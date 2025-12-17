@@ -1500,15 +1500,56 @@ html body.elementor-default .wpvfh-btn-secondary:hover:not(:disabled),
     line-height: 1 !important;
 }
 
-/* Bouton succès - Vert */
-.wpvfh-container .wpvfh-btn-success {
+/* Bouton succès - Vert - NUCLEAR */
+.wpvfh-container .wpvfh-btn-success,
+.wpvfh-container button.wpvfh-btn-success,
+.wpvfh-panel .wpvfh-btn-success,
+.wpvfh-modal .wpvfh-btn-success,
+html body .wpvfh-btn-success,
+html body.elementor-page .wpvfh-btn-success,
+html body.elementor-default .wpvfh-btn-success,
+.elementor .wpvfh-btn-success,
+.elementor-widget-container .wpvfh-btn-success {
+    all: revert !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 24px !important;
     background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
+    background-color: #27ae60 !important;
+    background-image: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
     color: #fff !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.4 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
 }
 
-.wpvfh-container .wpvfh-btn-success:hover:not(:disabled) {
+.wpvfh-container .wpvfh-btn-success:hover:not(:disabled),
+.wpvfh-panel .wpvfh-btn-success:hover:not(:disabled),
+.wpvfh-modal .wpvfh-btn-success:hover:not(:disabled),
+html body .wpvfh-btn-success:hover:not(:disabled),
+html body.elementor-page .wpvfh-btn-success:hover:not(:disabled),
+.elementor .wpvfh-btn-success:hover:not(:disabled) {
     background: linear-gradient(135deg, #1e8449 0%, #196f3d 100%) !important;
+    background-color: #1e8449 !important;
+    background-image: linear-gradient(135deg, #1e8449 0%, #196f3d 100%) !important;
     box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+    text-decoration: none !important;
+    border: none !important;
 }
 
 /* Spinner de chargement */
