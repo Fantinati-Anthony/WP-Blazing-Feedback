@@ -27,6 +27,7 @@
             pins: [],                  // Liste des pins affichés
             selectedPin: null,         // Pin sélectionné
             clickPosition: null,       // Position du dernier clic
+            clickHandler: null,        // Référence au gestionnaire de clics global
         },
 
         /**
@@ -84,10 +85,8 @@
             // Redimensionnement de la fenêtre
             window.addEventListener('resize', this.handleResize.bind(this));
 
-            // Clic sur l'overlay - capture les clics pour placer les pins
-            if (this.elements.overlay) {
-                this.elements.overlay.addEventListener('click', this.handleOverlayClick.bind(this));
-            }
+            // Créer le gestionnaire de clics global (stocké pour pouvoir le retirer)
+            this.state.clickHandler = this.handleGlobalClick.bind(this);
 
             // Annuler avec Echap
             document.addEventListener('keydown', (e) => {
@@ -106,7 +105,7 @@
 
             this.state.isActive = true;
 
-            // Afficher l'overlay
+            // Afficher l'overlay (pour effet visuel seulement)
             if (this.elements.overlay) {
                 this.elements.overlay.hidden = false;
                 this.elements.overlay.setAttribute('aria-hidden', 'false');
@@ -118,10 +117,18 @@
             // Changer le curseur
             document.body.style.cursor = 'crosshair';
 
+            // IMPORTANT: Ajouter le gestionnaire de clics global en phase de CAPTURE
+            // Cela intercepte TOUS les clics avant qu'ils n'atteignent les éléments
+            document.addEventListener('click', this.state.clickHandler, true);
+            document.addEventListener('mousedown', this.preventInteraction, true);
+            document.addEventListener('mouseup', this.preventInteraction, true);
+            document.addEventListener('touchstart', this.state.clickHandler, true);
+            document.addEventListener('touchend', this.preventInteraction, true);
+
             // Émettre l'événement
             this.emitEvent('annotation-activated');
 
-            console.log('[Blazing Feedback] Mode annotation activé');
+            console.log('[Blazing Feedback] Mode annotation activé - clics globaux interceptés');
         },
 
         /**
@@ -146,6 +153,13 @@
             // Restaurer le curseur
             document.body.style.cursor = '';
 
+            // IMPORTANT: Retirer les gestionnaires de clics globaux
+            document.removeEventListener('click', this.state.clickHandler, true);
+            document.removeEventListener('mousedown', this.preventInteraction, true);
+            document.removeEventListener('mouseup', this.preventInteraction, true);
+            document.removeEventListener('touchstart', this.state.clickHandler, true);
+            document.removeEventListener('touchend', this.preventInteraction, true);
+
             // Émettre l'événement
             this.emitEvent('annotation-deactivated');
 
@@ -153,19 +167,63 @@
         },
 
         /**
-         * Gérer le clic sur l'overlay
-         * @param {MouseEvent} event - Événement de clic
+         * Empêcher les interactions pendant le mode annotation
+         * @param {Event} event - Événement
          * @returns {void}
          */
-        handleOverlayClick: function(event) {
+        preventInteraction: function(event) {
+            // Ne pas bloquer les éléments du widget Blazing Feedback
+            if (event.target.closest('.wpvfh-widget') ||
+                event.target.closest('.wpvfh-pin') ||
+                event.target.classList.contains('wpvfh-hint-close')) {
+                return;
+            }
+
             event.preventDefault();
             event.stopPropagation();
+            event.stopImmediatePropagation();
+        },
 
-            // Ignorer si clic sur le bouton annuler
+        /**
+         * Gérer le clic global (capture phase)
+         * @param {MouseEvent|TouchEvent} event - Événement de clic
+         * @returns {void}
+         */
+        handleGlobalClick: function(event) {
+            // Ne pas traiter si le mode n'est pas actif
+            if (!this.state.isActive) return;
+
+            // Ignorer si clic sur le widget Blazing Feedback lui-même
+            if (event.target.closest('.wpvfh-widget') ||
+                event.target.closest('.wpvfh-pin')) {
+                return;
+            }
+
+            // Ignorer si clic sur le bouton annuler du hint
             if (event.target.classList.contains('wpvfh-hint-close')) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
                 this.deactivate();
                 return;
             }
+
+            // Bloquer l'événement
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+
+            // Obtenir les coordonnées
+            let clientX, clientY;
+            if (event.type === 'touchstart' && event.touches && event.touches.length > 0) {
+                clientX = event.touches[0].clientX;
+                clientY = event.touches[0].clientY;
+            } else {
+                clientX = event.clientX;
+                clientY = event.clientY;
+            }
+
+            console.log('[Blazing Feedback] Clic capturé à:', clientX, clientY);
 
             // Calculer la position relative
             const scrollX = window.scrollX || window.pageXOffset;
@@ -175,8 +233,8 @@
             const pageHeight = document.documentElement.scrollHeight;
 
             // Position absolue sur la page
-            const absoluteX = event.clientX + scrollX;
-            const absoluteY = event.clientY + scrollY;
+            const absoluteX = clientX + scrollX;
+            const absoluteY = clientY + scrollY;
 
             // Position en pourcentage
             const percentX = (absoluteX / pageWidth) * 100;
@@ -188,8 +246,8 @@
                 absoluteY,
                 percentX,
                 percentY,
-                clientX: event.clientX,
-                clientY: event.clientY,
+                clientX: clientX,
+                clientY: clientY,
                 viewportWidth: window.innerWidth,
                 viewportHeight: window.innerHeight,
                 scrollX,
@@ -197,21 +255,27 @@
             };
 
             // Masquer temporairement l'overlay pour trouver l'élément sous le clic
-            this.elements.overlay.style.display = 'none';
+            if (this.elements.overlay) {
+                this.elements.overlay.style.visibility = 'hidden';
+            }
 
             // Obtenir l'élément sous le clic
-            const elementUnder = document.elementFromPoint(event.clientX, event.clientY);
+            const elementUnder = document.elementFromPoint(clientX, clientY);
 
             // Restaurer l'overlay
-            this.elements.overlay.style.display = '';
+            if (this.elements.overlay) {
+                this.elements.overlay.style.visibility = '';
+            }
 
             // Générer un sélecteur CSS pour l'élément
             const selector = this.generateSelector(elementUnder);
             this.state.clickPosition.selector = selector;
             this.state.clickPosition.element = elementUnder;
 
+            console.log('[Blazing Feedback] Élément sous le clic:', elementUnder, 'Sélecteur:', selector);
+
             // Créer le pin temporaire
-            this.createTemporaryPin(event.clientX, event.clientY);
+            this.createTemporaryPin(clientX, clientY);
 
             // Émettre l'événement avec les données
             this.emitEvent('pin-placed', this.state.clickPosition);
@@ -247,9 +311,10 @@
                 border-radius: 50%;
                 transform: translate(-50%, -50%);
                 box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                z-index: 999999;
+                z-index: 2147483647;
                 cursor: pointer;
                 animation: wpvfh-pin-appear 0.2s ease-out;
+                pointer-events: auto;
             `;
 
             pin.innerHTML = '<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-weight:bold;font-size:12px;">+</span>';
@@ -257,6 +322,8 @@
             document.body.appendChild(pin);
 
             this.state.currentPin = pin;
+
+            console.log('[Blazing Feedback] Pin temporaire créé à:', x, y);
         },
 
         /**

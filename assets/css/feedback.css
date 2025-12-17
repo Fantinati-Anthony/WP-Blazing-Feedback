@@ -569,6 +569,8 @@
     z-index: 2147483646; /* Maximum z-index pour être au-dessus de tout */
     background: rgba(0, 0, 0, 0.15);
     cursor: crosshair;
+    /* IMPORTANT: L'overlay est purement visuel, les clics sont capturés au niveau document */
+    pointer-events: none;
 }
 
 .wpvfh-annotation-overlay[hidden] {
