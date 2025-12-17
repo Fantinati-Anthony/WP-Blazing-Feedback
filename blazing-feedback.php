@@ -541,6 +541,10 @@ final class WP_Visual_Feedback_Hub {
                         <?php esc_html_e( 'Liste', 'blazing-feedback' ); ?>
                         <span class="wpvfh-tab-count" id="wpvfh-pins-count"></span>
                     </button>
+                    <button type="button" class="wpvfh-tab" data-tab="details" id="wpvfh-tab-details-btn" hidden>
+                        <span class="wpvfh-tab-icon" aria-hidden="true">👁️</span>
+                        <?php esc_html_e( 'Détails', 'blazing-feedback' ); ?>
+                    </button>
                 </div>
 
                 <div class="wpvfh-panel-body">
@@ -665,6 +669,64 @@ final class WP_Visual_Feedback_Hub {
                             </button>
                         </div>
                     </div><!-- /wpvfh-tab-list -->
+
+                    <!-- Onglet: Détails d'un feedback -->
+                    <div id="wpvfh-tab-details" class="wpvfh-tab-content">
+                        <div class="wpvfh-details-header-bar">
+                            <button type="button" class="wpvfh-back-btn" id="wpvfh-back-to-list">
+                                <span aria-hidden="true">←</span>
+                                <?php esc_html_e( 'Retour', 'blazing-feedback' ); ?>
+                            </button>
+                            <span class="wpvfh-feedback-id" id="wpvfh-detail-id"></span>
+                        </div>
+
+                        <div class="wpvfh-detail-content" id="wpvfh-detail-content">
+                            <!-- Statut -->
+                            <div class="wpvfh-detail-status" id="wpvfh-detail-status"></div>
+
+                            <!-- Auteur et date -->
+                            <div class="wpvfh-detail-meta">
+                                <div class="wpvfh-detail-author" id="wpvfh-detail-author"></div>
+                                <div class="wpvfh-detail-date" id="wpvfh-detail-date"></div>
+                            </div>
+
+                            <!-- Commentaire -->
+                            <div class="wpvfh-detail-comment" id="wpvfh-detail-comment"></div>
+
+                            <!-- Screenshot -->
+                            <div class="wpvfh-detail-screenshot" id="wpvfh-detail-screenshot" hidden>
+                                <img src="" alt="<?php esc_attr_e( 'Screenshot', 'blazing-feedback' ); ?>">
+                            </div>
+
+                            <!-- Réponses -->
+                            <div class="wpvfh-detail-replies" id="wpvfh-detail-replies" hidden>
+                                <h4><?php esc_html_e( 'Réponses', 'blazing-feedback' ); ?></h4>
+                                <div class="wpvfh-replies-list" id="wpvfh-replies-list"></div>
+                            </div>
+
+                            <!-- Actions modérateur -->
+                            <div class="wpvfh-detail-actions" id="wpvfh-detail-actions" hidden>
+                                <div class="wpvfh-status-change">
+                                    <label for="wpvfh-status-select"><?php esc_html_e( 'Statut:', 'blazing-feedback' ); ?></label>
+                                    <select id="wpvfh-status-select" class="wpvfh-status-select">
+                                        <option value="new"><?php esc_html_e( 'Nouveau', 'blazing-feedback' ); ?></option>
+                                        <option value="in_progress"><?php esc_html_e( 'En cours', 'blazing-feedback' ); ?></option>
+                                        <option value="resolved"><?php esc_html_e( 'Résolu', 'blazing-feedback' ); ?></option>
+                                        <option value="rejected"><?php esc_html_e( 'Rejeté', 'blazing-feedback' ); ?></option>
+                                    </select>
+                                </div>
+
+                                <div class="wpvfh-reply-section">
+                                    <label for="wpvfh-reply-input"><?php esc_html_e( 'Ajouter une réponse:', 'blazing-feedback' ); ?></label>
+                                    <textarea id="wpvfh-reply-input" class="wpvfh-textarea" rows="2" placeholder="<?php esc_attr_e( 'Votre réponse...', 'blazing-feedback' ); ?>"></textarea>
+                                    <button type="button" class="wpvfh-btn wpvfh-btn-primary" id="wpvfh-send-reply">
+                                        <span class="wpvfh-btn-emoji">📨</span>
+                                        <?php esc_html_e( 'Envoyer', 'blazing-feedback' ); ?>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /wpvfh-tab-details -->
                 </div>
             </div>
 

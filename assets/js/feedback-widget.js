@@ -34,6 +34,7 @@
             currentFeedbacks: [],
             screenshotData: null,
             pinPosition: null,
+            currentFeedbackId: null,   // ID du feedback en cours de visualisation
         },
 
         /**
@@ -86,10 +87,26 @@
                 tabs: document.querySelectorAll('.wpvfh-tab'),
                 tabNew: document.getElementById('wpvfh-tab-new'),
                 tabList: document.getElementById('wpvfh-tab-list'),
+                tabDetails: document.getElementById('wpvfh-tab-details'),
+                tabDetailsBtn: document.getElementById('wpvfh-tab-details-btn'),
                 pinsList: document.getElementById('wpvfh-pins-list'),
                 pinsCount: document.getElementById('wpvfh-pins-count'),
                 emptyState: document.getElementById('wpvfh-empty-state'),
                 addFeedbackBtn: document.querySelector('.wpvfh-add-feedback-btn'),
+                // Éléments détails
+                backToListBtn: document.getElementById('wpvfh-back-to-list'),
+                detailId: document.getElementById('wpvfh-detail-id'),
+                detailStatus: document.getElementById('wpvfh-detail-status'),
+                detailAuthor: document.getElementById('wpvfh-detail-author'),
+                detailDate: document.getElementById('wpvfh-detail-date'),
+                detailComment: document.getElementById('wpvfh-detail-comment'),
+                detailScreenshot: document.getElementById('wpvfh-detail-screenshot'),
+                detailReplies: document.getElementById('wpvfh-detail-replies'),
+                repliesList: document.getElementById('wpvfh-replies-list'),
+                detailActions: document.getElementById('wpvfh-detail-actions'),
+                statusSelect: document.getElementById('wpvfh-status-select'),
+                replyInput: document.getElementById('wpvfh-reply-input'),
+                sendReplyBtn: document.getElementById('wpvfh-send-reply'),
                 // Éléments média
                 mediaToolbar: document.querySelector('.wpvfh-media-toolbar'),
                 toolButtons: document.querySelectorAll('.wpvfh-tool-btn'),
@@ -204,6 +221,34 @@
                 this.elements.addFeedbackBtn.addEventListener('click', () => {
                     this.switchTab('new');
                     this.startFeedbackMode();
+                });
+            }
+
+            // Bouton retour dans les détails
+            if (this.elements.backToListBtn) {
+                this.elements.backToListBtn.addEventListener('click', () => {
+                    this.switchTab('list');
+                });
+            }
+
+            // Changement de statut
+            if (this.elements.statusSelect) {
+                this.elements.statusSelect.addEventListener('change', (e) => {
+                    if (this.state.currentFeedbackId) {
+                        this.updateFeedbackStatus(this.state.currentFeedbackId, e.target.value);
+                    }
+                });
+            }
+
+            // Envoi de réponse
+            if (this.elements.sendReplyBtn) {
+                this.elements.sendReplyBtn.addEventListener('click', () => {
+                    if (this.state.currentFeedbackId && this.elements.replyInput) {
+                        const content = this.elements.replyInput.value.trim();
+                        if (content) {
+                            this.addReply(this.state.currentFeedbackId, content);
+                        }
+                    }
                 });
             }
         },
@@ -538,12 +583,16 @@
 
         /**
          * Changer d'onglet
-         * @param {string} tabName - Nom de l'onglet ('new' ou 'list')
+         * @param {string} tabName - Nom de l'onglet ('new', 'list' ou 'details')
          */
         switchTab: function(tabName) {
             // Mettre à jour les boutons d'onglet
             if (this.elements.tabs && this.elements.tabs.length > 0) {
                 this.elements.tabs.forEach(tab => {
+                    // Masquer/Afficher le bouton détails selon l'onglet
+                    if (tab.dataset.tab === 'details') {
+                        tab.hidden = (tabName !== 'details');
+                    }
                     tab.classList.toggle('active', tab.dataset.tab === tabName);
                 });
             }
@@ -555,10 +604,15 @@
             if (this.elements.tabList) {
                 this.elements.tabList.classList.toggle('active', tabName === 'list');
             }
+            if (this.elements.tabDetails) {
+                this.elements.tabDetails.classList.toggle('active', tabName === 'details');
+            }
 
             // Si on va sur la liste, charger les feedbacks
             if (tabName === 'list') {
                 this.renderPinsList();
+                // Réinitialiser le feedback courant
+                this.state.currentFeedbackId = null;
             }
         },
 
@@ -949,187 +1003,109 @@
         },
 
         /**
-         * Afficher les détails d'un feedback
+         * Afficher les détails d'un feedback dans la sidebar
          * @param {Object} feedback - Données du feedback
          * @returns {void}
          */
         showFeedbackDetails: function(feedback) {
-            // Créer une modal ou un panel pour afficher les détails
-            const modal = this.createDetailsModal(feedback);
-            document.body.appendChild(modal);
+            // Stocker l'ID du feedback courant
+            this.state.currentFeedbackId = feedback.id;
 
-            // Fermer avec Échap
-            const closeHandler = (e) => {
-                if (e.key === 'Escape') {
-                    modal.remove();
-                    document.removeEventListener('keydown', closeHandler);
-                }
+            // Labels des statuts
+            const statusLabels = {
+                new: this.config.i18n?.statusNew || 'Nouveau',
+                in_progress: this.config.i18n?.statusInProgress || 'En cours',
+                resolved: this.config.i18n?.statusResolved || 'Résolu',
+                rejected: this.config.i18n?.statusRejected || 'Rejeté',
             };
-            document.addEventListener('keydown', closeHandler);
-        },
 
-        /**
-         * Créer la modal de détails
-         * @param {Object} feedback - Données du feedback
-         * @returns {HTMLElement} Modal
-         */
-        createDetailsModal: function(feedback) {
-            const modal = document.createElement('div');
-            modal.className = 'wpvfh-details-modal';
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0,0,0,0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 1000000;
-            `;
+            const statusIcons = {
+                new: '🆕',
+                in_progress: '⏳',
+                resolved: '✅',
+                rejected: '❌',
+            };
 
-            const statuses = this.config.statuses || {};
-            const statusData = statuses[feedback.status] || { label: feedback.status, color: '#666' };
+            const status = feedback.status || 'new';
 
-            modal.innerHTML = `
-                <div class="wpvfh-details-content" style="
-                    background: #fff;
-                    border-radius: 8px;
-                    max-width: 600px;
-                    width: 90%;
-                    max-height: 80vh;
-                    overflow: auto;
-                    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-                ">
-                    <div class="wpvfh-details-header" style="
-                        padding: 20px;
-                        border-bottom: 1px solid #eee;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                    ">
-                        <h3 style="margin: 0;">Feedback #${feedback.id}</h3>
-                        <button type="button" class="wpvfh-modal-close" style="
-                            background: none;
-                            border: none;
-                            font-size: 24px;
-                            cursor: pointer;
-                            color: #666;
-                        ">&times;</button>
-                    </div>
-                    <div class="wpvfh-details-body" style="padding: 20px;">
-                        <div style="margin-bottom: 15px;">
-                            <span style="
-                                display: inline-block;
-                                padding: 4px 12px;
-                                border-radius: 20px;
-                                background: ${statusData.color}20;
-                                color: ${statusData.color};
-                                font-size: 13px;
-                                font-weight: 500;
-                            ">${statusData.icon || ''} ${statusData.label}</span>
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong>Auteur:</strong> ${feedback.author?.name || 'Anonyme'}
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong>Date:</strong> ${new Date(feedback.date).toLocaleString()}
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong>Commentaire:</strong>
-                            <p style="background: #f5f5f5; padding: 15px; border-radius: 4px; margin: 10px 0 0;">${this.escapeHtml(feedback.comment)}</p>
-                        </div>
-                        ${feedback.screenshot_url ? `
-                            <div style="margin-bottom: 15px;">
-                                <strong>Screenshot:</strong>
-                                <img src="${feedback.screenshot_url}" alt="Screenshot" style="max-width: 100%; margin-top: 10px; border-radius: 4px; border: 1px solid #eee;">
-                            </div>
-                        ` : ''}
-                        ${feedback.replies && feedback.replies.length ? `
-                            <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
-                                <strong>Réponses (${feedback.replies.length}):</strong>
-                                ${feedback.replies.map(reply => `
-                                    <div style="background: #f9f9f9; padding: 12px; border-radius: 4px; margin-top: 10px;">
-                                        <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
-                                            ${reply.author?.name || 'Anonyme'} - ${new Date(reply.date).toLocaleString()}
-                                        </div>
-                                        <div>${this.escapeHtml(reply.content)}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                        ${this.config.canModerate ? `
-                            <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
-                                <strong>Changer le statut:</strong>
-                                <select class="wpvfh-status-select" data-feedback-id="${feedback.id}" style="
-                                    margin-left: 10px;
-                                    padding: 5px 10px;
-                                    border-radius: 4px;
-                                    border: 1px solid #ddd;
-                                ">
-                                    ${Object.entries(statuses).map(([key, data]) => `
-                                        <option value="${key}" ${feedback.status === key ? 'selected' : ''}>${data.icon || ''} ${data.label}</option>
-                                    `).join('')}
-                                </select>
-                            </div>
-                            <div style="margin-top: 15px;">
-                                <strong>Ajouter une réponse:</strong>
-                                <textarea class="wpvfh-reply-input" style="
-                                    width: 100%;
-                                    margin-top: 10px;
-                                    padding: 10px;
-                                    border-radius: 4px;
-                                    border: 1px solid #ddd;
-                                    resize: vertical;
-                                " rows="3" placeholder="${this.config.i18n?.replyPlaceholder || 'Votre réponse...'}"></textarea>
-                                <button type="button" class="wpvfh-reply-submit" data-feedback-id="${feedback.id}" style="
-                                    margin-top: 10px;
-                                    padding: 8px 16px;
-                                    background: #2271b1;
-                                    color: #fff;
-                                    border: none;
-                                    border-radius: 4px;
-                                    cursor: pointer;
-                                ">Envoyer la réponse</button>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-
-            // Événements
-            modal.querySelector('.wpvfh-modal-close').addEventListener('click', () => modal.remove());
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.remove();
-            });
-
-            // Changement de statut
-            const statusSelect = modal.querySelector('.wpvfh-status-select');
-            if (statusSelect) {
-                statusSelect.addEventListener('change', async (e) => {
-                    await this.updateFeedbackStatus(feedback.id, e.target.value);
-                });
+            // Remplir les éléments
+            if (this.elements.detailId) {
+                this.elements.detailId.textContent = `#${feedback.id}`;
             }
 
-            // Envoi de réponse
-            const replySubmit = modal.querySelector('.wpvfh-reply-submit');
-            if (replySubmit) {
-                replySubmit.addEventListener('click', async () => {
-                    const input = modal.querySelector('.wpvfh-reply-input');
-                    const content = input?.value?.trim();
-                    if (content) {
-                        await this.addReply(feedback.id, content);
-                        input.value = '';
-                        modal.remove();
-                        // Recharger les détails
-                        const updatedFeedback = await this.apiRequest('GET', `feedbacks/${feedback.id}`);
-                        this.showFeedbackDetails(updatedFeedback);
-                    }
-                });
+            if (this.elements.detailStatus) {
+                this.elements.detailStatus.innerHTML = `
+                    <span class="wpvfh-status-badge status-${status}">
+                        ${statusIcons[status] || ''} ${statusLabels[status] || status}
+                    </span>
+                `;
             }
 
-            return modal;
+            if (this.elements.detailAuthor) {
+                this.elements.detailAuthor.innerHTML = `
+                    <span>👤</span>
+                    <span>${this.escapeHtml(feedback.author?.name || 'Anonyme')}</span>
+                `;
+            }
+
+            if (this.elements.detailDate) {
+                const date = feedback.date ? new Date(feedback.date).toLocaleString() : '';
+                this.elements.detailDate.innerHTML = `
+                    <span>📅</span>
+                    <span>${date}</span>
+                `;
+            }
+
+            if (this.elements.detailComment) {
+                this.elements.detailComment.textContent = feedback.comment || feedback.content || '';
+            }
+
+            // Screenshot
+            if (this.elements.detailScreenshot) {
+                if (feedback.screenshot_url) {
+                    const img = this.elements.detailScreenshot.querySelector('img');
+                    if (img) img.src = feedback.screenshot_url;
+                    this.elements.detailScreenshot.hidden = false;
+                } else {
+                    this.elements.detailScreenshot.hidden = true;
+                }
+            }
+
+            // Réponses
+            if (this.elements.detailReplies && this.elements.repliesList) {
+                if (feedback.replies && feedback.replies.length > 0) {
+                    this.elements.repliesList.innerHTML = feedback.replies.map(reply => `
+                        <div class="wpvfh-reply-item">
+                            <div class="wpvfh-reply-meta">
+                                ${this.escapeHtml(reply.author?.name || 'Anonyme')} -
+                                ${new Date(reply.date).toLocaleString()}
+                            </div>
+                            <div class="wpvfh-reply-content">${this.escapeHtml(reply.content)}</div>
+                        </div>
+                    `).join('');
+                    this.elements.detailReplies.hidden = false;
+                } else {
+                    this.elements.detailReplies.hidden = true;
+                }
+            }
+
+            // Actions modérateur
+            if (this.elements.detailActions) {
+                this.elements.detailActions.hidden = !this.config.canModerate;
+            }
+
+            // Sélecteur de statut
+            if (this.elements.statusSelect) {
+                this.elements.statusSelect.value = status;
+            }
+
+            // Vider le champ de réponse
+            if (this.elements.replyInput) {
+                this.elements.replyInput.value = '';
+            }
+
+            // Ouvrir le panel et basculer sur l'onglet détails
+            this.openPanel('details');
         },
 
         /**
@@ -1145,6 +1121,27 @@
                 // Mettre à jour le pin
                 if (window.BlazingAnnotation) {
                     window.BlazingAnnotation.updatePin(feedbackId, { status });
+                }
+
+                // Mettre à jour l'affichage du statut dans la sidebar
+                if (this.elements.detailStatus) {
+                    const statusLabels = {
+                        new: this.config.i18n?.statusNew || 'Nouveau',
+                        in_progress: this.config.i18n?.statusInProgress || 'En cours',
+                        resolved: this.config.i18n?.statusResolved || 'Résolu',
+                        rejected: this.config.i18n?.statusRejected || 'Rejeté',
+                    };
+                    const statusIcons = {
+                        new: '🆕',
+                        in_progress: '⏳',
+                        resolved: '✅',
+                        rejected: '❌',
+                    };
+                    this.elements.detailStatus.innerHTML = `
+                        <span class="wpvfh-status-badge status-${status}">
+                            ${statusIcons[status] || ''} ${statusLabels[status] || status}
+                        </span>
+                    `;
                 }
 
                 this.showNotification('Statut mis à jour', 'success');
@@ -1165,6 +1162,16 @@
             try {
                 await this.apiRequest('POST', `feedbacks/${feedbackId}/replies`, { content });
                 this.showNotification('Réponse ajoutée', 'success');
+
+                // Vider le champ de réponse
+                if (this.elements.replyInput) {
+                    this.elements.replyInput.value = '';
+                }
+
+                // Recharger les détails du feedback
+                const updatedFeedback = await this.apiRequest('GET', `feedbacks/${feedbackId}`);
+                this.showFeedbackDetails(updatedFeedback);
+
             } catch (error) {
                 console.error('[Blazing Feedback] Erreur d\'ajout de réponse:', error);
                 this.showNotification('Erreur lors de l\'ajout de la réponse', 'error');
