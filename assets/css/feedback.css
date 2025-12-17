@@ -752,6 +752,35 @@ html body.elementor-default .wpvfh-tab.active,
     background-color: #fff !important;
 }
 
+/* Onglets cachés - APRÈS les autres règles pour garantir la priorité */
+.wpvfh-tab[hidden],
+.wpvfh-tabs .wpvfh-tab[hidden],
+.wpvfh-tabs button.wpvfh-tab[hidden],
+.wpvfh-container .wpvfh-tab[hidden],
+.wpvfh-container .wpvfh-tabs .wpvfh-tab[hidden],
+.wpvfh-container button.wpvfh-tab[hidden],
+.wpvfh-panel .wpvfh-tab[hidden],
+.wpvfh-panel .wpvfh-tabs .wpvfh-tab[hidden],
+html body .wpvfh-tab[hidden],
+html body .wpvfh-tabs .wpvfh-tab[hidden],
+html body.elementor-page .wpvfh-tab[hidden],
+html body.elementor-page .wpvfh-tabs .wpvfh-tab[hidden],
+html body.elementor-default .wpvfh-tab[hidden],
+html body.elementor-default .wpvfh-tabs .wpvfh-tab[hidden],
+.elementor .wpvfh-tab[hidden],
+.elementor .wpvfh-tabs .wpvfh-tab[hidden],
+button.wpvfh-tab[hidden] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    flex: 0 !important;
+}
+
 .wpvfh-tab-icon {
     font-size: 16px !important;
     line-height: 1 !important;
