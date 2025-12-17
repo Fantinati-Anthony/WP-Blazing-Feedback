@@ -276,12 +276,12 @@ class WPVFH_REST_API {
             ),
             'position_x'      => array(
                 'type'              => 'number',
-                'sanitize_callback' => 'floatval',
+                'sanitize_callback' => function( $value ) { return floatval( $value ); },
                 'description'       => __( 'Position X du marqueur (%)', 'blazing-feedback' ),
             ),
             'position_y'      => array(
                 'type'              => 'number',
-                'sanitize_callback' => 'floatval',
+                'sanitize_callback' => function( $value ) { return floatval( $value ); },
                 'description'       => __( 'Position Y du marqueur (%)', 'blazing-feedback' ),
             ),
             'screenshot_data' => array(

@@ -282,12 +282,12 @@ class WPVFH_CPT_Feedback {
         // Position
         register_post_meta( self::POST_TYPE, '_wpvfh_position_x', array_merge( $meta_args, array(
             'type'              => 'number',
-            'sanitize_callback' => 'floatval',
+            'sanitize_callback' => function( $value ) { return floatval( $value ); },
         ) ) );
 
         register_post_meta( self::POST_TYPE, '_wpvfh_position_y', array_merge( $meta_args, array(
             'type'              => 'number',
-            'sanitize_callback' => 'floatval',
+            'sanitize_callback' => function( $value ) { return floatval( $value ); },
         ) ) );
 
         // URL
