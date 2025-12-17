@@ -744,15 +744,21 @@
             // Réinitialiser l'état local
             this.state.pinPosition = null;
 
-            // Masquer l'indicateur de sélection
+            // Masquer l'indicateur de sélection (double méthode pour fiabilité)
             if (this.elements.selectedElement) {
                 this.elements.selectedElement.hidden = true;
+                this.elements.selectedElement.classList.add('wpvfh-hidden');
+                this.elements.selectedElement.style.display = 'none';
             }
 
             // Afficher le bouton de sélection
             if (this.elements.selectElementBtn) {
                 this.elements.selectElementBtn.hidden = false;
+                this.elements.selectElementBtn.classList.remove('wpvfh-hidden');
+                this.elements.selectElementBtn.style.display = '';
             }
+
+            console.log('[Blazing Feedback] Sélection effacée');
         },
 
         /**
@@ -774,9 +780,11 @@
                 this.elements.positionY.value = data.percentY || data.position_y || '';
             }
 
-            // Afficher l'indicateur de sélection
+            // Afficher l'indicateur de sélection (triple méthode pour fiabilité)
             if (this.elements.selectedElement) {
                 this.elements.selectedElement.hidden = false;
+                this.elements.selectedElement.classList.remove('wpvfh-hidden');
+                this.elements.selectedElement.style.display = 'flex';
 
                 // Afficher le sélecteur si disponible
                 const textEl = this.elements.selectedElement.querySelector('.wpvfh-selected-text');
@@ -792,6 +800,8 @@
             // Masquer le bouton de sélection
             if (this.elements.selectElementBtn) {
                 this.elements.selectElementBtn.hidden = true;
+                this.elements.selectElementBtn.classList.add('wpvfh-hidden');
+                this.elements.selectElementBtn.style.display = 'none';
             }
 
             // Ouvrir le panel avec l'onglet nouveau si fermé
@@ -811,11 +821,15 @@
             // Réafficher le bouton de sélection
             if (this.elements.selectElementBtn) {
                 this.elements.selectElementBtn.hidden = false;
+                this.elements.selectElementBtn.classList.remove('wpvfh-hidden');
+                this.elements.selectElementBtn.style.display = '';
             }
 
-            // Masquer l'indicateur
+            // Masquer l'indicateur (triple méthode pour fiabilité)
             if (this.elements.selectedElement) {
                 this.elements.selectedElement.hidden = true;
+                this.elements.selectedElement.classList.add('wpvfh-hidden');
+                this.elements.selectedElement.style.display = 'none';
             }
         },
 
