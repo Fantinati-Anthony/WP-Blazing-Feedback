@@ -60,10 +60,36 @@
             }
 
             this.cacheElements();
+            this.moveFixedElementsToBody();
             this.bindEvents();
             this.loadExistingFeedbacks();
 
             console.log('[Blazing Feedback] Widget initialisé');
+        },
+
+        /**
+         * Déplacer les éléments fixed vers body pour éviter les problèmes de stacking context
+         * @returns {void}
+         */
+        moveFixedElementsToBody: function() {
+            // Déplacer le panel vers body pour éviter les problèmes avec transform/filter des parents
+            if (this.elements.panel && this.elements.panel.parentNode !== document.body) {
+                document.body.appendChild(this.elements.panel);
+                console.log('[Blazing Feedback] Panel déplacé vers body');
+            }
+
+            // Déplacer l'overlay vers body aussi
+            if (this.elements.sidebarOverlay && this.elements.sidebarOverlay.parentNode !== document.body) {
+                document.body.appendChild(this.elements.sidebarOverlay);
+            }
+
+            // Déplacer les modals vers body
+            if (this.elements.confirmModal && this.elements.confirmModal.parentNode !== document.body) {
+                document.body.appendChild(this.elements.confirmModal);
+            }
+            if (this.elements.validateModal && this.elements.validateModal.parentNode !== document.body) {
+                document.body.appendChild(this.elements.validateModal);
+            }
         },
 
         /**
