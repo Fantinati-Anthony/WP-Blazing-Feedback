@@ -350,7 +350,7 @@ final class WP_Visual_Feedback_Hub {
          */
         return apply_filters( 'wpvfh_frontend_data', array(
             'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
-            'restUrl'        => rest_url( 'visual-feedback/v1/' ),
+            'restUrl'        => rest_url( 'blazing-feedback/v1/' ),
             'restNonce'      => wp_create_nonce( 'wp_rest' ),
             'nonce'          => wp_create_nonce( 'wpvfh_nonce' ),
             'currentUrl'     => esc_url( home_url( add_query_arg( array() ) ) ),
@@ -358,7 +358,7 @@ final class WP_Visual_Feedback_Hub {
             'userName'       => $current_user->display_name,
             'userEmail'      => $current_user->user_email,
             'isLoggedIn'     => is_user_logged_in(),
-            'canCreate'      => current_user_can( 'create_feedback' ),
+            'canCreate'      => current_user_can( 'publish_feedbacks' ),
             'canModerate'    => current_user_can( 'moderate_feedback' ),
             'canManage'      => current_user_can( 'manage_feedback' ),
             'pluginUrl'      => WPVFH_PLUGIN_URL,
@@ -405,7 +405,7 @@ final class WP_Visual_Feedback_Hub {
         }
 
         // Vérifier les capacités
-        return current_user_can( 'create_feedback' ) || current_user_can( 'moderate_feedback' ) || current_user_can( 'manage_feedback' );
+        return current_user_can( 'publish_feedbacks' ) || current_user_can( 'moderate_feedback' ) || current_user_can( 'manage_feedback' );
     }
 
     /**

@@ -31,61 +31,78 @@ class WPVFH_Roles {
             'display_name' => 'Feedback Client',
             'capabilities' => array(
                 // Lecture de base WordPress
-                'read'                   => true,
+                'read'                       => true,
 
-                // Capacités feedback - Client
-                'create_feedback'        => true,
-                'read_feedback'          => true,
-                'edit_feedback'          => true,
-                'delete_feedback'        => true,
+                // Capacités feedback CPT - Client (ses propres feedbacks)
+                'edit_feedback'              => true,
+                'read_feedback'              => true,
+                'delete_feedback'            => true,
+                'edit_feedbacks'             => true,
+                'publish_feedbacks'          => true,
 
                 // Pas d'accès aux feedbacks des autres
-                'read_others_feedback'   => false,
-                'edit_others_feedback'   => false,
-                'delete_others_feedback' => false,
-                'moderate_feedback'      => false,
-                'manage_feedback'        => false,
-                'export_feedback'        => false,
+                'edit_others_feedbacks'      => false,
+                'delete_others_feedbacks'    => false,
+                'read_private_feedbacks'     => false,
+                'edit_private_feedbacks'     => false,
+                'delete_private_feedbacks'   => false,
+
+                // Capacités personnalisées
+                'moderate_feedback'          => false,
+                'manage_feedback'            => false,
+                'export_feedback'            => false,
             ),
         ),
         'feedback_member' => array(
             'display_name' => 'Feedback Member',
             'capabilities' => array(
                 // Lecture de base WordPress
-                'read'                   => true,
+                'read'                       => true,
 
-                // Capacités feedback - Member
-                'create_feedback'        => true,
-                'read_feedback'          => true,
-                'edit_feedback'          => true,
-                'delete_feedback'        => true,
-                'read_others_feedback'   => true,
-                'edit_others_feedback'   => true,
-                'moderate_feedback'      => true,  // Peut répondre et changer les statuts
+                // Capacités feedback CPT - Member (peut voir et modifier tous)
+                'edit_feedback'              => true,
+                'read_feedback'              => true,
+                'delete_feedback'            => true,
+                'edit_feedbacks'             => true,
+                'publish_feedbacks'          => true,
+                'edit_others_feedbacks'      => true,
+                'read_private_feedbacks'     => true,
+                'edit_private_feedbacks'     => true,
 
-                // Pas d'accès admin
-                'delete_others_feedback' => false,
-                'manage_feedback'        => false,
-                'export_feedback'        => false,
+                // Pas de suppression des autres
+                'delete_others_feedbacks'    => false,
+                'delete_private_feedbacks'   => false,
+
+                // Capacités personnalisées
+                'moderate_feedback'          => true,
+                'manage_feedback'            => false,
+                'export_feedback'            => false,
             ),
         ),
         'feedback_admin' => array(
             'display_name' => 'Feedback Admin',
             'capabilities' => array(
                 // Lecture de base WordPress
-                'read'                   => true,
+                'read'                       => true,
 
-                // Toutes les capacités feedback
-                'create_feedback'        => true,
-                'read_feedback'          => true,
-                'edit_feedback'          => true,
-                'delete_feedback'        => true,
-                'read_others_feedback'   => true,
-                'edit_others_feedback'   => true,
-                'delete_others_feedback' => true,
-                'moderate_feedback'      => true,
-                'manage_feedback'        => true,
-                'export_feedback'        => true,
+                // Toutes les capacités feedback CPT
+                'edit_feedback'              => true,
+                'read_feedback'              => true,
+                'delete_feedback'            => true,
+                'edit_feedbacks'             => true,
+                'publish_feedbacks'          => true,
+                'edit_others_feedbacks'      => true,
+                'delete_others_feedbacks'    => true,
+                'read_private_feedbacks'     => true,
+                'edit_private_feedbacks'     => true,
+                'delete_private_feedbacks'   => true,
+                'edit_published_feedbacks'   => true,
+                'delete_published_feedbacks' => true,
+
+                // Capacités personnalisées
+                'moderate_feedback'          => true,
+                'manage_feedback'            => true,
+                'export_feedback'            => true,
             ),
         ),
     );
@@ -158,15 +175,23 @@ class WPVFH_Roles {
             return;
         }
 
-        // Ajouter toutes les capacités du plugin
+        // Ajouter toutes les capacités du plugin (CPT standard + personnalisées)
         $all_caps = array(
-            'create_feedback',
-            'read_feedback',
+            // Capacités CPT WordPress standard
             'edit_feedback',
+            'read_feedback',
             'delete_feedback',
-            'read_others_feedback',
-            'edit_others_feedback',
-            'delete_others_feedback',
+            'edit_feedbacks',
+            'edit_others_feedbacks',
+            'publish_feedbacks',
+            'read_private_feedbacks',
+            'delete_feedbacks',
+            'delete_private_feedbacks',
+            'delete_published_feedbacks',
+            'delete_others_feedbacks',
+            'edit_private_feedbacks',
+            'edit_published_feedbacks',
+            // Capacités personnalisées
             'moderate_feedback',
             'manage_feedback',
             'export_feedback',
@@ -180,12 +205,14 @@ class WPVFH_Roles {
         $editor_role = get_role( 'editor' );
         if ( $editor_role ) {
             $editor_caps = array(
-                'create_feedback',
-                'read_feedback',
                 'edit_feedback',
+                'read_feedback',
                 'delete_feedback',
-                'read_others_feedback',
-                'edit_others_feedback',
+                'edit_feedbacks',
+                'publish_feedbacks',
+                'edit_others_feedbacks',
+                'read_private_feedbacks',
+                'edit_private_feedbacks',
                 'moderate_feedback',
             );
 
@@ -198,10 +225,11 @@ class WPVFH_Roles {
         $author_role = get_role( 'author' );
         if ( $author_role ) {
             $author_caps = array(
-                'create_feedback',
-                'read_feedback',
                 'edit_feedback',
+                'read_feedback',
                 'delete_feedback',
+                'edit_feedbacks',
+                'publish_feedbacks',
             );
 
             foreach ( $author_caps as $cap ) {
@@ -213,7 +241,7 @@ class WPVFH_Roles {
         $contributor_role = get_role( 'contributor' );
         if ( $contributor_role ) {
             $contributor_caps = array(
-                'create_feedback',
+                'edit_feedbacks',
                 'read_feedback',
             );
 
@@ -249,13 +277,21 @@ class WPVFH_Roles {
      */
     public static function remove_caps_from_roles() {
         $all_caps = array(
-            'create_feedback',
-            'read_feedback',
+            // Capacités CPT WordPress standard
             'edit_feedback',
+            'read_feedback',
             'delete_feedback',
-            'read_others_feedback',
-            'edit_others_feedback',
-            'delete_others_feedback',
+            'edit_feedbacks',
+            'edit_others_feedbacks',
+            'publish_feedbacks',
+            'read_private_feedbacks',
+            'delete_feedbacks',
+            'delete_private_feedbacks',
+            'delete_published_feedbacks',
+            'delete_others_feedbacks',
+            'edit_private_feedbacks',
+            'edit_published_feedbacks',
+            // Capacités personnalisées
             'moderate_feedback',
             'manage_feedback',
             'export_feedback',

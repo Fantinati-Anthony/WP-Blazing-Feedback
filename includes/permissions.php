@@ -83,7 +83,7 @@ class WPVFH_Permissions {
             return apply_filters( 'wpvfh_allow_anonymous_feedback', false );
         }
 
-        return user_can( $user_id, 'create_feedback' );
+        return user_can( $user_id, 'publish_feedbacks' );
     }
 
     /**
@@ -110,8 +110,8 @@ class WPVFH_Permissions {
             return user_can( $user_id, 'read_feedback' );
         }
 
-        // Sinon, vérifier la capacité de lire les autres
-        return user_can( $user_id, 'read_others_feedback' );
+        // Sinon, vérifier la capacité de lire les autres (feedbacks privés)
+        return user_can( $user_id, 'read_private_feedbacks' );
     }
 
     /**
@@ -138,7 +138,7 @@ class WPVFH_Permissions {
         }
 
         // Sinon, vérifier la capacité de modifier les autres
-        return user_can( $user_id, 'edit_others_feedback' );
+        return user_can( $user_id, 'edit_others_feedbacks' );
     }
 
     /**
@@ -165,7 +165,7 @@ class WPVFH_Permissions {
         }
 
         // Sinon, vérifier la capacité de supprimer les autres
-        return user_can( $user_id, 'delete_others_feedback' );
+        return user_can( $user_id, 'delete_others_feedbacks' );
     }
 
     /**
