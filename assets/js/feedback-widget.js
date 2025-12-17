@@ -822,7 +822,7 @@
         },
 
         /**
-         * Afficher la liste des pins dans la sidebar
+         * Afficher la liste des pins dans la sidebar avec drag-and-drop
          */
         renderPinsList: function() {
             if (!this.elements.pinsList) return;
@@ -842,7 +842,10 @@
 
             if (feedbacks.length === 0) return;
 
-            // Générer le HTML des pins
+            // Ajouter la classe sortable
+            this.elements.pinsList.classList.add('sortable');
+
+            // Générer le HTML des pins avec handle de drag et numéro
             const html = feedbacks.map((feedback, index) => {
                 const statusLabels = {
                     new: this.config.i18n?.statusNew || 'Nouveau',
@@ -851,20 +854,15 @@
                     rejected: this.config.i18n?.statusRejected || 'Rejeté',
                 };
 
-                const statusIcons = {
-                    new: '!',
-                    in_progress: '⏳',
-                    resolved: '✓',
-                    rejected: '✗',
-                };
-
                 const status = feedback.status || 'new';
                 const date = feedback.date ? new Date(feedback.date).toLocaleDateString() : '';
+                const pinNumber = index + 1;
 
                 return `
-                    <div class="wpvfh-pin-item" data-feedback-id="${feedback.id}">
+                    <div class="wpvfh-pin-item" data-feedback-id="${feedback.id}" data-pin-number="${pinNumber}" draggable="true">
+                        <div class="wpvfh-drag-handle" title="Glisser pour réorganiser">⋮⋮</div>
                         <div class="wpvfh-pin-marker status-${status}">
-                            ${statusIcons[status] || (index + 1)}
+                            ${pinNumber}
                         </div>
                         <div class="wpvfh-pin-content">
                             <p class="wpvfh-pin-text">${this.escapeHtml(feedback.comment || feedback.content || '')}</p>
@@ -886,11 +884,124 @@
 
             // Ajouter les événements aux items
             this.elements.pinsList.querySelectorAll('.wpvfh-pin-item').forEach(item => {
-                item.addEventListener('click', () => {
+                // Clic pour aller au pin
+                item.addEventListener('click', (e) => {
+                    // Ne pas scroller si on drag ou si on clique sur une action
+                    if (e.target.closest('.wpvfh-drag-handle') || e.target.closest('.wpvfh-pin-action')) {
+                        return;
+                    }
                     const feedbackId = parseInt(item.dataset.feedbackId, 10);
                     this.scrollToPin(feedbackId);
                 });
             });
+
+            // Initialiser le drag-and-drop
+            this.initDragAndDrop();
+        },
+
+        /**
+         * Initialiser le drag-and-drop pour la liste
+         */
+        initDragAndDrop: function() {
+            const list = this.elements.pinsList;
+            if (!list) return;
+
+            let draggedItem = null;
+
+            list.querySelectorAll('.wpvfh-pin-item').forEach(item => {
+                // Début du drag
+                item.addEventListener('dragstart', (e) => {
+                    draggedItem = item;
+                    item.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', item.dataset.feedbackId);
+                });
+
+                // Fin du drag
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                    list.querySelectorAll('.wpvfh-pin-item').forEach(i => {
+                        i.classList.remove('drag-over');
+                    });
+                    draggedItem = null;
+                });
+
+                // Survol pendant le drag
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+
+                    if (item !== draggedItem) {
+                        item.classList.add('drag-over');
+                    }
+                });
+
+                // Sortie du survol
+                item.addEventListener('dragleave', () => {
+                    item.classList.remove('drag-over');
+                });
+
+                // Drop
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    item.classList.remove('drag-over');
+
+                    if (draggedItem && item !== draggedItem) {
+                        // Réorganiser dans le DOM
+                        const allItems = [...list.querySelectorAll('.wpvfh-pin-item')];
+                        const fromIndex = allItems.indexOf(draggedItem);
+                        const toIndex = allItems.indexOf(item);
+
+                        if (fromIndex < toIndex) {
+                            item.parentNode.insertBefore(draggedItem, item.nextSibling);
+                        } else {
+                            item.parentNode.insertBefore(draggedItem, item);
+                        }
+
+                        // Mettre à jour l'ordre dans currentFeedbacks
+                        this.updateFeedbackOrder();
+                    }
+                });
+            });
+        },
+
+        /**
+         * Mettre à jour l'ordre des feedbacks après réorganisation
+         */
+        updateFeedbackOrder: function() {
+            const list = this.elements.pinsList;
+            if (!list) return;
+
+            // Récupérer les IDs dans le nouvel ordre
+            const orderedIds = [...list.querySelectorAll('.wpvfh-pin-item')]
+                .map(item => parseInt(item.dataset.feedbackId, 10));
+
+            // Réorganiser currentFeedbacks
+            const newOrder = orderedIds.map(id =>
+                this.state.currentFeedbacks.find(f => f.id === id)
+            ).filter(Boolean);
+
+            this.state.currentFeedbacks = newOrder;
+
+            // Mettre à jour les numéros dans la liste
+            list.querySelectorAll('.wpvfh-pin-item').forEach((item, index) => {
+                const newNumber = index + 1;
+                item.dataset.pinNumber = newNumber;
+                const marker = item.querySelector('.wpvfh-pin-marker');
+                if (marker) {
+                    marker.textContent = newNumber;
+                }
+                // Animation flash
+                item.classList.add('reordered');
+                setTimeout(() => item.classList.remove('reordered'), 500);
+            });
+
+            // Renuméroter les pins sur la page
+            if (window.BlazingAnnotation) {
+                window.BlazingAnnotation.renumberPins(orderedIds);
+            }
+
+            console.log('[Blazing Feedback] Ordre mis à jour:', orderedIds);
         },
 
         /**

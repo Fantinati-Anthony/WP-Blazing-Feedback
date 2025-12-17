@@ -565,8 +565,11 @@
             // Effacer les pins existants
             this.clearPins();
 
-            // Créer les nouveaux pins
-            pins.forEach(pinData => this.createPin(pinData));
+            // Créer les nouveaux pins avec numérotation
+            pins.forEach((pinData, index) => {
+                pinData._displayOrder = index + 1;
+                this.createPin(pinData);
+            });
 
             // Repositionner immédiatement
             setTimeout(() => this.repositionAllPins(), 100);
@@ -574,86 +577,68 @@
 
         /**
          * Créer un pin permanent avec DOM Anchoring
+         * Affiche un contour jaune autour de l'élément avec un pin numéroté en haut à droite
          * @param {Object} data - Données du pin
-         * @returns {HTMLElement} Élément du pin
+         * @returns {HTMLElement} Élément du pin (conteneur outline)
          */
         createPin: function(data) {
-            const pin = document.createElement('div');
-            pin.className = 'wpvfh-pin wpvfh-pin-saved';
-            pin.dataset.feedbackId = data.id;
+            // Numéro d'affichage
+            const pinNumber = data._displayOrder || (this.state.pins.length + 1);
+
+            // Créer le conteneur (outline + pin)
+            const container = document.createElement('div');
+            container.className = 'wpvfh-element-feedback-outline wpvfh-pin-saved';
+            container.dataset.feedbackId = data.id;
+            container.dataset.status = data.status || 'new';
+            container.dataset.pinNumber = pinNumber;
+
+            // Le pin numéroté en haut à droite
+            const pin = document.createElement('span');
+            pin.className = 'wpvfh-element-pin';
             pin.dataset.status = data.status || 'new';
+            pin.textContent = pinNumber;
+            pin.style.pointerEvents = 'auto';
+            pin.style.cursor = 'pointer';
 
-            // Couleur selon le statut
-            const statusColors = {
-                new: '#3498db',
-                in_progress: '#f39c12',
-                resolved: '#27ae60',
-                rejected: '#e74c3c',
-            };
-            const color = statusColors[data.status] || statusColors.new;
+            container.appendChild(pin);
 
-            // Style de base du pin
-            pin.style.cssText = `
-                position: absolute;
-                width: ${this.config.pinSize}px;
-                height: ${this.config.pinSize}px;
-                background: ${color};
-                border: 3px solid #fff;
-                border-radius: 50%;
-                transform: translate(-50%, -50%);
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                cursor: pointer;
-                transition: transform 0.2s ease, opacity 0.2s ease;
-                pointer-events: auto;
-            `;
-
-            // Icône selon le statut
-            const icons = {
-                new: '!',
-                in_progress: '⏳',
-                resolved: '✓',
-                rejected: '✗',
-            };
-            pin.innerHTML = `<span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-weight:bold;font-size:12px;">${icons[data.status] || '!'}</span>`;
-
-            // Événements
+            // Événements sur le pin
             pin.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.selectPin(data.id);
             });
 
             pin.addEventListener('mouseenter', () => {
-                pin.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                container.classList.add('active');
             });
 
             pin.addEventListener('mouseleave', () => {
-                pin.style.transform = 'translate(-50%, -50%)';
+                container.classList.remove('active');
             });
 
-            // Ajouter au conteneur
-            if (this.elements.pinsContainer) {
-                this.elements.pinsContainer.appendChild(pin);
-            }
+            // Ajouter au body (pas au pinsContainer pour un meilleur positionnement)
+            document.body.appendChild(container);
 
             // Stocker la référence avec toutes les données d'ancrage
             this.state.pins.push({
-                element: pin,
+                element: container,
+                pinElement: pin,
                 data: data,
             });
 
-            // Positionner le pin selon son ancrage DOM
-            this.positionPinByAnchor(pin, data);
+            // Positionner selon l'ancrage DOM
+            this.positionPinByAnchor(container, data);
 
-            return pin;
+            return container;
         },
 
         /**
-         * Positionner un pin selon son ancrage DOM
-         * @param {HTMLElement} pin - Élément du pin
+         * Positionner un pin (outline + numéro) selon son ancrage DOM
+         * @param {HTMLElement} container - Élément conteneur (outline)
          * @param {Object} data - Données du pin
          * @returns {void}
          */
-        positionPinByAnchor: function(pin, data) {
+        positionPinByAnchor: function(container, data) {
             let positioned = false;
 
             // 1. Essayer de positionner via le sélecteur DOM
@@ -665,21 +650,15 @@
                     const scrollX = window.scrollX || window.pageXOffset;
                     const scrollY = window.scrollY || window.pageYOffset;
 
-                    // Utiliser l'offset relatif à l'élément si disponible
-                    let offsetX = data.element_offset_x;
-                    let offsetY = data.element_offset_y;
+                    // Positionner l'outline autour de l'élément
+                    container.style.left = (rect.left + scrollX) + 'px';
+                    container.style.top = (rect.top + scrollY) + 'px';
+                    container.style.width = rect.width + 'px';
+                    container.style.height = rect.height + 'px';
+                    container.style.opacity = '1';
 
-                    // Fallback: centre de l'élément si pas d'offset
-                    if (typeof offsetX !== 'number') offsetX = 50;
-                    if (typeof offsetY !== 'number') offsetY = 50;
-
-                    // Calculer la position absolue
-                    const absoluteX = rect.left + scrollX + (rect.width * offsetX / 100);
-                    const absoluteY = rect.top + scrollY + (rect.height * offsetY / 100);
-
-                    pin.style.left = absoluteX + 'px';
-                    pin.style.top = absoluteY + 'px';
-                    pin.style.opacity = '1';
+                    // Stocker la référence à l'élément d'ancrage
+                    container._anchorElement = anchorElement;
 
                     positioned = true;
 
@@ -687,7 +666,7 @@
                 }
             }
 
-            // 2. Fallback: utiliser les pourcentages de la page
+            // 2. Fallback: créer un outline factice basé sur les pourcentages
             if (!positioned) {
                 const pageWidth = document.documentElement.scrollWidth;
                 const pageHeight = document.documentElement.scrollHeight;
@@ -698,9 +677,12 @@
                 const absoluteX = (posX / 100) * pageWidth;
                 const absoluteY = (posY / 100) * pageHeight;
 
-                pin.style.left = absoluteX + 'px';
-                pin.style.top = absoluteY + 'px';
-                pin.style.opacity = '0.7'; // Légèrement transparent si fallback
+                // Pour les pins sans ancrage DOM, on crée un petit outline
+                container.style.left = (absoluteX - 30) + 'px';
+                container.style.top = (absoluteY - 30) + 'px';
+                container.style.width = '60px';
+                container.style.height = '60px';
+                container.style.opacity = '0.7'; // Légèrement transparent si fallback
 
                 console.log('[Blazing Feedback] Pin #' + data.id + ' positionné via fallback (%)', posX, posY);
             }
@@ -764,9 +746,21 @@
          * @returns {void}
          */
         clearPins: function() {
+            // Supprimer les outlines du body
+            this.state.pins.forEach(pin => {
+                if (pin.element && pin.element.parentNode) {
+                    pin.element.remove();
+                }
+            });
+
+            // Vider aussi le pinsContainer au cas où
             if (this.elements.pinsContainer) {
                 this.elements.pinsContainer.innerHTML = '';
             }
+
+            // Supprimer tous les outlines orphelins
+            document.querySelectorAll('.wpvfh-element-feedback-outline').forEach(el => el.remove());
+
             this.state.pins = [];
             this.state.selectedPin = null;
         },
@@ -1229,18 +1223,66 @@
                 this.state.pinsVisible = !this.state.pinsVisible;
             }
 
+            const visibility = this.state.pinsVisible ? 'visible' : 'hidden';
+
+            // Masquer/afficher le conteneur
             if (this.elements.pinsContainer) {
-                this.elements.pinsContainer.style.visibility = this.state.pinsVisible ? 'visible' : 'hidden';
+                this.elements.pinsContainer.style.visibility = visibility;
             }
 
-            // Masquer/afficher les contours de sélection aussi
+            // Masquer/afficher tous les outlines de feedback
+            this.state.pins.forEach(pin => {
+                if (pin.element) {
+                    pin.element.style.visibility = visibility;
+                }
+            });
+
+            // Masquer/afficher les contours de sélection temporaire
             if (this.state.selectedOutlineEl) {
-                this.state.selectedOutlineEl.style.visibility = this.state.pinsVisible ? 'visible' : 'hidden';
+                this.state.selectedOutlineEl.style.visibility = visibility;
             }
 
             this.emitEvent('pins-visibility-changed', { visible: this.state.pinsVisible });
 
             console.log('[Blazing Feedback] Pins visibilité:', this.state.pinsVisible);
+        },
+
+        /**
+         * Renuméroter tous les pins selon un nouvel ordre
+         * @param {Array} orderedIds - IDs des feedbacks dans le nouvel ordre
+         * @returns {void}
+         */
+        renumberPins: function(orderedIds) {
+            if (!orderedIds || !Array.isArray(orderedIds)) return;
+
+            orderedIds.forEach((id, index) => {
+                const pinData = this.state.pins.find(p => p.data.id === id);
+                if (pinData) {
+                    const newNumber = index + 1;
+                    pinData.data._displayOrder = newNumber;
+
+                    // Mettre à jour le numéro dans le DOM
+                    if (pinData.pinElement) {
+                        pinData.pinElement.textContent = newNumber;
+                    }
+                    if (pinData.element) {
+                        pinData.element.dataset.pinNumber = newNumber;
+                    }
+                }
+            });
+
+            console.log('[Blazing Feedback] Pins renumérotés:', orderedIds);
+            this.emitEvent('pins-renumbered', { order: orderedIds });
+        },
+
+        /**
+         * Obtenir l'ordre actuel des pins
+         * @returns {Array} IDs des feedbacks dans l'ordre actuel
+         */
+        getPinOrder: function() {
+            return this.state.pins
+                .sort((a, b) => (a.data._displayOrder || 0) - (b.data._displayOrder || 0))
+                .map(p => p.data.id);
         },
 
         /**
