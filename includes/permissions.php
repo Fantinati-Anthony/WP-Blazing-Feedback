@@ -107,11 +107,15 @@ class WPVFH_Permissions {
 
         // L'auteur peut toujours lire son propre feedback
         if ( (int) $feedback->post_author === $user_id ) {
-            return user_can( $user_id, 'read_feedback' );
+            // L'auteur peut lire s'il a la capacité de créer des feedbacks
+            return user_can( $user_id, 'read_feedback' ) ||
+                   user_can( $user_id, 'publish_feedbacks' );
         }
 
-        // Sinon, vérifier la capacité de lire les autres (feedbacks privés)
-        return user_can( $user_id, 'read_private_feedbacks' );
+        // Sinon, vérifier la capacité de lire les autres ou de modérer
+        return user_can( $user_id, 'read_private_feedbacks' ) ||
+               user_can( $user_id, 'moderate_feedback' ) ||
+               user_can( $user_id, 'read_others_feedback' );
     }
 
     /**

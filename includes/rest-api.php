@@ -401,8 +401,10 @@ class WPVFH_REST_API {
             return $nonce_check;
         }
 
-        // Les utilisateurs avec la capacité read_feedback peuvent lire
-        return current_user_can( 'read_feedback' );
+        // Les utilisateurs qui peuvent créer ou modérer peuvent aussi lire
+        return current_user_can( 'read_feedback' ) ||
+               current_user_can( 'publish_feedbacks' ) ||
+               current_user_can( 'moderate_feedback' );
     }
 
     /**
