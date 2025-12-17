@@ -453,18 +453,27 @@
 
         /**
          * Ouvrir le panel de feedback (sidebar)
+         * @param {string} tab - Onglet à afficher ('new' ou 'list')
          * @returns {void}
          */
-        openPanel: function() {
+        openPanel: function(tab = 'new') {
+            console.log('[Blazing Feedback] Ouverture du panel...');
+
             this.state.isOpen = true;
 
             if (this.elements.panel) {
+                // Retirer l'attribut hidden
+                this.elements.panel.removeAttribute('hidden');
                 this.elements.panel.hidden = false;
                 this.elements.panel.setAttribute('aria-hidden', 'false');
-                // Déclencher l'animation après un petit délai pour l'affichage
-                requestAnimationFrame(() => {
-                    this.elements.panel.classList.add('wpvfh-panel-open');
-                });
+
+                // Forcer un reflow avant d'ajouter la classe d'animation
+                void this.elements.panel.offsetHeight;
+
+                // Ajouter la classe pour l'animation d'ouverture
+                this.elements.panel.classList.add('wpvfh-panel-open');
+
+                console.log('[Blazing Feedback] Panel classes:', this.elements.panel.className);
             }
 
             // Afficher l'overlay
@@ -476,10 +485,15 @@
                 this.elements.toggleBtn.setAttribute('aria-expanded', 'true');
             }
 
+            // S'assurer de basculer sur le bon onglet
+            this.switchTab(tab);
+
             // Focus sur le champ de commentaire si onglet nouveau
-            if (this.elements.commentField && this.elements.tabNew?.classList.contains('active')) {
-                setTimeout(() => this.elements.commentField.focus(), 300);
+            if (tab === 'new' && this.elements.commentField) {
+                setTimeout(() => this.elements.commentField.focus(), 350);
             }
+
+            console.log('[Blazing Feedback] Panel ouvert, onglet:', tab);
 
             this.emitEvent('panel-opened');
         },
@@ -498,7 +512,9 @@
                 setTimeout(() => {
                     if (!this.state.isOpen) {
                         this.elements.panel.hidden = true;
+                        this.elements.panel.setAttribute('hidden', '');
                         this.elements.panel.setAttribute('aria-hidden', 'true');
+                        this.elements.panel.style.pointerEvents = '';
                     }
                 }, 300);
             }
@@ -515,6 +531,8 @@
             // Nettoyer le formulaire
             this.resetForm();
 
+            console.log('[Blazing Feedback] Panel fermé');
+
             this.emitEvent('panel-closed');
         },
 
@@ -524,9 +542,11 @@
          */
         switchTab: function(tabName) {
             // Mettre à jour les boutons d'onglet
-            this.elements.tabs.forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.tab === tabName);
-            });
+            if (this.elements.tabs && this.elements.tabs.length > 0) {
+                this.elements.tabs.forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabName);
+                });
+            }
 
             // Afficher/masquer les contenus
             if (this.elements.tabNew) {
@@ -539,11 +559,6 @@
             // Si on va sur la liste, charger les feedbacks
             if (tabName === 'list') {
                 this.renderPinsList();
-            }
-
-            // Focus si onglet nouveau
-            if (tabName === 'new' && this.elements.commentField) {
-                setTimeout(() => this.elements.commentField.focus(), 100);
             }
         },
 

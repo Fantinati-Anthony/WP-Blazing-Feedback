@@ -134,18 +134,18 @@
     flex-direction: column;
     transform: translateX(100%);
     transition: transform 0.3s ease;
+    visibility: hidden;
 }
 
 .wpvfh-panel.wpvfh-panel-open {
     transform: translateX(0);
+    visibility: visible;
 }
 
+/* Quand caché, rester hors écran */
 .wpvfh-panel[hidden] {
-    display: block !important; /* Toujours visible pour l'animation */
-    pointer-events: none;
-}
-
-.wpvfh-panel[hidden]:not(.wpvfh-panel-open) {
+    display: flex !important; /* Garder le display pour l'animation */
+    visibility: hidden;
     transform: translateX(100%);
 }
 
