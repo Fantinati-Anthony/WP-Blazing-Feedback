@@ -377,19 +377,8 @@
     right: 0;
     bottom: 0;
     z-index: 2147483646; /* Maximum z-index pour être au-dessus de tout */
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.15);
     cursor: crosshair;
-}
-
-/* Bloquer tous les clics en mode annotation */
-body.wpvfh-annotation-mode * {
-    pointer-events: none !important;
-}
-
-body.wpvfh-annotation-mode .wpvfh-annotation-overlay,
-body.wpvfh-annotation-mode .wpvfh-annotation-hint,
-body.wpvfh-annotation-mode .wpvfh-hint-close {
-    pointer-events: auto !important;
 }
 
 .wpvfh-annotation-overlay[hidden] {
@@ -399,19 +388,23 @@ body.wpvfh-annotation-mode .wpvfh-hint-close {
 /* Hint d'annotation */
 .wpvfh-annotation-hint {
     position: fixed;
-    top: 50%;
+    top: 20px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 12px;
-    padding: 24px 32px;
+    padding: 12px 20px;
     background: var(--wpvfh-bg);
     border-radius: var(--wpvfh-radius);
     box-shadow: var(--wpvfh-shadow);
     text-align: center;
-    pointer-events: auto;
+    pointer-events: none; /* Ne bloque pas les clics */
+}
+
+.wpvfh-annotation-hint .wpvfh-hint-close {
+    pointer-events: auto; /* Sauf le bouton annuler */
 }
 
 .wpvfh-hint-icon {

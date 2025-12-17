@@ -84,17 +84,10 @@
             // Redimensionnement de la fenêtre
             window.addEventListener('resize', this.handleResize.bind(this));
 
-            // Clic sur l'overlay
+            // Clic sur l'overlay - capture les clics pour placer les pins
             if (this.elements.overlay) {
                 this.elements.overlay.addEventListener('click', this.handleOverlayClick.bind(this));
             }
-
-            // Intercepter TOUS les clics en mode annotation (phase de capture)
-            document.addEventListener('click', this.handleGlobalClick.bind(this), true);
-            document.addEventListener('mousedown', this.handleGlobalClick.bind(this), true);
-            document.addEventListener('mouseup', this.handleGlobalClick.bind(this), true);
-            document.addEventListener('touchstart', this.handleGlobalClick.bind(this), true);
-            document.addEventListener('touchend', this.handleGlobalClick.bind(this), true);
 
             // Annuler avec Echap
             document.addEventListener('keydown', (e) => {
@@ -102,29 +95,6 @@
                     this.deactivate();
                 }
             });
-        },
-
-        /**
-         * Gérer les clics globaux en mode annotation
-         * Bloque tous les clics sauf sur l'overlay
-         * @param {Event} event - Événement
-         * @returns {void}
-         */
-        handleGlobalClick: function(event) {
-            if (!this.state.isActive) return;
-
-            // Permettre les clics sur l'overlay et ses enfants
-            if (this.elements.overlay &&
-                (event.target === this.elements.overlay ||
-                 this.elements.overlay.contains(event.target) ||
-                 event.target.classList.contains('wpvfh-hint-close'))) {
-                return;
-            }
-
-            // Bloquer tous les autres clics
-            event.preventDefault();
-            event.stopPropagation();
-            event.stopImmediatePropagation();
         },
 
         /**
@@ -226,18 +196,14 @@
                 scrollY,
             };
 
-            // Temporairement retirer le mode annotation pour trouver l'élément sous le clic
-            document.body.classList.remove('wpvfh-annotation-mode');
-            this.elements.overlay.style.pointerEvents = 'none';
-            this.elements.overlay.style.visibility = 'hidden';
+            // Masquer temporairement l'overlay pour trouver l'élément sous le clic
+            this.elements.overlay.style.display = 'none';
 
             // Obtenir l'élément sous le clic
             const elementUnder = document.elementFromPoint(event.clientX, event.clientY);
 
             // Restaurer l'overlay
-            this.elements.overlay.style.pointerEvents = '';
-            this.elements.overlay.style.visibility = '';
-            document.body.classList.add('wpvfh-annotation-mode');
+            this.elements.overlay.style.display = '';
 
             // Générer un sélecteur CSS pour l'élément
             const selector = this.generateSelector(elementUnder);
