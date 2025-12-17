@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: Blazing Feedback
- * Plugin URI: https://github.com/your-repo/blazing-feedback
+ * Plugin URI: https://github.com/Fantinati-Anthony/Blazing-Feedback-WP
  * Description: Plugin de feedback visuel autonome pour WordPress. Annotations, captures d'écran, gestion de statuts. Alternative open-source à ProjectHuddle, Feedbucket et Marker.io.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Blazing Feedback Team
- * Author URI: https://github.com/your-repo
+ * Author URI: https://github.com/Fantinati-Anthony
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: blazing-feedback
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Constantes du plugin
  */
-define( 'WPVFH_VERSION', '1.0.0' );
+define( 'WPVFH_VERSION', '1.1.0' );
 define( 'WPVFH_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPVFH_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPVFH_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -107,6 +107,10 @@ final class WP_Visual_Feedback_Hub {
         // Admin uniquement
         if ( is_admin() ) {
             require_once WPVFH_PLUGIN_DIR . 'includes/admin-ui.php';
+            require_once WPVFH_PLUGIN_DIR . 'includes/github-updater.php';
+
+            // Initialiser le système de mise à jour GitHub
+            new WPVFH_GitHub_Updater( __FILE__ );
         }
     }
 
