@@ -878,6 +878,13 @@
 
             console.log('[Blazing Feedback] Panel ouvert, onglet:', tab);
 
+            // Repositionner les pins après l'animation du margin
+            setTimeout(() => {
+                if (window.BlazingAnnotation && window.BlazingAnnotation.repositionAllPins) {
+                    window.BlazingAnnotation.repositionAllPins();
+                }
+            }, 350);
+
             this.emitEvent('panel-opened');
         },
 
@@ -918,6 +925,13 @@
             this.resetForm();
 
             console.log('[Blazing Feedback] Panel fermé');
+
+            // Repositionner les pins après l'animation du margin
+            setTimeout(() => {
+                if (window.BlazingAnnotation && window.BlazingAnnotation.repositionAllPins) {
+                    window.BlazingAnnotation.repositionAllPins();
+                }
+            }, 350);
 
             this.emitEvent('panel-closed');
         },

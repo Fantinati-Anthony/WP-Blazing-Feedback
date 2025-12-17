@@ -73,106 +73,114 @@
    ========================================================================== */
 
 .wpvfh-floating-buttons {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: var(--wpvfh-z-index);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    position: fixed !important;
+    bottom: 24px !important;
+    right: 24px !important;
+    z-index: var(--wpvfh-z-index) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
 }
 
 .wpvfh-toggle-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 20px;
-    background: var(--wpvfh-primary);
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: var(--wpvfh-shadow);
-    transition: all var(--wpvfh-transition);
-    font-size: 14px;
-    font-weight: 500;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 20px !important;
+    background: var(--wpvfh-primary) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 50px !important;
+    cursor: pointer !important;
+    box-shadow: var(--wpvfh-shadow) !important;
+    transition: all var(--wpvfh-transition) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    min-height: auto !important;
 }
 
 .wpvfh-toggle-btn:hover {
-    background: var(--wpvfh-primary-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(231, 76, 60, 0.35);
+    background: var(--wpvfh-primary-hover) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 24px rgba(231, 76, 60, 0.35) !important;
+    color: #fff !important;
+    text-decoration: none !important;
 }
 
 .wpvfh-toggle-btn:focus {
-    outline: 2px solid var(--wpvfh-primary);
-    outline-offset: 2px;
+    outline: 2px solid var(--wpvfh-primary) !important;
+    outline-offset: 2px !important;
 }
 
 .wpvfh-toggle-btn:active {
-    transform: translateY(0);
+    transform: translateY(0) !important;
 }
 
 /* Bouton principal (Feedback) */
 .wpvfh-btn-main {
-    position: relative;
+    position: relative !important;
 }
 
 .wpvfh-feedback-count {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 6px;
-    background: #f39c12;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute !important;
+    top: -6px !important;
+    right: -6px !important;
+    min-width: 20px !important;
+    height: 20px !important;
+    padding: 0 6px !important;
+    background: #f39c12 !important;
+    color: #fff !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
 }
 
 /* Bouton ajouter (+) */
 .wpvfh-btn-add {
-    padding: 12px;
-    background: #27ae60;
+    padding: 12px !important;
+    background: #27ae60 !important;
 }
 
 .wpvfh-btn-add:hover {
-    background: #219a52;
-    box-shadow: 0 6px 24px rgba(39, 174, 96, 0.35);
+    background: #219a52 !important;
+    box-shadow: 0 6px 24px rgba(39, 174, 96, 0.35) !important;
 }
 
 /* Bouton visibilité */
 .wpvfh-btn-visibility {
-    padding: 12px;
-    background: #3498db;
+    padding: 12px !important;
+    background: #3498db !important;
 }
 
 .wpvfh-btn-visibility:hover {
-    background: #2980b9;
-    box-shadow: 0 6px 24px rgba(52, 152, 219, 0.35);
+    background: #2980b9 !important;
+    box-shadow: 0 6px 24px rgba(52, 152, 219, 0.35) !important;
 }
 
 .wpvfh-btn-visibility[data-visible="false"] {
-    background: #95a5a6;
+    background: #95a5a6 !important;
 }
 
 .wpvfh-btn-visibility[data-visible="false"]:hover {
-    background: #7f8c8d;
+    background: #7f8c8d !important;
 }
 
 .wpvfh-btn-icon {
-    font-size: 18px;
-    line-height: 1;
+    font-size: 18px !important;
+    line-height: 1 !important;
 }
 
 .wpvfh-btn-text {
-    white-space: nowrap;
+    white-space: nowrap !important;
 }
 
 /* Positions alternatives du bouton */
@@ -333,24 +341,26 @@ body.wpvfh-panel-active .wpvfh-floating-buttons {
 }
 
 .wpvfh-close-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    background: transparent;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 24px;
-    color: var(--wpvfh-text-light);
-    transition: all var(--wpvfh-transition);
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    font-size: 24px !important;
+    color: var(--wpvfh-text-light) !important;
+    transition: all var(--wpvfh-transition) !important;
+    min-height: auto !important;
+    line-height: 1 !important;
 }
 
 .wpvfh-close-btn:hover {
-    background: var(--wpvfh-border);
-    color: var(--wpvfh-text);
+    background: var(--wpvfh-border) !important;
+    color: var(--wpvfh-text) !important;
 }
 
 /* Onglets de navigation */
@@ -2038,72 +2048,76 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 }
 
 .wpvfh-filter-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border: 2px solid transparent;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background: #fff;
-    color: #6c757d;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 12px !important;
+    border: 2px solid transparent !important;
+    border-radius: 20px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    background: #fff !important;
+    color: #6c757d !important;
+    line-height: 1.4 !important;
+    min-height: auto !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
 }
 
 .wpvfh-filter-btn:hover {
-    background: #e9ecef;
+    background: #e9ecef !important;
 }
 
 .wpvfh-filter-btn.active {
-    border-color: currentColor;
+    border-color: currentColor !important;
 }
 
 .wpvfh-filter-btn[data-status="new"] {
-    color: #3498db;
+    color: #3498db !important;
 }
 
 .wpvfh-filter-btn[data-status="new"].active {
-    background: rgba(52, 152, 219, 0.1);
+    background: rgba(52, 152, 219, 0.1) !important;
 }
 
 .wpvfh-filter-btn[data-status="in_progress"] {
-    color: #f39c12;
+    color: #f39c12 !important;
 }
 
 .wpvfh-filter-btn[data-status="in_progress"].active {
-    background: rgba(243, 156, 18, 0.1);
+    background: rgba(243, 156, 18, 0.1) !important;
 }
 
 .wpvfh-filter-btn[data-status="resolved"] {
-    color: #27ae60;
+    color: #27ae60 !important;
 }
 
 .wpvfh-filter-btn[data-status="resolved"].active {
-    background: rgba(39, 174, 96, 0.1);
+    background: rgba(39, 174, 96, 0.1) !important;
 }
 
 .wpvfh-filter-btn[data-status="rejected"] {
-    color: #95a5a6;
+    color: #95a5a6 !important;
 }
 
 .wpvfh-filter-btn[data-status="rejected"].active {
-    background: rgba(149, 165, 166, 0.1);
+    background: rgba(149, 165, 166, 0.1) !important;
 }
 
 .wpvfh-filter-btn .wpvfh-filter-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    background: currentColor;
-    color: #fff;
-    border-radius: 9px;
-    font-size: 10px;
-    font-weight: 700;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    padding: 0 5px !important;
+    background: currentColor !important;
+    color: #fff !important;
+    border-radius: 9px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
 }
 
 /* ==========================================================================
