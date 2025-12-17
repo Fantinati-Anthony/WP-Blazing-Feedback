@@ -137,6 +137,17 @@
     visibility: hidden;
 }
 
+/* Ajuster pour la barre admin WordPress */
+.admin-bar .wpvfh-panel {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    .admin-bar .wpvfh-panel {
+        top: 46px;
+    }
+}
+
 .wpvfh-panel.wpvfh-panel-open {
     transform: translateX(0);
     visibility: visible;
@@ -161,6 +172,17 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Ajuster l'overlay pour la barre admin */
+.admin-bar .wpvfh-sidebar-overlay {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    .admin-bar .wpvfh-sidebar-overlay {
+        top: 46px;
+    }
 }
 
 .wpvfh-sidebar-overlay.wpvfh-overlay-visible {
