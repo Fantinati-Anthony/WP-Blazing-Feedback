@@ -29,6 +29,15 @@
             clickPosition: null,       // Position du dernier clic
             clickHandler: null,        // Référence au gestionnaire de clics global
             repositionTimeout: null,   // Timeout pour le repositionnement debounced
+            // Nouveau: Mode inspecteur d'éléments
+            inspectorMode: false,      // Mode inspecteur actif
+            hoveredElement: null,      // Élément actuellement survolé
+            selectedElement: null,     // Élément sélectionné
+            selectedElementData: null, // Données de l'élément sélectionné
+            highlightEl: null,         // Élément de surbrillance
+            selectedOutlineEl: null,   // Élément contour de sélection
+            inspectorHint: null,       // Hint du mode inspecteur
+            pinsVisible: true,         // Visibilité des pins
         },
 
         /**
@@ -107,6 +116,12 @@
             document.addEventListener('blazing-feedback:stop-annotation', this.deactivate.bind(this));
             document.addEventListener('blazing-feedback:load-pins', this.loadPins.bind(this));
             document.addEventListener('blazing-feedback:clear-pins', this.clearPins.bind(this));
+
+            // Nouveaux événements pour l'inspecteur d'éléments
+            document.addEventListener('blazing-feedback:start-inspector', this.startInspector.bind(this));
+            document.addEventListener('blazing-feedback:stop-inspector', this.stopInspector.bind(this));
+            document.addEventListener('blazing-feedback:clear-selection', this.clearSelection.bind(this));
+            document.addEventListener('blazing-feedback:toggle-pins', this.togglePinsVisibility.bind(this));
 
             // Redimensionnement - repositionner tous les pins
             window.addEventListener('resize', this.debouncedReposition.bind(this));
@@ -863,6 +878,377 @@
                 detail: detail,
             });
             document.dispatchEvent(event);
+        },
+
+        // =====================================================================
+        // MODE INSPECTEUR D'ÉLÉMENTS (style DevTools)
+        // =====================================================================
+
+        /**
+         * Démarrer le mode inspecteur d'éléments
+         * @returns {void}
+         */
+        startInspector: function() {
+            if (this.state.inspectorMode) return;
+
+            this.state.inspectorMode = true;
+
+            // Ajouter la classe au body
+            document.body.classList.add('wpvfh-inspector-mode');
+
+            // Créer l'élément de surbrillance
+            this.createHighlightElement();
+
+            // Créer le hint en haut
+            this.createInspectorHint();
+
+            // Ajouter les gestionnaires d'événements
+            this._inspectorMoveHandler = this.handleInspectorMove.bind(this);
+            this._inspectorClickHandler = this.handleInspectorClick.bind(this);
+
+            document.addEventListener('mousemove', this._inspectorMoveHandler, true);
+            document.addEventListener('click', this._inspectorClickHandler, true);
+
+            // Annuler avec Echap
+            this._inspectorEscHandler = (e) => {
+                if (e.key === 'Escape') {
+                    this.stopInspector();
+                }
+            };
+            document.addEventListener('keydown', this._inspectorEscHandler);
+
+            console.log('[Blazing Feedback] Mode inspecteur démarré');
+            this.emitEvent('inspector-started');
+        },
+
+        /**
+         * Arrêter le mode inspecteur d'éléments
+         * @returns {void}
+         */
+        stopInspector: function() {
+            if (!this.state.inspectorMode) return;
+
+            this.state.inspectorMode = false;
+            this.state.hoveredElement = null;
+
+            // Retirer la classe du body
+            document.body.classList.remove('wpvfh-inspector-mode');
+
+            // Supprimer l'élément de surbrillance
+            if (this.state.highlightEl) {
+                this.state.highlightEl.remove();
+                this.state.highlightEl = null;
+            }
+
+            // Supprimer le hint
+            if (this.state.inspectorHint) {
+                this.state.inspectorHint.remove();
+                this.state.inspectorHint = null;
+            }
+
+            // Retirer les gestionnaires d'événements
+            if (this._inspectorMoveHandler) {
+                document.removeEventListener('mousemove', this._inspectorMoveHandler, true);
+            }
+            if (this._inspectorClickHandler) {
+                document.removeEventListener('click', this._inspectorClickHandler, true);
+            }
+            if (this._inspectorEscHandler) {
+                document.removeEventListener('keydown', this._inspectorEscHandler);
+            }
+
+            console.log('[Blazing Feedback] Mode inspecteur arrêté');
+            this.emitEvent('inspector-stopped');
+        },
+
+        /**
+         * Créer l'élément de surbrillance (highlight)
+         * @returns {void}
+         */
+        createHighlightElement: function() {
+            if (this.state.highlightEl) return;
+
+            const highlight = document.createElement('div');
+            highlight.className = 'wpvfh-element-highlight';
+            highlight.style.display = 'none';
+            highlight.innerHTML = '<span class="wpvfh-element-highlight-label"></span>';
+
+            document.body.appendChild(highlight);
+            this.state.highlightEl = highlight;
+        },
+
+        /**
+         * Créer le hint du mode inspecteur
+         * @returns {void}
+         */
+        createInspectorHint: function() {
+            if (this.state.inspectorHint) return;
+
+            const hint = document.createElement('div');
+            hint.className = 'wpvfh-inspector-hint';
+            hint.innerHTML = `
+                <span class="wpvfh-hint-icon">🎯</span>
+                <span class="wpvfh-hint-text">Sélectionnez un élément</span>
+                <button type="button" class="wpvfh-hint-cancel">Annuler</button>
+            `;
+
+            // Bouton annuler
+            hint.querySelector('.wpvfh-hint-cancel').addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.stopInspector();
+            });
+
+            document.body.appendChild(hint);
+            this.state.inspectorHint = hint;
+        },
+
+        /**
+         * Gérer le mouvement de souris en mode inspecteur
+         * @param {MouseEvent} event
+         * @returns {void}
+         */
+        handleInspectorMove: function(event) {
+            if (!this.state.inspectorMode) return;
+
+            // Ignorer si sur le widget ou le hint
+            if (event.target.closest('.wpvfh-widget') ||
+                event.target.closest('.wpvfh-inspector-hint') ||
+                event.target.closest('.wpvfh-element-highlight')) {
+                this.hideHighlight();
+                return;
+            }
+
+            const element = event.target;
+
+            // Ignorer si même élément
+            if (element === this.state.hoveredElement) return;
+
+            this.state.hoveredElement = element;
+            this.showHighlight(element);
+        },
+
+        /**
+         * Afficher la surbrillance sur un élément
+         * @param {HTMLElement} element
+         * @returns {void}
+         */
+        showHighlight: function(element) {
+            if (!this.state.highlightEl || !element) return;
+
+            const rect = element.getBoundingClientRect();
+            const highlight = this.state.highlightEl;
+
+            // Positionner la surbrillance
+            highlight.style.display = 'block';
+            highlight.style.left = rect.left + 'px';
+            highlight.style.top = rect.top + 'px';
+            highlight.style.width = rect.width + 'px';
+            highlight.style.height = rect.height + 'px';
+
+            // Label avec tag et classes
+            const label = highlight.querySelector('.wpvfh-element-highlight-label');
+            if (label) {
+                const tagName = element.tagName.toLowerCase();
+                const id = element.id ? `#${element.id}` : '';
+                const classes = element.className && typeof element.className === 'string'
+                    ? '.' + element.className.split(/\s+/).filter(c => c && !c.startsWith('wpvfh-')).slice(0, 2).join('.')
+                    : '';
+
+                label.textContent = tagName + id + classes;
+
+                // Déterminer si le label doit être en bas
+                if (rect.top < 30) {
+                    label.classList.add('bottom');
+                } else {
+                    label.classList.remove('bottom');
+                }
+            }
+        },
+
+        /**
+         * Masquer la surbrillance
+         * @returns {void}
+         */
+        hideHighlight: function() {
+            if (this.state.highlightEl) {
+                this.state.highlightEl.style.display = 'none';
+            }
+        },
+
+        /**
+         * Gérer le clic en mode inspecteur
+         * @param {MouseEvent} event
+         * @returns {void}
+         */
+        handleInspectorClick: function(event) {
+            if (!this.state.inspectorMode) return;
+
+            // Ignorer si sur le widget ou le hint
+            if (event.target.closest('.wpvfh-widget') ||
+                event.target.closest('.wpvfh-inspector-hint') ||
+                event.target.closest('.wpvfh-element-highlight')) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+
+            const element = event.target;
+
+            // Sélectionner l'élément
+            this.selectElement(element, event.clientX, event.clientY);
+
+            // Arrêter le mode inspecteur
+            this.stopInspector();
+        },
+
+        /**
+         * Sélectionner un élément
+         * @param {HTMLElement} element
+         * @param {number} clientX
+         * @param {number} clientY
+         * @returns {void}
+         */
+        selectElement: function(element, clientX, clientY) {
+            // Effacer l'ancienne sélection
+            this.clearSelection();
+
+            this.state.selectedElement = element;
+
+            // Calculer les données d'ancrage
+            const anchorData = this.calculateAnchorPosition(element, clientX, clientY);
+            this.state.selectedElementData = anchorData;
+
+            // Créer le contour de sélection permanent
+            this.createSelectedOutline(element);
+
+            console.log('[Blazing Feedback] Élément sélectionné:', anchorData);
+
+            // Émettre l'événement
+            this.emitEvent('element-selected', {
+                element: element,
+                data: anchorData,
+            });
+        },
+
+        /**
+         * Créer le contour de sélection permanent
+         * @param {HTMLElement} element
+         * @returns {void}
+         */
+        createSelectedOutline: function(element) {
+            // Supprimer l'ancien contour
+            if (this.state.selectedOutlineEl) {
+                this.state.selectedOutlineEl.remove();
+            }
+
+            const rect = element.getBoundingClientRect();
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+
+            const outline = document.createElement('div');
+            outline.className = 'wpvfh-element-selected-outline';
+            outline.style.left = (rect.left + scrollX) + 'px';
+            outline.style.top = (rect.top + scrollY) + 'px';
+            outline.style.width = rect.width + 'px';
+            outline.style.height = rect.height + 'px';
+
+            // Badge de check
+            outline.innerHTML = '<span class="wpvfh-element-selected-badge">✓</span>';
+
+            document.body.appendChild(outline);
+            this.state.selectedOutlineEl = outline;
+
+            // Observer le redimensionnement pour mettre à jour la position
+            this._updateOutlinePosition = () => {
+                if (this.state.selectedElement && this.state.selectedOutlineEl) {
+                    const newRect = this.state.selectedElement.getBoundingClientRect();
+                    const newScrollX = window.scrollX || window.pageXOffset;
+                    const newScrollY = window.scrollY || window.pageYOffset;
+
+                    this.state.selectedOutlineEl.style.left = (newRect.left + newScrollX) + 'px';
+                    this.state.selectedOutlineEl.style.top = (newRect.top + newScrollY) + 'px';
+                    this.state.selectedOutlineEl.style.width = newRect.width + 'px';
+                    this.state.selectedOutlineEl.style.height = newRect.height + 'px';
+                }
+            };
+
+            window.addEventListener('scroll', this._updateOutlinePosition, { passive: true });
+            window.addEventListener('resize', this._updateOutlinePosition);
+        },
+
+        /**
+         * Effacer la sélection d'élément
+         * @returns {void}
+         */
+        clearSelection: function() {
+            this.state.selectedElement = null;
+            this.state.selectedElementData = null;
+
+            if (this.state.selectedOutlineEl) {
+                this.state.selectedOutlineEl.remove();
+                this.state.selectedOutlineEl = null;
+            }
+
+            if (this._updateOutlinePosition) {
+                window.removeEventListener('scroll', this._updateOutlinePosition);
+                window.removeEventListener('resize', this._updateOutlinePosition);
+            }
+
+            this.emitEvent('selection-cleared');
+        },
+
+        /**
+         * Obtenir les données de l'élément sélectionné
+         * @returns {Object|null}
+         */
+        getSelectedElementData: function() {
+            return this.state.selectedElementData;
+        },
+
+        /**
+         * Vérifier si un élément est sélectionné
+         * @returns {boolean}
+         */
+        hasSelection: function() {
+            return this.state.selectedElement !== null;
+        },
+
+        /**
+         * Basculer la visibilité des pins
+         * @param {CustomEvent} event
+         * @returns {void}
+         */
+        togglePinsVisibility: function(event) {
+            const forceVisible = event?.detail?.visible;
+
+            if (typeof forceVisible === 'boolean') {
+                this.state.pinsVisible = forceVisible;
+            } else {
+                this.state.pinsVisible = !this.state.pinsVisible;
+            }
+
+            if (this.elements.pinsContainer) {
+                this.elements.pinsContainer.style.visibility = this.state.pinsVisible ? 'visible' : 'hidden';
+            }
+
+            // Masquer/afficher les contours de sélection aussi
+            if (this.state.selectedOutlineEl) {
+                this.state.selectedOutlineEl.style.visibility = this.state.pinsVisible ? 'visible' : 'hidden';
+            }
+
+            this.emitEvent('pins-visibility-changed', { visible: this.state.pinsVisible });
+
+            console.log('[Blazing Feedback] Pins visibilité:', this.state.pinsVisible);
+        },
+
+        /**
+         * Vérifier si les pins sont visibles
+         * @returns {boolean}
+         */
+        arePinsVisible: function() {
+            return this.state.pinsVisible;
         },
     };
 

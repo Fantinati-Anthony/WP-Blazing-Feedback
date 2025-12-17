@@ -69,16 +69,23 @@
 }
 
 /* ==========================================================================
-   Bouton flottant
+   Groupe de boutons flottants
    ========================================================================== */
 
-.wpvfh-toggle-btn {
+.wpvfh-floating-buttons {
     position: fixed;
     bottom: 24px;
     right: 24px;
     z-index: var(--wpvfh-z-index);
     display: flex;
     align-items: center;
+    gap: 8px;
+}
+
+.wpvfh-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 12px 20px;
     background: var(--wpvfh-primary);
@@ -105,6 +112,58 @@
 
 .wpvfh-toggle-btn:active {
     transform: translateY(0);
+}
+
+/* Bouton principal (Feedback) */
+.wpvfh-btn-main {
+    position: relative;
+}
+
+.wpvfh-feedback-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: #f39c12;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Bouton ajouter (+) */
+.wpvfh-btn-add {
+    padding: 12px;
+    background: #27ae60;
+}
+
+.wpvfh-btn-add:hover {
+    background: #219a52;
+    box-shadow: 0 6px 24px rgba(39, 174, 96, 0.35);
+}
+
+/* Bouton visibilité */
+.wpvfh-btn-visibility {
+    padding: 12px;
+    background: #3498db;
+}
+
+.wpvfh-btn-visibility:hover {
+    background: #2980b9;
+    box-shadow: 0 6px 24px rgba(52, 152, 219, 0.35);
+}
+
+.wpvfh-btn-visibility[data-visible="false"] {
+    background: #95a5a6;
+}
+
+.wpvfh-btn-visibility[data-visible="false"]:hover {
+    background: #7f8c8d;
 }
 
 .wpvfh-btn-icon {
@@ -548,6 +607,78 @@
     display: block;
     width: 100%;
     height: auto;
+}
+
+/* ==========================================================================
+   Section ciblage d'élément
+   ========================================================================== */
+
+.wpvfh-target-section {
+    margin-bottom: 16px !important;
+}
+
+.wpvfh-container .wpvfh-select-element-btn,
+.wpvfh-container button.wpvfh-select-element-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 12px 16px !important;
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3) !important;
+}
+
+.wpvfh-container .wpvfh-select-element-btn:hover {
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4) !important;
+}
+
+.wpvfh-container .wpvfh-select-element-btn .wpvfh-optional-badge {
+    background: rgba(255, 255, 255, 0.2) !important;
+    padding: 2px 8px !important;
+    border-radius: 10px !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+}
+
+.wpvfh-selected-element {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 12px 16px !important;
+    background: #d4edda !important;
+    border: 1px solid #28a745 !important;
+    border-radius: 8px !important;
+    color: #155724 !important;
+    font-size: 14px !important;
+}
+
+.wpvfh-selected-element .wpvfh-selected-icon {
+    color: #28a745 !important;
+    font-weight: bold !important;
+}
+
+.wpvfh-selected-element .wpvfh-selected-text {
+    flex: 1 !important;
+}
+
+.wpvfh-container .wpvfh-clear-selection {
+    background: none !important;
+    border: none !important;
+    color: #721c24 !important;
+    font-size: 18px !important;
+    cursor: pointer !important;
+    padding: 0 4px !important;
+    line-height: 1 !important;
 }
 
 /* ==========================================================================
@@ -1438,4 +1569,213 @@ body.wpvfh-annotation-mode * {
 /* Empêcher l'impact SEO */
 .wpvfh-container {
     contain: layout style;
+}
+
+/* ==========================================================================
+   Mode inspecteur d'élément (style DevTools)
+   ========================================================================== */
+
+/* Overlay de sélection d'élément */
+.wpvfh-element-inspector-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2147483645;
+    pointer-events: none;
+    background: transparent;
+}
+
+/* Outline jaune sur l'élément survolé */
+.wpvfh-element-highlight {
+    position: fixed;
+    pointer-events: none;
+    z-index: 2147483646;
+    border: 2px solid #f1c40f !important;
+    background: rgba(241, 196, 15, 0.15) !important;
+    box-shadow:
+        0 0 0 2px rgba(241, 196, 15, 0.8),
+        0 0 20px rgba(241, 196, 15, 0.4),
+        inset 0 0 0 1px rgba(241, 196, 15, 0.6) !important;
+    border-radius: 2px;
+    transition: all 0.1s ease-out;
+}
+
+/* Label de l'élément survolé */
+.wpvfh-element-highlight-label {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    padding: 4px 8px;
+    background: #f1c40f;
+    color: #000;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'SF Mono', Monaco, 'Fira Code', monospace;
+    border-radius: 3px 3px 0 0;
+    white-space: nowrap;
+    transform: translateY(2px);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Si le label dépasse en haut, le mettre en bas */
+.wpvfh-element-highlight-label.bottom {
+    bottom: auto;
+    top: 100%;
+    border-radius: 0 0 3px 3px;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Élément sélectionné (contour permanent) */
+.wpvfh-element-selected-outline {
+    position: absolute;
+    pointer-events: none;
+    z-index: 999989;
+    border: 3px solid #f1c40f !important;
+    background: rgba(241, 196, 15, 0.1) !important;
+    box-shadow:
+        0 0 0 3px rgba(241, 196, 15, 0.5),
+        0 0 30px rgba(241, 196, 15, 0.3),
+        inset 0 0 15px rgba(241, 196, 15, 0.15) !important;
+    border-radius: 4px;
+    animation: wpvfh-element-pulse 2s ease-in-out infinite;
+}
+
+@keyframes wpvfh-element-pulse {
+    0%, 100% {
+        box-shadow:
+            0 0 0 3px rgba(241, 196, 15, 0.5),
+            0 0 30px rgba(241, 196, 15, 0.3),
+            inset 0 0 15px rgba(241, 196, 15, 0.15);
+    }
+    50% {
+        box-shadow:
+            0 0 0 5px rgba(241, 196, 15, 0.7),
+            0 0 40px rgba(241, 196, 15, 0.4),
+            inset 0 0 20px rgba(241, 196, 15, 0.2);
+    }
+}
+
+/* Badge de l'élément sélectionné */
+.wpvfh-element-selected-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    animation: wpvfh-badge-appear 0.3s ease-out;
+}
+
+@keyframes wpvfh-badge-appear {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Mode inspecteur actif - curseur personnalisé */
+body.wpvfh-inspector-mode {
+    cursor: crosshair !important;
+}
+
+body.wpvfh-inspector-mode * {
+    cursor: crosshair !important;
+}
+
+/* Hint en haut pour le mode inspecteur */
+.wpvfh-inspector-hint {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+    color: #000;
+    border-radius: 50px;
+    box-shadow: 0 4px 20px rgba(241, 196, 15, 0.4);
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 2147483647;
+    animation: wpvfh-hint-slide-in 0.3s ease-out;
+}
+
+@keyframes wpvfh-hint-slide-in {
+    from {
+        transform: translateX(-50%) translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.wpvfh-inspector-hint .wpvfh-hint-icon {
+    font-size: 20px;
+}
+
+.wpvfh-inspector-hint .wpvfh-hint-cancel {
+    padding: 6px 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 20px;
+    color: #000;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.wpvfh-inspector-hint .wpvfh-hint-cancel:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Masquer les pins pendant le mode inspecteur */
+body.wpvfh-inspector-mode .wpvfh-pins-container {
+    visibility: hidden !important;
+}
+
+/* Animation info-bulle de l'élément */
+.wpvfh-selected-element-preview {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.wpvfh-selected-element-preview code {
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 11px;
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #e74c3c;
 }

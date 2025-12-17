@@ -83,6 +83,13 @@
                 submitBtn: document.querySelector('.wpvfh-submit-btn'),
                 notifications: document.getElementById('wpvfh-notifications'),
                 overlay: document.getElementById('wpvfh-annotation-overlay'),
+                // Nouveaux boutons flottants
+                addBtn: document.getElementById('wpvfh-add-btn'),
+                visibilityBtn: document.getElementById('wpvfh-visibility-btn'),
+                // Section ciblage d'élément
+                selectElementBtn: document.getElementById('wpvfh-select-element-btn'),
+                selectedElement: document.getElementById('wpvfh-selected-element'),
+                clearSelectionBtn: document.querySelector('.wpvfh-clear-selection'),
                 // Onglets et liste
                 tabs: document.querySelectorAll('.wpvfh-tab'),
                 tabNew: document.getElementById('wpvfh-tab-new'),
@@ -93,6 +100,7 @@
                 pinsCount: document.getElementById('wpvfh-pins-count'),
                 emptyState: document.getElementById('wpvfh-empty-state'),
                 addFeedbackBtn: document.querySelector('.wpvfh-add-feedback-btn'),
+                feedbackCount: document.getElementById('wpvfh-feedback-count'),
                 // Éléments détails
                 backToListBtn: document.getElementById('wpvfh-back-to-list'),
                 detailId: document.getElementById('wpvfh-detail-id'),
@@ -128,9 +136,29 @@
          * @returns {void}
          */
         bindEvents: function() {
-            // Bouton toggle
+            // Bouton toggle (principal "Feedback" - ouvre la liste)
             if (this.elements.toggleBtn) {
                 this.elements.toggleBtn.addEventListener('click', this.handleToggle.bind(this));
+            }
+
+            // Bouton ajouter (+) - ouvre le formulaire nouveau feedback
+            if (this.elements.addBtn) {
+                this.elements.addBtn.addEventListener('click', this.handleAddClick.bind(this));
+            }
+
+            // Bouton visibilité - afficher/masquer les pins
+            if (this.elements.visibilityBtn) {
+                this.elements.visibilityBtn.addEventListener('click', this.handleVisibilityToggle.bind(this));
+            }
+
+            // Bouton cibler un élément
+            if (this.elements.selectElementBtn) {
+                this.elements.selectElementBtn.addEventListener('click', this.handleSelectElement.bind(this));
+            }
+
+            // Bouton effacer la sélection
+            if (this.elements.clearSelectionBtn) {
+                this.elements.clearSelectionBtn.addEventListener('click', this.handleClearSelection.bind(this));
             }
 
             // Boutons du panel
@@ -180,6 +208,11 @@
             document.addEventListener('blazing-feedback:pin-selected', this.handlePinSelected.bind(this));
             document.addEventListener('blazing-feedback:capture-success', this.handleCaptureSuccess.bind(this));
             document.addEventListener('blazing-feedback:capture-error', this.handleCaptureError.bind(this));
+
+            // Événements inspecteur d'éléments
+            document.addEventListener('blazing-feedback:element-selected', this.handleElementSelected.bind(this));
+            document.addEventListener('blazing-feedback:selection-cleared', this.handleSelectionCleared.bind(this));
+            document.addEventListener('blazing-feedback:inspector-stopped', this.handleInspectorStopped.bind(this));
 
             // Événements enregistrement vocal
             document.addEventListener('blazing-feedback:voice-recording-complete', this.handleVoiceComplete.bind(this));
@@ -468,7 +501,8 @@
         },
 
         /**
-         * Gérer le toggle du widget
+         * Gérer le toggle du widget (bouton principal "Feedback")
+         * Ouvre le panel avec la liste des feedbacks
          * @param {Event} event - Événement de clic
          * @returns {void}
          */
@@ -478,12 +512,183 @@
             if (this.state.isOpen) {
                 this.closePanel();
             } else {
-                this.startFeedbackMode();
+                // Ouvrir le panel avec l'onglet liste
+                this.openPanel('list');
             }
         },
 
         /**
-         * Démarrer le mode feedback
+         * Gérer le clic sur le bouton "+" (ajouter)
+         * Ouvre le panel avec le formulaire nouveau feedback
+         * @param {Event} event
+         * @returns {void}
+         */
+        handleAddClick: function(event) {
+            event.preventDefault();
+
+            // Ouvrir le panel avec l'onglet nouveau
+            this.openPanel('new');
+
+            // Focus sur le champ commentaire
+            if (this.elements.commentField) {
+                setTimeout(() => this.elements.commentField.focus(), 350);
+            }
+        },
+
+        /**
+         * Gérer le clic sur le bouton de visibilité
+         * Affiche/masque les pins
+         * @param {Event} event
+         * @returns {void}
+         */
+        handleVisibilityToggle: function(event) {
+            event.preventDefault();
+
+            const btn = this.elements.visibilityBtn;
+            const isVisible = btn.dataset.visible === 'true';
+
+            // Inverser la visibilité
+            const newVisible = !isVisible;
+            btn.dataset.visible = newVisible.toString();
+
+            // Mettre à jour les icônes
+            const iconVisible = btn.querySelector('.wpvfh-icon-visible');
+            const iconHidden = btn.querySelector('.wpvfh-icon-hidden');
+
+            if (iconVisible) iconVisible.hidden = !newVisible;
+            if (iconHidden) iconHidden.hidden = newVisible;
+
+            // Émettre l'événement pour masquer/afficher les pins
+            this.emitEvent('toggle-pins', { visible: newVisible });
+
+            // Notification
+            this.showNotification(
+                newVisible ? 'Points affichés' : 'Points masqués',
+                'info'
+            );
+        },
+
+        /**
+         * Gérer le clic sur "Cibler un élément"
+         * Démarre le mode inspecteur DevTools
+         * @param {Event} event
+         * @returns {void}
+         */
+        handleSelectElement: function(event) {
+            event.preventDefault();
+
+            // Fermer temporairement le panel pour faciliter la sélection
+            if (this.state.isOpen) {
+                this.closePanel();
+            }
+
+            // Démarrer le mode inspecteur
+            this.emitEvent('start-inspector');
+        },
+
+        /**
+         * Gérer le clic sur "Effacer la sélection"
+         * @param {Event} event
+         * @returns {void}
+         */
+        handleClearSelection: function(event) {
+            event.preventDefault();
+
+            // Effacer la sélection
+            this.emitEvent('clear-selection');
+
+            // Réinitialiser l'état local
+            this.state.pinPosition = null;
+
+            // Masquer l'indicateur de sélection
+            if (this.elements.selectedElement) {
+                this.elements.selectedElement.hidden = true;
+            }
+
+            // Afficher le bouton de sélection
+            if (this.elements.selectElementBtn) {
+                this.elements.selectElementBtn.hidden = false;
+            }
+        },
+
+        /**
+         * Gérer la sélection d'un élément (événement de l'inspecteur)
+         * @param {CustomEvent} event
+         * @returns {void}
+         */
+        handleElementSelected: function(event) {
+            const { data } = event.detail;
+
+            // Stocker les données de position
+            this.state.pinPosition = data;
+
+            // Mettre à jour les champs cachés
+            if (this.elements.positionX) {
+                this.elements.positionX.value = data.percentX || data.position_x || '';
+            }
+            if (this.elements.positionY) {
+                this.elements.positionY.value = data.percentY || data.position_y || '';
+            }
+
+            // Afficher l'indicateur de sélection
+            if (this.elements.selectedElement) {
+                this.elements.selectedElement.hidden = false;
+
+                // Afficher le sélecteur si disponible
+                const textEl = this.elements.selectedElement.querySelector('.wpvfh-selected-text');
+                if (textEl && data.selector) {
+                    // Tronquer le sélecteur s'il est trop long
+                    const shortSelector = data.selector.length > 40
+                        ? data.selector.substring(0, 37) + '...'
+                        : data.selector;
+                    textEl.textContent = `Élément: ${data.anchor_tag}`;
+                }
+            }
+
+            // Masquer le bouton de sélection
+            if (this.elements.selectElementBtn) {
+                this.elements.selectElementBtn.hidden = true;
+            }
+
+            // Ouvrir le panel avec l'onglet nouveau si fermé
+            if (!this.state.isOpen) {
+                this.openPanel('new');
+            }
+
+            console.log('[Blazing Feedback] Élément sélectionné:', data);
+        },
+
+        /**
+         * Gérer l'effacement de la sélection
+         * @param {CustomEvent} event
+         * @returns {void}
+         */
+        handleSelectionCleared: function(event) {
+            // Réafficher le bouton de sélection
+            if (this.elements.selectElementBtn) {
+                this.elements.selectElementBtn.hidden = false;
+            }
+
+            // Masquer l'indicateur
+            if (this.elements.selectedElement) {
+                this.elements.selectedElement.hidden = true;
+            }
+        },
+
+        /**
+         * Gérer l'arrêt du mode inspecteur (annulation)
+         * @param {CustomEvent} event
+         * @returns {void}
+         */
+        handleInspectorStopped: function(event) {
+            // Si aucune sélection n'a été faite, réouvrir le panel
+            if (!window.BlazingAnnotation || !window.BlazingAnnotation.hasSelection()) {
+                // Ne pas rouvrir automatiquement, l'utilisateur a annulé
+            }
+        },
+
+        /**
+         * Démarrer le mode feedback (ancien mode annotation)
          * @returns {void}
          */
         startFeedbackMode: function() {
@@ -928,6 +1133,16 @@
                     // Ajouter à la liste locale
                     this.state.currentFeedbacks.push(response);
 
+                    // Mettre à jour les compteurs
+                    const count = this.state.currentFeedbacks.length;
+                    if (this.elements.pinsCount) {
+                        this.elements.pinsCount.textContent = count > 0 ? count : '';
+                    }
+                    if (this.elements.feedbackCount) {
+                        this.elements.feedbackCount.textContent = count;
+                        this.elements.feedbackCount.hidden = count === 0;
+                    }
+
                     // Émettre l'événement
                     this.emitEvent('feedback-created', response);
                 }
@@ -967,6 +1182,17 @@
             // Supprimer le pin temporaire
             if (window.BlazingAnnotation) {
                 window.BlazingAnnotation.removeTemporaryPin();
+            }
+
+            // Effacer la sélection d'élément
+            this.emitEvent('clear-selection');
+
+            // Réinitialiser l'affichage de la section ciblage
+            if (this.elements.selectElementBtn) {
+                this.elements.selectElementBtn.hidden = false;
+            }
+            if (this.elements.selectedElement) {
+                this.elements.selectedElement.hidden = true;
             }
         },
 
@@ -1013,6 +1239,16 @@
                     // Mettre à jour le compteur dans l'onglet Liste
                     if (this.elements.pinsCount) {
                         this.elements.pinsCount.textContent = response.length > 0 ? response.length : '';
+                    }
+
+                    // Mettre à jour le badge compteur sur le bouton principal
+                    if (this.elements.feedbackCount) {
+                        if (response.length > 0) {
+                            this.elements.feedbackCount.textContent = response.length;
+                            this.elements.feedbackCount.hidden = false;
+                        } else {
+                            this.elements.feedbackCount.hidden = true;
+                        }
                     }
                 }
 
