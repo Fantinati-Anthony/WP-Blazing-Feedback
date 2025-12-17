@@ -1181,26 +1181,49 @@
         apiRequest: async function(method, endpoint, data = null) {
             const url = this.config.restUrl + endpoint;
 
+            console.log('[Blazing Feedback] API Request:', method, url);
+
             const options = {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'X-WP-Nonce': this.config.restNonce,
                 },
+                credentials: 'same-origin',
             };
 
             if (data && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
                 options.body = JSON.stringify(data);
+                console.log('[Blazing Feedback] Request data:', data);
             }
 
-            const response = await fetch(url, options);
+            try {
+                const response = await fetch(url, options);
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || `Erreur HTTP ${response.status}`);
+                console.log('[Blazing Feedback] Response status:', response.status);
+
+                // Lire le texte de la réponse d'abord
+                const responseText = await response.text();
+
+                // Vérifier si c'est du JSON valide
+                let responseData;
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('[Blazing Feedback] Réponse non-JSON:', responseText.substring(0, 500));
+                    throw new Error('La réponse du serveur n\'est pas valide. Vérifiez que les permaliens WordPress sont activés.');
+                }
+
+                if (!response.ok) {
+                    throw new Error(responseData.message || `Erreur HTTP ${response.status}`);
+                }
+
+                return responseData;
+
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur API:', error);
+                throw error;
             }
-
-            return response.json();
         },
 
         /**
