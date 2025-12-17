@@ -906,8 +906,11 @@
                     scroll_y: this.state.pinPosition?.scrollY || metadata.scrollY,
                 };
 
+                console.log('[Blazing Feedback] Envoi du feedback:', feedbackData);
+
                 // Envoyer à l'API
                 const response = await this.apiRequest('POST', 'feedbacks', feedbackData);
+                console.log('[Blazing Feedback] Réponse création:', response);
 
                 if (response.id) {
                     // Succès
@@ -990,18 +993,31 @@
          */
         loadExistingFeedbacks: async function() {
             try {
-                const url = encodeURIComponent(this.config.currentUrl || window.location.href);
+                const currentUrl = this.config.currentUrl || window.location.href;
+                console.log('[Blazing Feedback] Chargement des feedbacks pour URL:', currentUrl);
+
+                const url = encodeURIComponent(currentUrl);
                 const response = await this.apiRequest('GET', `feedbacks/by-url?url=${url}`);
+
+                console.log('[Blazing Feedback] Réponse API:', response);
 
                 if (Array.isArray(response)) {
                     this.state.currentFeedbacks = response;
+                    console.log('[Blazing Feedback] Feedbacks chargés:', response.length);
 
                     // Afficher les pins
-                    this.emitEvent('load-pins', { pins: response });
+                    if (response.length > 0) {
+                        this.emitEvent('load-pins', { pins: response });
+                    }
+
+                    // Mettre à jour le compteur dans l'onglet Liste
+                    if (this.elements.pinsCount) {
+                        this.elements.pinsCount.textContent = response.length > 0 ? response.length : '';
+                    }
                 }
 
             } catch (error) {
-                console.warn('[Blazing Feedback] Impossible de charger les feedbacks:', error);
+                console.error('[Blazing Feedback] Erreur chargement feedbacks:', error);
             }
         },
 

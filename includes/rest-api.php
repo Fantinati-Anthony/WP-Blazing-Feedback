@@ -952,31 +952,25 @@ class WPVFH_REST_API {
         $url = $request->get_param( 'url' );
         $include_resolved = $request->get_param( 'include_resolved' );
 
-        // Normaliser l'URL pour la comparaison
-        $normalized_url = self::normalize_url( $url );
+        // Extraire le path de l'URL pour une recherche plus flexible
+        $parsed = wp_parse_url( $url );
+        $path = isset( $parsed['path'] ) ? $parsed['path'] : '/';
+
+        // Nettoyer le path (enlever trailing slash sauf pour la racine)
+        $path = rtrim( $path, '/' );
+        if ( empty( $path ) ) {
+            $path = '/';
+        }
 
         $args = array(
             'post_type'      => WPVFH_CPT_Feedback::POST_TYPE,
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'meta_query'     => array(
-                'relation' => 'OR',
                 array(
-                    'key'   => '_wpvfh_url',
-                    'value' => $url,
-                ),
-                array(
-                    'key'   => '_wpvfh_url',
-                    'value' => $normalized_url,
-                ),
-                // Aussi chercher sans trailing slash
-                array(
-                    'key'   => '_wpvfh_url',
-                    'value' => rtrim( $url, '/' ),
-                ),
-                array(
-                    'key'   => '_wpvfh_url',
-                    'value' => rtrim( $url, '/' ) . '/',
+                    'key'     => '_wpvfh_url',
+                    'value'   => $path,
+                    'compare' => 'LIKE',
                 ),
             ),
         );
