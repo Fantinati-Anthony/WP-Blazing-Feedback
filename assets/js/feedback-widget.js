@@ -887,8 +887,8 @@
                 const feedbackData = {
                     comment: comment,
                     url: this.config.currentUrl || window.location.href,
-                    position_x: this.elements.positionX?.value || null,
-                    position_y: this.elements.positionY?.value || null,
+                    position_x: this.state.pinPosition?.position_x || this.elements.positionX?.value || null,
+                    position_y: this.state.pinPosition?.position_y || this.elements.positionY?.value || null,
                     screenshot_data: this.state.screenshotData || null,
                     screen_width: metadata.screenWidth,
                     screen_height: metadata.screenHeight,
@@ -898,9 +898,12 @@
                     os: metadata.os,
                     device: metadata.device,
                     user_agent: metadata.userAgent,
+                    // DOM Anchoring data
                     selector: this.state.pinPosition?.selector || null,
-                    scroll_x: metadata.scrollX,
-                    scroll_y: metadata.scrollY,
+                    element_offset_x: this.state.pinPosition?.element_offset_x || null,
+                    element_offset_y: this.state.pinPosition?.element_offset_y || null,
+                    scroll_x: this.state.pinPosition?.scrollX || metadata.scrollX,
+                    scroll_y: this.state.pinPosition?.scrollY || metadata.scrollY,
                 };
 
                 // Envoyer à l'API
@@ -977,7 +980,7 @@
             if (isLoading) {
                 this.elements.submitBtn.innerHTML = '<span class="wpvfh-spinner"></span> ' + (this.config.i18n?.loadingMessage || 'Envoi...');
             } else {
-                this.elements.submitBtn.textContent = this.config.i18n?.submitButton || 'Envoyer';
+                this.elements.submitBtn.innerHTML = '<span class="wpvfh-btn-emoji">📤</span> ' + (this.config.i18n?.submitButton || 'Envoyer');
             }
         },
 

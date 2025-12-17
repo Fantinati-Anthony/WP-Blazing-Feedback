@@ -952,14 +952,31 @@ class WPVFH_REST_API {
         $url = $request->get_param( 'url' );
         $include_resolved = $request->get_param( 'include_resolved' );
 
+        // Normaliser l'URL pour la comparaison
+        $normalized_url = self::normalize_url( $url );
+
         $args = array(
             'post_type'      => WPVFH_CPT_Feedback::POST_TYPE,
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'meta_query'     => array(
+                'relation' => 'OR',
                 array(
                     'key'   => '_wpvfh_url',
                     'value' => $url,
+                ),
+                array(
+                    'key'   => '_wpvfh_url',
+                    'value' => $normalized_url,
+                ),
+                // Aussi chercher sans trailing slash
+                array(
+                    'key'   => '_wpvfh_url',
+                    'value' => rtrim( $url, '/' ),
+                ),
+                array(
+                    'key'   => '_wpvfh_url',
+                    'value' => rtrim( $url, '/' ) . '/',
                 ),
             ),
         );
@@ -1144,6 +1161,38 @@ class WPVFH_REST_API {
         wp_update_attachment_metadata( $attachment_id, $attach_data );
 
         return $attachment_id;
+    }
+
+    /**
+     * Normaliser une URL pour la comparaison
+     *
+     * @since 1.0.0
+     * @param string $url URL à normaliser
+     * @return string URL normalisée
+     */
+    private static function normalize_url( $url ) {
+        // Parser l'URL
+        $parsed = wp_parse_url( $url );
+
+        if ( ! $parsed ) {
+            return $url;
+        }
+
+        $scheme = isset( $parsed['scheme'] ) ? $parsed['scheme'] : 'https';
+        $host = isset( $parsed['host'] ) ? strtolower( $parsed['host'] ) : '';
+        $path = isset( $parsed['path'] ) ? $parsed['path'] : '/';
+        $query = isset( $parsed['query'] ) ? '?' . $parsed['query'] : '';
+
+        // Supprimer www.
+        $host = preg_replace( '/^www\./', '', $host );
+
+        // Normaliser le path
+        $path = rtrim( $path, '/' );
+        if ( empty( $path ) ) {
+            $path = '/';
+        }
+
+        return $scheme . '://' . $host . $path . $query;
     }
 }
 
