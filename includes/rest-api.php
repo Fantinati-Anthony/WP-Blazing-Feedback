@@ -198,6 +198,46 @@ class WPVFH_REST_API {
             ),
         ) );
 
+        // GET /pages - Liste des pages avec feedbacks
+        register_rest_route( self::NAMESPACE, '/pages', array(
+            array(
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => array( __CLASS__, 'get_pages' ),
+                'permission_callback' => array( __CLASS__, 'can_read_feedbacks' ),
+            ),
+        ) );
+
+        // POST /pages/validate - Valider une page
+        register_rest_route( self::NAMESPACE, '/pages/validate', array(
+            array(
+                'methods'             => WP_REST_Server::CREATABLE,
+                'callback'            => array( __CLASS__, 'validate_page' ),
+                'permission_callback' => array( __CLASS__, 'can_validate_page' ),
+                'args'                => array(
+                    'url' => array(
+                        'required'          => true,
+                        'type'              => 'string',
+                        'sanitize_callback' => 'esc_url_raw',
+                    ),
+                ),
+            ),
+        ) );
+
+        // GET /users - Liste des utilisateurs (pour mentions)
+        register_rest_route( self::NAMESPACE, '/users', array(
+            array(
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => array( __CLASS__, 'get_users' ),
+                'permission_callback' => array( __CLASS__, 'can_read_feedbacks' ),
+                'args'                => array(
+                    'search' => array(
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ),
+                ),
+            ),
+        ) );
+
         /**
          * Action pour enregistrer des routes supplémentaires
          *
@@ -522,6 +562,75 @@ class WPVFH_REST_API {
         }
 
         return WPVFH_Permissions::can_manage_feedback();
+    }
+
+    /**
+     * Vérifier si l'utilisateur peut valider une page
+     *
+     * @since 1.0.0
+     * @param WP_REST_Request $request Requête REST
+     * @return bool|WP_Error
+     */
+    public static function can_validate_page( $request ) {
+        $nonce_check = WPVFH_Permissions::verify_rest_nonce( $request );
+        if ( is_wp_error( $nonce_check ) ) {
+            return $nonce_check;
+        }
+
+        // Admin peut toujours valider
+        if ( WPVFH_Permissions::can_manage_feedback() ) {
+            return true;
+        }
+
+        // Pour les autres, vérifier si tous les feedbacks sont résolus
+        $url = $request->get_param( 'url' );
+        return self::check_page_can_be_validated( $url );
+    }
+
+    /**
+     * Vérifier si une page peut être validée (tous les feedbacks résolus)
+     *
+     * @since 1.0.0
+     * @param string $url URL de la page
+     * @return bool
+     */
+    private static function check_page_can_be_validated( $url ) {
+        $parsed = wp_parse_url( $url );
+        $path = isset( $parsed['path'] ) ? $parsed['path'] : '/';
+        $path = rtrim( $path, '/' );
+        if ( empty( $path ) ) {
+            $path = '/';
+        }
+
+        $args = array(
+            'post_type'      => WPVFH_CPT_Feedback::POST_TYPE,
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'meta_query'     => array(
+                array(
+                    'key'     => '_wpvfh_url',
+                    'value'   => $path,
+                    'compare' => 'LIKE',
+                ),
+            ),
+            'fields'         => 'ids',
+        );
+
+        $query = new WP_Query( $args );
+
+        if ( $query->found_posts === 0 ) {
+            return true; // Pas de feedback = peut valider
+        }
+
+        // Vérifier que tous sont resolved ou rejected
+        foreach ( $query->posts as $post_id ) {
+            $status = get_post_meta( $post_id, '_wpvfh_status', true );
+            if ( ! in_array( $status, array( 'resolved', 'rejected' ), true ) ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // ========================================
@@ -1092,6 +1201,154 @@ class WPVFH_REST_API {
         $stats = apply_filters( 'wpvfh_feedback_stats', $stats );
 
         return new WP_REST_Response( $stats );
+    }
+
+    /**
+     * Obtenir la liste des pages avec feedbacks
+     *
+     * @since 1.0.0
+     * @param WP_REST_Request $request Requête REST
+     * @return WP_REST_Response
+     */
+    public static function get_pages( $request ) {
+        global $wpdb;
+
+        // Récupérer toutes les URLs uniques avec leur compte de feedbacks
+        $pages_data = $wpdb->get_results( $wpdb->prepare(
+            "SELECT pm.meta_value as url, COUNT(*) as count
+            FROM {$wpdb->postmeta} pm
+            INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
+            WHERE pm.meta_key = '_wpvfh_url'
+            AND p.post_type = %s
+            AND p.post_status = 'publish'
+            GROUP BY pm.meta_value
+            ORDER BY count DESC",
+            WPVFH_CPT_Feedback::POST_TYPE
+        ) );
+
+        $pages = array();
+
+        foreach ( $pages_data as $page ) {
+            // Vérifier si la page est validée
+            $validated = get_option( 'wpvfh_validated_pages', array() );
+            $is_validated = in_array( $page->url, $validated, true );
+
+            // Essayer de récupérer le titre de la page WordPress
+            $post_id = url_to_postid( $page->url );
+            $title = $post_id ? get_the_title( $post_id ) : '';
+
+            $pages[] = array(
+                'url'       => $page->url,
+                'title'     => $title,
+                'count'     => (int) $page->count,
+                'validated' => $is_validated,
+            );
+        }
+
+        return new WP_REST_Response( $pages );
+    }
+
+    /**
+     * Valider une page
+     *
+     * @since 1.0.0
+     * @param WP_REST_Request $request Requête REST
+     * @return WP_REST_Response|WP_Error
+     */
+    public static function validate_page( $request ) {
+        $url = $request->get_param( 'url' );
+
+        // Normaliser l'URL
+        $parsed = wp_parse_url( $url );
+        $path = isset( $parsed['path'] ) ? $parsed['path'] : '/';
+        $path = rtrim( $path, '/' );
+        if ( empty( $path ) ) {
+            $path = '/';
+        }
+
+        // Ajouter à la liste des pages validées
+        $validated = get_option( 'wpvfh_validated_pages', array() );
+        if ( ! in_array( $url, $validated, true ) ) {
+            $validated[] = $url;
+            update_option( 'wpvfh_validated_pages', $validated );
+        }
+
+        // Marquer tous les feedbacks de cette page comme résolus (si pas déjà)
+        $args = array(
+            'post_type'      => WPVFH_CPT_Feedback::POST_TYPE,
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'meta_query'     => array(
+                array(
+                    'key'     => '_wpvfh_url',
+                    'value'   => $path,
+                    'compare' => 'LIKE',
+                ),
+            ),
+            'fields'         => 'ids',
+        );
+
+        $query = new WP_Query( $args );
+
+        foreach ( $query->posts as $post_id ) {
+            $status = get_post_meta( $post_id, '_wpvfh_status', true );
+            // Marquer comme résolu uniquement les new/in_progress
+            if ( in_array( $status, array( 'new', 'in_progress' ), true ) ) {
+                update_post_meta( $post_id, '_wpvfh_status', 'resolved' );
+                wp_set_object_terms( $post_id, 'resolved', WPVFH_CPT_Feedback::TAX_STATUS );
+            }
+        }
+
+        /**
+         * Action après validation d'une page
+         *
+         * @since 1.0.0
+         * @param string $url URL de la page
+         */
+        do_action( 'wpvfh_page_validated', $url );
+
+        return new WP_REST_Response( array(
+            'success' => true,
+            'url'     => $url,
+            'message' => __( 'Page validée avec succès.', 'blazing-feedback' ),
+        ) );
+    }
+
+    /**
+     * Obtenir la liste des utilisateurs (pour les mentions)
+     *
+     * @since 1.0.0
+     * @param WP_REST_Request $request Requête REST
+     * @return WP_REST_Response
+     */
+    public static function get_users( $request ) {
+        $search = $request->get_param( 'search' );
+
+        $args = array(
+            'number'  => 20,
+            'orderby' => 'display_name',
+            'order'   => 'ASC',
+            'fields'  => array( 'ID', 'display_name', 'user_login', 'user_email' ),
+        );
+
+        if ( $search ) {
+            $args['search'] = '*' . $search . '*';
+            $args['search_columns'] = array( 'display_name', 'user_login', 'user_email' );
+        }
+
+        $users_query = new WP_User_Query( $args );
+        $users = array();
+
+        foreach ( $users_query->get_results() as $user ) {
+            $users[] = array(
+                'id'       => $user->ID,
+                'name'     => $user->display_name,
+                'username' => $user->user_login,
+                'avatar'   => get_avatar_url( $user->user_email, array( 'size' => 32 ) ),
+            );
+        }
+
+        return new WP_REST_Response( $users );
     }
 
     /**

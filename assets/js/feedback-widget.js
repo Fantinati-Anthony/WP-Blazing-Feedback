@@ -35,6 +35,11 @@
             screenshotData: null,
             pinPosition: null,
             currentFeedbackId: null,   // ID du feedback en cours de visualisation
+            currentFilter: 'all',       // Filtre actif
+            allPages: [],              // Liste de toutes les pages avec feedbacks
+            attachments: [],           // Fichiers attachés au formulaire
+            mentionUsers: [],          // Liste des utilisateurs pour mentions
+            feedbackToDelete: null,    // ID du feedback à supprimer (modal)
         },
 
         /**
@@ -96,11 +101,47 @@
                 tabList: document.getElementById('wpvfh-tab-list'),
                 tabDetails: document.getElementById('wpvfh-tab-details'),
                 tabDetailsBtn: document.getElementById('wpvfh-tab-details-btn'),
+                tabPages: document.getElementById('wpvfh-tab-pages'),
                 pinsList: document.getElementById('wpvfh-pins-list'),
                 pinsCount: document.getElementById('wpvfh-pins-count'),
                 emptyState: document.getElementById('wpvfh-empty-state'),
                 addFeedbackBtn: document.querySelector('.wpvfh-add-feedback-btn'),
                 feedbackCount: document.getElementById('wpvfh-feedback-count'),
+                // Filtres
+                filters: document.getElementById('wpvfh-filters'),
+                filterButtons: document.querySelectorAll('.wpvfh-filter-btn'),
+                // Pages
+                pagesList: document.getElementById('wpvfh-pages-list'),
+                pagesEmpty: document.getElementById('wpvfh-pages-empty'),
+                pagesLoading: document.getElementById('wpvfh-pages-loading'),
+                // Validation de page
+                pageValidation: document.getElementById('wpvfh-page-validation'),
+                validatePageBtn: document.getElementById('wpvfh-validate-page-btn'),
+                validationStatus: document.getElementById('wpvfh-validation-status'),
+                validationHint: document.getElementById('wpvfh-validation-hint'),
+                // Suppression
+                deleteSection: document.getElementById('wpvfh-delete-section'),
+                deleteFeedbackBtn: document.getElementById('wpvfh-delete-feedback-btn'),
+                // Modals
+                confirmModal: document.getElementById('wpvfh-confirm-modal'),
+                cancelDeleteBtn: document.getElementById('wpvfh-cancel-delete'),
+                confirmDeleteBtn: document.getElementById('wpvfh-confirm-delete'),
+                validateModal: document.getElementById('wpvfh-validate-modal'),
+                cancelValidateBtn: document.getElementById('wpvfh-cancel-validate'),
+                confirmValidateBtn: document.getElementById('wpvfh-confirm-validate'),
+                // Mentions
+                mentionDropdown: document.getElementById('wpvfh-mention-dropdown'),
+                mentionList: document.getElementById('wpvfh-mention-list'),
+                // Pièces jointes
+                attachmentsInput: document.getElementById('wpvfh-attachments'),
+                addAttachmentBtn: document.getElementById('wpvfh-add-attachment-btn'),
+                attachmentsPreview: document.getElementById('wpvfh-attachments-preview'),
+                // Invitations
+                inviteSection: document.getElementById('wpvfh-invite-section'),
+                participantsList: document.getElementById('wpvfh-participants-list'),
+                inviteInput: document.getElementById('wpvfh-invite-input'),
+                inviteBtn: document.getElementById('wpvfh-invite-btn'),
+                userSuggestions: document.getElementById('wpvfh-user-suggestions'),
                 // Éléments détails
                 backToListBtn: document.getElementById('wpvfh-back-to-list'),
                 detailId: document.getElementById('wpvfh-detail-id'),
@@ -282,6 +323,69 @@
                             this.addReply(this.state.currentFeedbackId, content);
                         }
                     }
+                });
+            }
+
+            // Filtres
+            if (this.elements.filterButtons) {
+                this.elements.filterButtons.forEach(btn => {
+                    btn.addEventListener('click', () => this.handleFilterClick(btn.dataset.status));
+                });
+            }
+
+            // Bouton supprimer feedback
+            if (this.elements.deleteFeedbackBtn) {
+                this.elements.deleteFeedbackBtn.addEventListener('click', () => this.showDeleteModal());
+            }
+
+            // Modal suppression
+            if (this.elements.cancelDeleteBtn) {
+                this.elements.cancelDeleteBtn.addEventListener('click', () => this.hideDeleteModal());
+            }
+            if (this.elements.confirmDeleteBtn) {
+                this.elements.confirmDeleteBtn.addEventListener('click', () => this.confirmDeleteFeedback());
+            }
+
+            // Fermer modal en cliquant sur l'overlay
+            document.querySelectorAll('.wpvfh-modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', () => {
+                    if (this.elements.confirmModal) this.elements.confirmModal.hidden = true;
+                    if (this.elements.validateModal) this.elements.validateModal.hidden = true;
+                });
+            });
+
+            // Bouton valider la page
+            if (this.elements.validatePageBtn) {
+                this.elements.validatePageBtn.addEventListener('click', () => this.showValidateModal());
+            }
+
+            // Modal validation
+            if (this.elements.cancelValidateBtn) {
+                this.elements.cancelValidateBtn.addEventListener('click', () => {
+                    if (this.elements.validateModal) this.elements.validateModal.hidden = true;
+                });
+            }
+            if (this.elements.confirmValidateBtn) {
+                this.elements.confirmValidateBtn.addEventListener('click', () => this.confirmValidatePage());
+            }
+
+            // Pièces jointes
+            if (this.elements.addAttachmentBtn && this.elements.attachmentsInput) {
+                this.elements.addAttachmentBtn.addEventListener('click', () => {
+                    this.elements.attachmentsInput.click();
+                });
+                this.elements.attachmentsInput.addEventListener('change', (e) => {
+                    this.handleAttachmentSelect(e.target.files);
+                });
+            }
+
+            // Mentions @ dans le textarea
+            if (this.elements.commentField) {
+                this.elements.commentField.addEventListener('input', (e) => {
+                    this.handleMentionInput(e);
+                });
+                this.elements.commentField.addEventListener('keydown', (e) => {
+                    this.handleMentionKeydown(e);
                 });
             }
         },
@@ -812,12 +916,22 @@
             if (this.elements.tabDetails) {
                 this.elements.tabDetails.classList.toggle('active', tabName === 'details');
             }
+            if (this.elements.tabPages) {
+                this.elements.tabPages.classList.toggle('active', tabName === 'pages');
+            }
 
             // Si on va sur la liste, charger les feedbacks
             if (tabName === 'list') {
                 this.renderPinsList();
+                this.updateFilterCounts();
+                this.updateValidationSection();
                 // Réinitialiser le feedback courant
                 this.state.currentFeedbackId = null;
+            }
+
+            // Si on va sur les pages, charger la liste des pages
+            if (tabName === 'pages') {
+                this.loadAllPages();
             }
         },
 
@@ -827,7 +941,7 @@
         renderPinsList: function() {
             if (!this.elements.pinsList) return;
 
-            const feedbacks = this.state.currentFeedbacks || [];
+            const feedbacks = this.getFilteredFeedbacks();
 
             // Mettre à jour le compteur
             if (this.elements.pinsCount) {
@@ -1470,6 +1584,13 @@
                 this.elements.replyInput.value = '';
             }
 
+            // Section suppression - visible pour le créateur ou un admin
+            if (this.elements.deleteSection) {
+                const isCreator = feedback.author?.id === this.config.userId;
+                const canDelete = isCreator || this.config.canManage;
+                this.elements.deleteSection.hidden = !canDelete;
+            }
+
             // Ouvrir le panel et basculer sur l'onglet détails
             this.openPanel('details');
         },
@@ -1649,6 +1770,636 @@
                 detail: detail,
             });
             document.dispatchEvent(event);
+        },
+
+        // ===========================================
+        // FILTRES
+        // ===========================================
+
+        /**
+         * Gérer le clic sur un filtre
+         * @param {string} status - Statut à filtrer
+         */
+        handleFilterClick: function(status) {
+            this.state.currentFilter = status;
+
+            // Mettre à jour les boutons
+            if (this.elements.filterButtons) {
+                this.elements.filterButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.status === status);
+                });
+            }
+
+            // Filtrer et afficher la liste
+            this.renderPinsList();
+        },
+
+        /**
+         * Obtenir les feedbacks filtrés
+         * @returns {Array} Feedbacks filtrés
+         */
+        getFilteredFeedbacks: function() {
+            if (this.state.currentFilter === 'all') {
+                return this.state.currentFeedbacks;
+            }
+            return this.state.currentFeedbacks.filter(f => f.status === this.state.currentFilter);
+        },
+
+        /**
+         * Mettre à jour les compteurs des filtres
+         */
+        updateFilterCounts: function() {
+            const feedbacks = this.state.currentFeedbacks || [];
+
+            const counts = {
+                all: feedbacks.length,
+                new: feedbacks.filter(f => f.status === 'new').length,
+                in_progress: feedbacks.filter(f => f.status === 'in_progress').length,
+                resolved: feedbacks.filter(f => f.status === 'resolved').length,
+                rejected: feedbacks.filter(f => f.status === 'rejected').length,
+            };
+
+            // Mettre à jour les badges
+            const allCount = document.getElementById('wpvfh-filter-all-count');
+            const newCount = document.getElementById('wpvfh-filter-new-count');
+            const progressCount = document.getElementById('wpvfh-filter-progress-count');
+            const resolvedCount = document.getElementById('wpvfh-filter-resolved-count');
+            const rejectedCount = document.getElementById('wpvfh-filter-rejected-count');
+
+            if (allCount) allCount.textContent = counts.all;
+            if (newCount) newCount.textContent = counts.new;
+            if (progressCount) progressCount.textContent = counts.in_progress;
+            if (resolvedCount) resolvedCount.textContent = counts.resolved;
+            if (rejectedCount) rejectedCount.textContent = counts.rejected;
+        },
+
+        // ===========================================
+        // VALIDATION DE PAGE
+        // ===========================================
+
+        /**
+         * Mettre à jour la section de validation de page
+         */
+        updateValidationSection: function() {
+            if (!this.elements.pageValidation) return;
+
+            const feedbacks = this.state.currentFeedbacks || [];
+
+            // Vérifier si tous les feedbacks sont traités
+            const totalCount = feedbacks.length;
+            const resolvedCount = feedbacks.filter(f => f.status === 'resolved' || f.status === 'rejected').length;
+            const allResolved = totalCount > 0 && resolvedCount === totalCount;
+
+            // Afficher la section seulement s'il y a des feedbacks
+            this.elements.pageValidation.hidden = totalCount === 0;
+
+            if (totalCount === 0) return;
+
+            // Mettre à jour l'icône et le texte selon l'état
+            const statusIcon = this.elements.validationStatus?.querySelector('.wpvfh-validation-icon');
+            const statusText = this.elements.validationStatus?.querySelector('.wpvfh-validation-text');
+
+            if (allResolved) {
+                if (statusIcon) statusIcon.textContent = '✅';
+                if (statusText) statusText.textContent = 'Tous les points ont été traités';
+                this.elements.pageValidation.classList.remove('pending');
+                this.elements.pageValidation.classList.add('ready');
+            } else {
+                if (statusIcon) statusIcon.textContent = '⏳';
+                if (statusText) statusText.textContent = `${resolvedCount}/${totalCount} points traités`;
+                this.elements.pageValidation.classList.remove('ready');
+                this.elements.pageValidation.classList.add('pending');
+            }
+
+            // Activer/désactiver le bouton (admin peut toujours valider)
+            if (this.elements.validatePageBtn) {
+                const canValidate = allResolved || this.config.canManage;
+                this.elements.validatePageBtn.disabled = !canValidate;
+            }
+
+            // Mettre à jour l'indice
+            if (this.elements.validationHint) {
+                if (this.config.canManage && !allResolved) {
+                    this.elements.validationHint.textContent = 'En tant qu\'admin, vous pouvez valider même si des points sont en cours.';
+                } else if (!allResolved) {
+                    this.elements.validationHint.textContent = 'Tous les points doivent être résolus ou rejetés avant validation.';
+                } else {
+                    this.elements.validationHint.textContent = '';
+                }
+            }
+        },
+
+        /**
+         * Afficher le modal de validation de page
+         */
+        showValidateModal: function() {
+            if (this.elements.validateModal) {
+                this.elements.validateModal.hidden = false;
+            }
+        },
+
+        /**
+         * Confirmer la validation de la page
+         */
+        confirmValidatePage: async function() {
+            try {
+                const currentUrl = this.config.currentUrl || window.location.href;
+                await this.apiRequest('POST', 'pages/validate', { url: currentUrl });
+
+                this.showNotification('Page validée avec succès !', 'success');
+
+                // Fermer le modal
+                if (this.elements.validateModal) {
+                    this.elements.validateModal.hidden = true;
+                }
+
+                // Mettre à jour l'affichage
+                this.elements.pageValidation.classList.remove('ready', 'pending');
+                this.elements.pageValidation.classList.add('validated');
+
+                const statusIcon = this.elements.validationStatus?.querySelector('.wpvfh-validation-icon');
+                const statusText = this.elements.validationStatus?.querySelector('.wpvfh-validation-text');
+                if (statusIcon) statusIcon.textContent = '🎉';
+                if (statusText) statusText.textContent = 'Page validée';
+
+                if (this.elements.validatePageBtn) {
+                    this.elements.validatePageBtn.hidden = true;
+                }
+
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur validation:', error);
+                this.showNotification('Erreur lors de la validation', 'error');
+            }
+        },
+
+        // ===========================================
+        // SUPPRESSION
+        // ===========================================
+
+        /**
+         * Afficher le modal de suppression
+         */
+        showDeleteModal: function() {
+            if (!this.state.currentFeedbackId) return;
+
+            this.state.feedbackToDelete = this.state.currentFeedbackId;
+            if (this.elements.confirmModal) {
+                this.elements.confirmModal.hidden = false;
+            }
+        },
+
+        /**
+         * Masquer le modal de suppression
+         */
+        hideDeleteModal: function() {
+            this.state.feedbackToDelete = null;
+            if (this.elements.confirmModal) {
+                this.elements.confirmModal.hidden = true;
+            }
+        },
+
+        /**
+         * Confirmer la suppression du feedback
+         */
+        confirmDeleteFeedback: async function() {
+            const feedbackId = this.state.feedbackToDelete;
+            if (!feedbackId) return;
+
+            try {
+                await this.apiRequest('DELETE', `feedbacks/${feedbackId}`);
+
+                this.showNotification('Feedback supprimé', 'success');
+
+                // Supprimer de la liste locale
+                this.state.currentFeedbacks = this.state.currentFeedbacks.filter(f => f.id !== feedbackId);
+
+                // Supprimer le pin sur la page
+                if (window.BlazingAnnotation) {
+                    window.BlazingAnnotation.removePin(feedbackId);
+                }
+
+                // Fermer le modal
+                this.hideDeleteModal();
+
+                // Retourner à la liste
+                this.switchTab('list');
+
+                // Mettre à jour les compteurs
+                this.updateFilterCounts();
+                if (this.elements.pinsCount) {
+                    this.elements.pinsCount.textContent = this.state.currentFeedbacks.length > 0
+                        ? this.state.currentFeedbacks.length : '';
+                }
+                if (this.elements.feedbackCount) {
+                    const count = this.state.currentFeedbacks.length;
+                    this.elements.feedbackCount.textContent = count;
+                    this.elements.feedbackCount.hidden = count === 0;
+                }
+
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur suppression:', error);
+                this.showNotification('Erreur lors de la suppression', 'error');
+            }
+        },
+
+        // ===========================================
+        // PAGES
+        // ===========================================
+
+        /**
+         * Charger la liste de toutes les pages avec feedbacks
+         */
+        loadAllPages: async function() {
+            if (this.elements.pagesLoading) this.elements.pagesLoading.hidden = false;
+            if (this.elements.pagesList) this.elements.pagesList.hidden = true;
+            if (this.elements.pagesEmpty) this.elements.pagesEmpty.hidden = true;
+
+            try {
+                const response = await this.apiRequest('GET', 'pages');
+                this.state.allPages = Array.isArray(response) ? response : [];
+
+                this.renderPagesList();
+
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur chargement pages:', error);
+                this.showNotification('Erreur lors du chargement des pages', 'error');
+            } finally {
+                if (this.elements.pagesLoading) this.elements.pagesLoading.hidden = true;
+            }
+        },
+
+        /**
+         * Afficher la liste des pages
+         */
+        renderPagesList: function() {
+            if (!this.elements.pagesList) return;
+
+            const pages = this.state.allPages || [];
+            const currentUrl = this.config.currentUrl || window.location.href;
+
+            // Afficher/masquer l'état vide
+            if (this.elements.pagesEmpty) {
+                this.elements.pagesEmpty.hidden = pages.length > 0;
+            }
+            this.elements.pagesList.hidden = pages.length === 0;
+
+            if (pages.length === 0) return;
+
+            // Générer le HTML
+            const html = pages.map(page => {
+                const isCurrent = page.url === currentUrl;
+                const title = page.title || this.extractPageTitle(page.url);
+                const shortUrl = this.shortenUrl(page.url);
+
+                return `
+                    <div class="wpvfh-page-item ${isCurrent ? 'current' : ''}" data-url="${this.escapeHtml(page.url)}">
+                        <span class="wpvfh-page-icon">${page.validated ? '✅' : '📄'}</span>
+                        <div class="wpvfh-page-info">
+                            <div class="wpvfh-page-title">${this.escapeHtml(title)}</div>
+                            <div class="wpvfh-page-url">${this.escapeHtml(shortUrl)}</div>
+                        </div>
+                        <span class="wpvfh-page-badge ${page.validated ? 'validated' : 'has-feedbacks'}">
+                            ${page.validated ? '✓' : page.count || 0}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+
+            this.elements.pagesList.innerHTML = html;
+
+            // Ajouter les événements
+            this.elements.pagesList.querySelectorAll('.wpvfh-page-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const url = item.dataset.url;
+                    if (url && url !== currentUrl) {
+                        window.location.href = url;
+                    } else {
+                        // Page courante, aller à la liste
+                        this.switchTab('list');
+                    }
+                });
+            });
+        },
+
+        /**
+         * Extraire un titre de l'URL
+         * @param {string} url - URL
+         * @returns {string} Titre
+         */
+        extractPageTitle: function(url) {
+            try {
+                const urlObj = new URL(url);
+                let path = urlObj.pathname;
+
+                // Retirer les slashes de début/fin
+                path = path.replace(/^\/|\/$/g, '');
+
+                if (!path || path === '') return 'Accueil';
+
+                // Prendre le dernier segment et nettoyer
+                const segments = path.split('/');
+                let title = segments[segments.length - 1];
+
+                // Retirer les extensions
+                title = title.replace(/\.(html?|php|aspx?)$/i, '');
+
+                // Remplacer les tirets/underscores par des espaces
+                title = title.replace(/[-_]/g, ' ');
+
+                // Capitaliser la première lettre
+                return title.charAt(0).toUpperCase() + title.slice(1);
+            } catch (e) {
+                return url;
+            }
+        },
+
+        /**
+         * Raccourcir une URL
+         * @param {string} url - URL complète
+         * @returns {string} URL raccourcie
+         */
+        shortenUrl: function(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.pathname || '/';
+            } catch (e) {
+                return url;
+            }
+        },
+
+        // ===========================================
+        // PIÈCES JOINTES
+        // ===========================================
+
+        /**
+         * Gérer la sélection de fichiers
+         * @param {FileList} files - Fichiers sélectionnés
+         */
+        handleAttachmentSelect: function(files) {
+            const maxFiles = 5;
+            const maxSize = 10 * 1024 * 1024; // 10 Mo
+
+            for (const file of files) {
+                // Vérifier le nombre maximum
+                if (this.state.attachments.length >= maxFiles) {
+                    this.showNotification(`Maximum ${maxFiles} fichiers autorisés`, 'warning');
+                    break;
+                }
+
+                // Vérifier la taille
+                if (file.size > maxSize) {
+                    this.showNotification(`"${file.name}" dépasse la limite de 10 Mo`, 'warning');
+                    continue;
+                }
+
+                // Ajouter à la liste
+                this.state.attachments.push(file);
+            }
+
+            // Mettre à jour l'aperçu
+            this.renderAttachmentsPreview();
+
+            // Réinitialiser l'input
+            if (this.elements.attachmentsInput) {
+                this.elements.attachmentsInput.value = '';
+            }
+        },
+
+        /**
+         * Afficher l'aperçu des pièces jointes
+         */
+        renderAttachmentsPreview: function() {
+            if (!this.elements.attachmentsPreview) return;
+
+            if (this.state.attachments.length === 0) {
+                this.elements.attachmentsPreview.innerHTML = '';
+                return;
+            }
+
+            const html = this.state.attachments.map((file, index) => {
+                const icon = this.getFileIcon(file.type);
+                const size = this.formatFileSize(file.size);
+
+                return `
+                    <div class="wpvfh-attachment-preview-item" data-index="${index}">
+                        <span class="wpvfh-file-icon">${icon}</span>
+                        <span class="wpvfh-file-name">${this.escapeHtml(file.name)}</span>
+                        <span class="wpvfh-file-size">${size}</span>
+                        <button type="button" class="wpvfh-remove-attachment" data-index="${index}">&times;</button>
+                    </div>
+                `;
+            }).join('');
+
+            this.elements.attachmentsPreview.innerHTML = html;
+
+            // Ajouter les événements de suppression
+            this.elements.attachmentsPreview.querySelectorAll('.wpvfh-remove-attachment').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(btn.dataset.index, 10);
+                    this.state.attachments.splice(index, 1);
+                    this.renderAttachmentsPreview();
+                });
+            });
+        },
+
+        /**
+         * Obtenir l'icône d'un fichier selon son type
+         * @param {string} mimeType - Type MIME
+         * @returns {string} Emoji
+         */
+        getFileIcon: function(mimeType) {
+            if (mimeType.startsWith('image/')) return '🖼️';
+            if (mimeType === 'application/pdf') return '📕';
+            if (mimeType.includes('word') || mimeType.includes('document')) return '📝';
+            if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '📊';
+            return '📎';
+        },
+
+        /**
+         * Formater la taille d'un fichier
+         * @param {number} bytes - Taille en bytes
+         * @returns {string} Taille formatée
+         */
+        formatFileSize: function(bytes) {
+            if (bytes < 1024) return bytes + ' o';
+            if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' Ko';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' Mo';
+        },
+
+        // ===========================================
+        // MENTIONS @
+        // ===========================================
+
+        /**
+         * Gérer l'input pour les mentions
+         * @param {Event} e - Événement input
+         */
+        handleMentionInput: function(e) {
+            const textarea = e.target;
+            const text = textarea.value;
+            const cursorPos = textarea.selectionStart;
+
+            // Trouver si on est en train d'écrire une mention
+            const textBeforeCursor = text.substring(0, cursorPos);
+            const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
+
+            if (mentionMatch) {
+                const searchTerm = mentionMatch[1];
+                this.showMentionDropdown(searchTerm, textarea);
+            } else {
+                this.hideMentionDropdown();
+            }
+        },
+
+        /**
+         * Gérer les touches pour les mentions
+         * @param {KeyboardEvent} e - Événement keydown
+         */
+        handleMentionKeydown: function(e) {
+            if (!this.elements.mentionDropdown || this.elements.mentionDropdown.hidden) {
+                return;
+            }
+
+            const items = this.elements.mentionList?.querySelectorAll('.wpvfh-mention-item');
+            const activeItem = this.elements.mentionList?.querySelector('.wpvfh-mention-item.active');
+            let activeIndex = -1;
+
+            if (items) {
+                items.forEach((item, i) => {
+                    if (item === activeItem) activeIndex = i;
+                });
+            }
+
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    if (items && items.length > 0) {
+                        const nextIndex = (activeIndex + 1) % items.length;
+                        items.forEach((item, i) => item.classList.toggle('active', i === nextIndex));
+                    }
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    if (items && items.length > 0) {
+                        const prevIndex = activeIndex <= 0 ? items.length - 1 : activeIndex - 1;
+                        items.forEach((item, i) => item.classList.toggle('active', i === prevIndex));
+                    }
+                    break;
+                case 'Enter':
+                case 'Tab':
+                    if (activeItem) {
+                        e.preventDefault();
+                        this.insertMention(activeItem.dataset.username);
+                    }
+                    break;
+                case 'Escape':
+                    this.hideMentionDropdown();
+                    break;
+            }
+        },
+
+        /**
+         * Afficher le dropdown des mentions
+         * @param {string} searchTerm - Terme de recherche
+         * @param {HTMLElement} textarea - Textarea source
+         */
+        showMentionDropdown: async function(searchTerm, textarea) {
+            // Charger les utilisateurs si pas encore fait
+            if (this.state.mentionUsers.length === 0) {
+                await this.loadMentionUsers();
+            }
+
+            // Filtrer les utilisateurs
+            const filtered = this.state.mentionUsers.filter(user =>
+                user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.username.toLowerCase().includes(searchTerm.toLowerCase())
+            ).slice(0, 6);
+
+            if (filtered.length === 0) {
+                this.hideMentionDropdown();
+                return;
+            }
+
+            // Générer le HTML
+            const html = filtered.map((user, i) => `
+                <div class="wpvfh-mention-item ${i === 0 ? 'active' : ''}" data-username="${this.escapeHtml(user.username)}">
+                    <div class="wpvfh-mention-avatar">${user.name.charAt(0).toUpperCase()}</div>
+                    <div class="wpvfh-mention-info">
+                        <div class="wpvfh-mention-name">${this.escapeHtml(user.name)}</div>
+                        <div class="wpvfh-mention-email">@${this.escapeHtml(user.username)}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            if (this.elements.mentionList) {
+                this.elements.mentionList.innerHTML = html;
+            }
+
+            // Positionner le dropdown
+            if (this.elements.mentionDropdown) {
+                const rect = textarea.getBoundingClientRect();
+                this.elements.mentionDropdown.style.top = (rect.bottom + window.scrollY) + 'px';
+                this.elements.mentionDropdown.style.left = rect.left + 'px';
+                this.elements.mentionDropdown.hidden = false;
+            }
+
+            // Ajouter les événements de clic
+            this.elements.mentionList?.querySelectorAll('.wpvfh-mention-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    this.insertMention(item.dataset.username);
+                });
+            });
+        },
+
+        /**
+         * Masquer le dropdown des mentions
+         */
+        hideMentionDropdown: function() {
+            if (this.elements.mentionDropdown) {
+                this.elements.mentionDropdown.hidden = true;
+            }
+        },
+
+        /**
+         * Insérer une mention dans le textarea
+         * @param {string} username - Nom d'utilisateur
+         */
+        insertMention: function(username) {
+            const textarea = this.elements.commentField;
+            if (!textarea) return;
+
+            const text = textarea.value;
+            const cursorPos = textarea.selectionStart;
+
+            // Trouver le début de la mention
+            const textBeforeCursor = text.substring(0, cursorPos);
+            const mentionStart = textBeforeCursor.lastIndexOf('@');
+
+            if (mentionStart >= 0) {
+                // Remplacer @xxx par @username
+                const newText = text.substring(0, mentionStart) + '@' + username + ' ' + text.substring(cursorPos);
+                textarea.value = newText;
+
+                // Positionner le curseur après la mention
+                const newCursorPos = mentionStart + username.length + 2;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+                textarea.focus();
+            }
+
+            this.hideMentionDropdown();
+        },
+
+        /**
+         * Charger la liste des utilisateurs pour les mentions
+         */
+        loadMentionUsers: async function() {
+            try {
+                const response = await this.apiRequest('GET', 'users');
+                this.state.mentionUsers = Array.isArray(response) ? response : [];
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur chargement utilisateurs:', error);
+                this.state.mentionUsers = [];
+            }
         },
     };
 

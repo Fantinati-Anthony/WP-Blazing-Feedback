@@ -567,6 +567,10 @@ final class WP_Visual_Feedback_Hub {
                         <?php esc_html_e( 'Liste', 'blazing-feedback' ); ?>
                         <span class="wpvfh-tab-count" id="wpvfh-pins-count"></span>
                     </button>
+                    <button type="button" class="wpvfh-tab" data-tab="pages">
+                        <span class="wpvfh-tab-icon" aria-hidden="true">📄</span>
+                        <?php esc_html_e( 'Pages', 'blazing-feedback' ); ?>
+                    </button>
                     <button type="button" class="wpvfh-tab" data-tab="details" id="wpvfh-tab-details-btn" hidden>
                         <span class="wpvfh-tab-icon" aria-hidden="true">👁️</span>
                         <?php esc_html_e( 'Détails', 'blazing-feedback' ); ?>
@@ -665,6 +669,30 @@ final class WP_Visual_Feedback_Hub {
                             <button type="button" class="wpvfh-remove-media">&times;</button>
                         </div>
 
+                        <!-- Section pièces jointes -->
+                        <div class="wpvfh-attachments-section">
+                            <label class="wpvfh-attachments-label">
+                                <span class="wpvfh-label-icon">📎</span>
+                                <?php esc_html_e( 'Pièces jointes', 'blazing-feedback' ); ?>
+                                <span class="wpvfh-optional-badge"><?php esc_html_e( 'optionnel', 'blazing-feedback' ); ?></span>
+                            </label>
+                            <div class="wpvfh-attachments-input">
+                                <input type="file" id="wpvfh-attachments" name="attachments" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" hidden>
+                                <button type="button" id="wpvfh-add-attachment-btn" class="wpvfh-add-attachment-btn">
+                                    <span>➕</span>
+                                    <?php esc_html_e( 'Ajouter des fichiers', 'blazing-feedback' ); ?>
+                                </button>
+                            </div>
+                            <div id="wpvfh-attachments-preview" class="wpvfh-attachments-preview"></div>
+                            <p class="wpvfh-attachments-hint"><?php esc_html_e( 'Images, PDF, documents (max 5 fichiers, 10 Mo chacun)', 'blazing-feedback' ); ?></p>
+                        </div>
+
+                        <!-- Aide pour les mentions -->
+                        <p class="wpvfh-mention-hint">
+                            <span class="wpvfh-hint-icon">💡</span>
+                            <?php esc_html_e( 'Utilisez @ pour mentionner quelqu\'un', 'blazing-feedback' ); ?>
+                        </p>
+
                         <!-- Info pin -->
                         <div class="wpvfh-form-group wpvfh-pin-info" hidden>
                             <p class="wpvfh-help-text">
@@ -697,6 +725,30 @@ final class WP_Visual_Feedback_Hub {
 
                     <!-- Onglet: Liste des feedbacks -->
                     <div id="wpvfh-tab-list" class="wpvfh-tab-content">
+                        <!-- Filtres par état -->
+                        <div class="wpvfh-filters" id="wpvfh-filters">
+                            <button type="button" class="wpvfh-filter-btn active" data-status="all">
+                                <?php esc_html_e( 'Tous', 'blazing-feedback' ); ?>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-all-count">0</span>
+                            </button>
+                            <button type="button" class="wpvfh-filter-btn" data-status="new">
+                                <?php esc_html_e( 'Nouveau', 'blazing-feedback' ); ?>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-new-count">0</span>
+                            </button>
+                            <button type="button" class="wpvfh-filter-btn" data-status="in_progress">
+                                <?php esc_html_e( 'En cours', 'blazing-feedback' ); ?>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-progress-count">0</span>
+                            </button>
+                            <button type="button" class="wpvfh-filter-btn" data-status="resolved">
+                                <?php esc_html_e( 'Résolu', 'blazing-feedback' ); ?>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-resolved-count">0</span>
+                            </button>
+                            <button type="button" class="wpvfh-filter-btn" data-status="rejected">
+                                <?php esc_html_e( 'Rejeté', 'blazing-feedback' ); ?>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-rejected-count">0</span>
+                            </button>
+                        </div>
+
                         <div id="wpvfh-pins-list" class="wpvfh-pins-list">
                             <!-- Les pins seront chargés dynamiquement -->
                         </div>
@@ -708,7 +760,62 @@ final class WP_Visual_Feedback_Hub {
                                 <?php esc_html_e( 'Ajouter un feedback', 'blazing-feedback' ); ?>
                             </button>
                         </div>
+                        <!-- Section validation de page -->
+                        <div id="wpvfh-page-validation" class="wpvfh-page-validation" hidden>
+                            <div class="wpvfh-validation-status" id="wpvfh-validation-status">
+                                <span class="wpvfh-validation-icon">⏳</span>
+                                <span class="wpvfh-validation-text"><?php esc_html_e( 'Points en attente de résolution', 'blazing-feedback' ); ?></span>
+                            </div>
+                            <button type="button" id="wpvfh-validate-page-btn" class="wpvfh-btn wpvfh-btn-validate" disabled>
+                                <span class="wpvfh-btn-emoji">✅</span>
+                                <?php esc_html_e( 'Valider cette page', 'blazing-feedback' ); ?>
+                            </button>
+                            <p class="wpvfh-validation-hint" id="wpvfh-validation-hint">
+                                <?php esc_html_e( 'Tous les points doivent être résolus ou rejetés avant validation.', 'blazing-feedback' ); ?>
+                            </p>
+                        </div>
+
+                        <!-- Légende des couleurs -->
+                        <div class="wpvfh-legend">
+                            <span class="wpvfh-legend-title"><?php esc_html_e( 'Légende:', 'blazing-feedback' ); ?></span>
+                            <div class="wpvfh-legend-items">
+                                <span class="wpvfh-legend-item wpvfh-legend-new">
+                                    <span class="wpvfh-legend-dot"></span>
+                                    <?php esc_html_e( 'Nouveau', 'blazing-feedback' ); ?>
+                                </span>
+                                <span class="wpvfh-legend-item wpvfh-legend-progress">
+                                    <span class="wpvfh-legend-dot"></span>
+                                    <?php esc_html_e( 'En cours', 'blazing-feedback' ); ?>
+                                </span>
+                                <span class="wpvfh-legend-item wpvfh-legend-resolved">
+                                    <span class="wpvfh-legend-dot"></span>
+                                    <?php esc_html_e( 'Résolu', 'blazing-feedback' ); ?>
+                                </span>
+                                <span class="wpvfh-legend-item wpvfh-legend-rejected">
+                                    <span class="wpvfh-legend-dot"></span>
+                                    <?php esc_html_e( 'Rejeté', 'blazing-feedback' ); ?>
+                                </span>
+                            </div>
+                        </div>
                     </div><!-- /wpvfh-tab-list -->
+
+                    <!-- Onglet: Pages -->
+                    <div id="wpvfh-tab-pages" class="wpvfh-tab-content">
+                        <div class="wpvfh-pages-header">
+                            <h4><?php esc_html_e( 'Toutes les pages avec feedbacks', 'blazing-feedback' ); ?></h4>
+                        </div>
+                        <div id="wpvfh-pages-list" class="wpvfh-pages-list">
+                            <!-- Les pages seront chargées dynamiquement -->
+                        </div>
+                        <div id="wpvfh-pages-empty" class="wpvfh-empty-state" hidden>
+                            <div class="wpvfh-empty-icon" aria-hidden="true">📄</div>
+                            <p class="wpvfh-empty-text"><?php esc_html_e( 'Aucune page avec des feedbacks', 'blazing-feedback' ); ?></p>
+                        </div>
+                        <div id="wpvfh-pages-loading" class="wpvfh-loading-state">
+                            <span class="wpvfh-spinner"></span>
+                            <span><?php esc_html_e( 'Chargement des pages...', 'blazing-feedback' ); ?></span>
+                        </div>
+                    </div><!-- /wpvfh-tab-pages -->
 
                     <!-- Onglet: Détails d'un feedback -->
                     <div id="wpvfh-tab-details" class="wpvfh-tab-content">
@@ -733,6 +840,12 @@ final class WP_Visual_Feedback_Hub {
                             <!-- Commentaire -->
                             <div class="wpvfh-detail-comment" id="wpvfh-detail-comment"></div>
 
+                            <!-- Pièces jointes -->
+                            <div class="wpvfh-detail-attachments" id="wpvfh-detail-attachments" hidden>
+                                <h4><?php esc_html_e( 'Pièces jointes', 'blazing-feedback' ); ?></h4>
+                                <div class="wpvfh-attachments-list" id="wpvfh-attachments-list"></div>
+                            </div>
+
                             <!-- Screenshot -->
                             <div class="wpvfh-detail-screenshot" id="wpvfh-detail-screenshot" hidden>
                                 <img src="" alt="<?php esc_attr_e( 'Screenshot', 'blazing-feedback' ); ?>">
@@ -742,6 +855,22 @@ final class WP_Visual_Feedback_Hub {
                             <div class="wpvfh-detail-replies" id="wpvfh-detail-replies" hidden>
                                 <h4><?php esc_html_e( 'Réponses', 'blazing-feedback' ); ?></h4>
                                 <div class="wpvfh-replies-list" id="wpvfh-replies-list"></div>
+                            </div>
+
+                            <!-- Inviter des utilisateurs -->
+                            <div class="wpvfh-invite-section" id="wpvfh-invite-section">
+                                <h4><?php esc_html_e( 'Participants', 'blazing-feedback' ); ?></h4>
+                                <div class="wpvfh-participants-list" id="wpvfh-participants-list">
+                                    <!-- Liste des participants -->
+                                </div>
+                                <div class="wpvfh-invite-input-wrapper">
+                                    <input type="text" id="wpvfh-invite-input" class="wpvfh-invite-input" placeholder="<?php esc_attr_e( 'Rechercher un utilisateur...', 'blazing-feedback' ); ?>">
+                                    <button type="button" id="wpvfh-invite-btn" class="wpvfh-btn wpvfh-btn-small">
+                                        <span>➕</span>
+                                        <?php esc_html_e( 'Inviter', 'blazing-feedback' ); ?>
+                                    </button>
+                                </div>
+                                <div id="wpvfh-user-suggestions" class="wpvfh-user-suggestions" hidden></div>
                             </div>
 
                             <!-- Actions modérateur -->
@@ -764,6 +893,15 @@ final class WP_Visual_Feedback_Hub {
                                         <?php esc_html_e( 'Envoyer', 'blazing-feedback' ); ?>
                                     </button>
                                 </div>
+
+                                <!-- Bouton supprimer (visible pour créateur/admin) -->
+                                <div class="wpvfh-delete-section" id="wpvfh-delete-section" hidden>
+                                    <hr class="wpvfh-separator">
+                                    <button type="button" class="wpvfh-btn wpvfh-btn-danger" id="wpvfh-delete-feedback-btn">
+                                        <span class="wpvfh-btn-emoji">🗑️</span>
+                                        <?php esc_html_e( 'Supprimer ce feedback', 'blazing-feedback' ); ?>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div><!-- /wpvfh-tab-details -->
@@ -784,6 +922,48 @@ final class WP_Visual_Feedback_Hub {
 
             <!-- Messages de notification -->
             <div id="wpvfh-notifications" class="wpvfh-notifications" aria-live="assertive"></div>
+
+            <!-- Dropdown suggestions mentions @ -->
+            <div id="wpvfh-mention-dropdown" class="wpvfh-mention-dropdown" hidden>
+                <div class="wpvfh-mention-list" id="wpvfh-mention-list">
+                    <!-- Utilisateurs suggérés chargés dynamiquement -->
+                </div>
+            </div>
+
+            <!-- Modal confirmation suppression -->
+            <div id="wpvfh-confirm-modal" class="wpvfh-modal" hidden>
+                <div class="wpvfh-modal-overlay"></div>
+                <div class="wpvfh-modal-content">
+                    <h3 class="wpvfh-modal-title"><?php esc_html_e( 'Confirmer la suppression', 'blazing-feedback' ); ?></h3>
+                    <p class="wpvfh-modal-text"><?php esc_html_e( 'Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible.', 'blazing-feedback' ); ?></p>
+                    <div class="wpvfh-modal-actions">
+                        <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-cancel-delete">
+                            <?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
+                        </button>
+                        <button type="button" class="wpvfh-btn wpvfh-btn-danger" id="wpvfh-confirm-delete">
+                            <?php esc_html_e( 'Supprimer', 'blazing-feedback' ); ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal validation page -->
+            <div id="wpvfh-validate-modal" class="wpvfh-modal" hidden>
+                <div class="wpvfh-modal-overlay"></div>
+                <div class="wpvfh-modal-content">
+                    <div class="wpvfh-modal-icon">✅</div>
+                    <h3 class="wpvfh-modal-title"><?php esc_html_e( 'Valider cette page', 'blazing-feedback' ); ?></h3>
+                    <p class="wpvfh-modal-text"><?php esc_html_e( 'En validant cette page, vous confirmez que tous les feedbacks ont été traités. Cette page sera marquée comme terminée.', 'blazing-feedback' ); ?></p>
+                    <div class="wpvfh-modal-actions">
+                        <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-cancel-validate">
+                            <?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
+                        </button>
+                        <button type="button" class="wpvfh-btn wpvfh-btn-success" id="wpvfh-confirm-validate">
+                            <?php esc_html_e( 'Valider', 'blazing-feedback' ); ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
         <?php
     }
