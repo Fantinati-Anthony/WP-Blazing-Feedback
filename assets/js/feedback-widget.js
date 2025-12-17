@@ -1089,15 +1089,31 @@
 
             // Ajouter les événements aux items
             this.elements.pinsList.querySelectorAll('.wpvfh-pin-item').forEach(item => {
-                // Clic pour aller au pin
+                // Clic pour voir les détails du feedback
                 item.addEventListener('click', (e) => {
-                    // Ne pas scroller si on drag ou si on clique sur une action
+                    // Ne pas réagir si on drag ou si on clique sur une action
                     if (e.target.closest('.wpvfh-drag-handle') || e.target.closest('.wpvfh-pin-action')) {
                         return;
                     }
                     const feedbackId = parseInt(item.dataset.feedbackId, 10);
-                    this.scrollToPin(feedbackId);
+
+                    // Trouver le feedback dans la liste
+                    const feedback = this.state.currentFeedbacks.find(f => f.id === feedbackId);
+                    if (feedback) {
+                        // Afficher les détails du feedback
+                        this.showFeedbackDetails(feedback);
+                    }
                 });
+
+                // Clic sur le bouton "aller au pin" (📍)
+                const gotoBtn = item.querySelector('.wpvfh-pin-goto');
+                if (gotoBtn) {
+                    gotoBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const feedbackId = parseInt(item.dataset.feedbackId, 10);
+                        this.scrollToPin(feedbackId);
+                    });
+                }
 
                 // Clic sur le bouton supprimer
                 const deleteBtn = item.querySelector('.wpvfh-pin-delete');
