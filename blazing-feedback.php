@@ -321,6 +321,12 @@ final class WP_Visual_Feedback_Hub {
             WPVFH_VERSION
         );
 
+        // Couleurs personnalisées
+        $custom_colors_css = WPVFH_Admin_UI::get_custom_colors_css();
+        if ( ! empty( $custom_colors_css ) ) {
+            wp_add_inline_style( 'wpvfh-feedback', $custom_colors_css );
+        }
+
         // Passer les données au JavaScript
         wp_localize_script( 'wpvfh-widget', 'wpvfhData', $this->get_frontend_data() );
 
@@ -358,6 +364,12 @@ final class WP_Visual_Feedback_Hub {
             array(),
             WPVFH_VERSION
         );
+
+        // Couleurs personnalisées
+        $custom_colors_css = WPVFH_Admin_UI::get_custom_colors_css();
+        if ( ! empty( $custom_colors_css ) ) {
+            wp_add_inline_style( 'wpvfh-admin', $custom_colors_css );
+        }
 
         wp_enqueue_script(
             'wpvfh-admin',

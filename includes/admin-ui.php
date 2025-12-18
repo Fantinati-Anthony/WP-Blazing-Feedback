@@ -335,6 +335,86 @@ class WPVFH_Admin_UI {
             'wpvfh_settings',
             'wpvfh_notification_section'
         );
+
+        // Section Couleurs du thème
+        add_settings_section(
+            'wpvfh_colors_section',
+            __( 'Couleurs du thème', 'blazing-feedback' ),
+            array( __CLASS__, 'render_colors_section' ),
+            'wpvfh_settings'
+        );
+
+        // Couleurs du thème
+        $theme_colors = array(
+            'wpvfh_color_primary'       => array(
+                'label'   => __( 'Couleur principale', 'blazing-feedback' ),
+                'default' => '#e74c3c',
+            ),
+            'wpvfh_color_primary_hover' => array(
+                'label'   => __( 'Couleur principale (survol)', 'blazing-feedback' ),
+                'default' => '#c0392b',
+            ),
+            'wpvfh_color_secondary'     => array(
+                'label'   => __( 'Couleur secondaire', 'blazing-feedback' ),
+                'default' => '#3498db',
+            ),
+            'wpvfh_color_success'       => array(
+                'label'   => __( 'Couleur succès', 'blazing-feedback' ),
+                'default' => '#27ae60',
+            ),
+            'wpvfh_color_warning'       => array(
+                'label'   => __( 'Couleur avertissement', 'blazing-feedback' ),
+                'default' => '#f39c12',
+            ),
+            'wpvfh_color_danger'        => array(
+                'label'   => __( 'Couleur danger', 'blazing-feedback' ),
+                'default' => '#e74c3c',
+            ),
+            'wpvfh_color_text'          => array(
+                'label'   => __( 'Couleur du texte', 'blazing-feedback' ),
+                'default' => '#333333',
+            ),
+            'wpvfh_color_text_light'    => array(
+                'label'   => __( 'Couleur du texte secondaire', 'blazing-feedback' ),
+                'default' => '#666666',
+            ),
+            'wpvfh_color_bg'            => array(
+                'label'   => __( 'Couleur de fond', 'blazing-feedback' ),
+                'default' => '#ffffff',
+            ),
+            'wpvfh_color_bg_light'      => array(
+                'label'   => __( 'Couleur de fond secondaire', 'blazing-feedback' ),
+                'default' => '#f5f5f5',
+            ),
+            'wpvfh_color_border'        => array(
+                'label'   => __( 'Couleur des bordures', 'blazing-feedback' ),
+                'default' => '#dddddd',
+            ),
+        );
+
+        foreach ( $theme_colors as $option_name => $config ) {
+            register_setting(
+                'wpvfh_general_settings',
+                $option_name,
+                array(
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_hex_color',
+                    'default'           => $config['default'],
+                )
+            );
+
+            add_settings_field(
+                $option_name,
+                $config['label'],
+                array( __CLASS__, 'render_theme_color_field' ),
+                'wpvfh_settings',
+                'wpvfh_colors_section',
+                array(
+                    'option_name' => $option_name,
+                    'default'     => $config['default'],
+                )
+            );
+        }
     }
 
     /**
@@ -837,6 +917,39 @@ class WPVFH_Admin_UI {
                     </a>
                 <?php endif; ?>
             </div>
+
+            <!-- Script pour les couleurs du thème -->
+            <script>
+            jQuery(document).ready(function($) {
+                // Synchroniser les inputs couleur et texte
+                $('input[type="color"]').on('input change', function() {
+                    var optionName = $(this).attr('name');
+                    var hexInput = $('[data-color-input="' + optionName + '"]');
+                    hexInput.val($(this).val());
+                });
+
+                // Synchroniser le texte vers l'input couleur
+                $('.wpvfh-color-hex-input').on('input change', function() {
+                    var optionName = $(this).data('color-input');
+                    var colorInput = $('#' + optionName);
+                    var value = $(this).val();
+                    // Valider le format hex
+                    if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+                        colorInput.val(value);
+                    }
+                });
+
+                // Réinitialiser la couleur par défaut
+                $('.wpvfh-reset-color').on('click', function() {
+                    var optionName = $(this).data('option');
+                    var defaultValue = $(this).data('default');
+                    var colorInput = $('#' + optionName);
+                    var hexInput = $('[data-color-input="' + optionName + '"]');
+                    colorInput.val(defaultValue);
+                    hexInput.val(defaultValue);
+                });
+            });
+            </script>
         </div>
         <?php
     }
@@ -1351,6 +1464,113 @@ class WPVFH_Admin_UI {
             <?php esc_html_e( 'Adresse email pour recevoir les notifications.', 'blazing-feedback' ); ?>
         </p>
         <?php
+    }
+
+    /**
+     * Rendu de la section couleurs
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public static function render_colors_section() {
+        echo '<p>' . esc_html__( 'Personnalisez les couleurs du widget de feedback.', 'blazing-feedback' ) . '</p>';
+    }
+
+    /**
+     * Champ couleur du thème générique
+     *
+     * @since 1.8.0
+     * @param array $args Arguments du champ
+     * @return void
+     */
+    public static function render_theme_color_field( $args ) {
+        $option_name = $args['option_name'];
+        $default = $args['default'];
+        $value = get_option( $option_name, $default );
+        ?>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <input type="color" name="<?php echo esc_attr( $option_name ); ?>" id="<?php echo esc_attr( $option_name ); ?>" value="<?php echo esc_attr( $value ); ?>">
+            <input type="text" value="<?php echo esc_attr( $value ); ?>" class="wpvfh-color-hex-input" data-color-input="<?php echo esc_attr( $option_name ); ?>" style="width: 80px; font-family: monospace;" maxlength="7">
+            <button type="button" class="button button-small wpvfh-reset-color" data-option="<?php echo esc_attr( $option_name ); ?>" data-default="<?php echo esc_attr( $default ); ?>" title="<?php esc_attr_e( 'Réinitialiser', 'blazing-feedback' ); ?>">
+                <span class="dashicons dashicons-image-rotate" style="vertical-align: middle; margin-top: -2px;"></span>
+            </button>
+        </div>
+        <?php
+    }
+
+    /**
+     * Obtenir les couleurs du thème personnalisées
+     *
+     * @since 1.8.0
+     * @return array
+     */
+    public static function get_theme_colors() {
+        return array(
+            'primary'       => get_option( 'wpvfh_color_primary', '#e74c3c' ),
+            'primary_hover' => get_option( 'wpvfh_color_primary_hover', '#c0392b' ),
+            'secondary'     => get_option( 'wpvfh_color_secondary', '#3498db' ),
+            'success'       => get_option( 'wpvfh_color_success', '#27ae60' ),
+            'warning'       => get_option( 'wpvfh_color_warning', '#f39c12' ),
+            'danger'        => get_option( 'wpvfh_color_danger', '#e74c3c' ),
+            'text'          => get_option( 'wpvfh_color_text', '#333333' ),
+            'text_light'    => get_option( 'wpvfh_color_text_light', '#666666' ),
+            'bg'            => get_option( 'wpvfh_color_bg', '#ffffff' ),
+            'bg_light'      => get_option( 'wpvfh_color_bg_light', '#f5f5f5' ),
+            'border'        => get_option( 'wpvfh_color_border', '#dddddd' ),
+        );
+    }
+
+    /**
+     * Générer le CSS inline pour les couleurs personnalisées
+     *
+     * @since 1.8.0
+     * @return string
+     */
+    public static function get_custom_colors_css() {
+        $colors = self::get_theme_colors();
+
+        // Vérifier si des couleurs ont été personnalisées
+        $defaults = array(
+            'primary'       => '#e74c3c',
+            'primary_hover' => '#c0392b',
+            'secondary'     => '#3498db',
+            'success'       => '#27ae60',
+            'warning'       => '#f39c12',
+            'danger'        => '#e74c3c',
+            'text'          => '#333333',
+            'text_light'    => '#666666',
+            'bg'            => '#ffffff',
+            'bg_light'      => '#f5f5f5',
+            'border'        => '#dddddd',
+        );
+
+        $has_custom = false;
+        foreach ( $colors as $key => $value ) {
+            if ( strtolower( $value ) !== strtolower( $defaults[ $key ] ) ) {
+                $has_custom = true;
+                break;
+            }
+        }
+
+        if ( ! $has_custom ) {
+            return '';
+        }
+
+        $css = ':root {';
+        $css .= '--wpvfh-primary: ' . esc_attr( $colors['primary'] ) . ';';
+        $css .= '--wpvfh-primary-hover: ' . esc_attr( $colors['primary_hover'] ) . ';';
+        $css .= '--wpvfh-secondary: ' . esc_attr( $colors['secondary'] ) . ';';
+        $css .= '--wpvfh-success: ' . esc_attr( $colors['success'] ) . ';';
+        $css .= '--wpvfh-warning: ' . esc_attr( $colors['warning'] ) . ';';
+        $css .= '--wpvfh-danger: ' . esc_attr( $colors['danger'] ) . ';';
+        $css .= '--wpvfh-text: ' . esc_attr( $colors['text'] ) . ';';
+        $css .= '--wpvfh-text-light: ' . esc_attr( $colors['text_light'] ) . ';';
+        $css .= '--wpvfh-bg: ' . esc_attr( $colors['bg'] ) . ';';
+        $css .= '--wpvfh-bg-light: ' . esc_attr( $colors['bg_light'] ) . ';';
+        $css .= '--wpvfh-border: ' . esc_attr( $colors['border'] ) . ';';
+        $css .= '}';
+
+        return $css;
     }
 
     /**
