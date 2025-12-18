@@ -176,6 +176,24 @@ class WPVFH_Admin_UI {
             'wpvfh_general_section'
         );
 
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_panel_position',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_key',
+                'default'           => 'right',
+            )
+        );
+
+        add_settings_field(
+            'wpvfh_panel_position',
+            __( 'Position du volet', 'blazing-feedback' ),
+            array( __CLASS__, 'render_panel_position_field' ),
+            'wpvfh_settings',
+            'wpvfh_general_section'
+        );
+
         add_settings_field(
             'wpvfh_button_color',
             __( 'Couleur du bouton', 'blazing-feedback' ),
@@ -190,6 +208,52 @@ class WPVFH_Admin_UI {
             array( __CLASS__, 'render_pages_field' ),
             'wpvfh_settings',
             'wpvfh_general_section'
+        );
+
+        // Section Icône du bouton
+        add_settings_section(
+            'wpvfh_icon_section',
+            __( 'Icône du bouton', 'blazing-feedback' ),
+            array( __CLASS__, 'render_icon_section' ),
+            'wpvfh_settings'
+        );
+
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_icon_mode',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_key',
+                'default'           => 'emoji',
+            )
+        );
+
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_icon_emoji',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_text_field',
+                'default'           => '💬',
+            )
+        );
+
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_icon_image_url',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'esc_url_raw',
+                'default'           => '',
+            )
+        );
+
+        add_settings_field(
+            'wpvfh_icon_mode',
+            __( 'Type d\'icône', 'blazing-feedback' ),
+            array( __CLASS__, 'render_icon_mode_field' ),
+            'wpvfh_settings',
+            'wpvfh_icon_section'
         );
 
         // Section Logo
@@ -808,6 +872,123 @@ class WPVFH_Admin_UI {
     }
 
     /**
+     * Rendu de la section icône du bouton
+     *
+     * @since 1.7.0
+     * @return void
+     */
+    public static function render_icon_section() {
+        echo '<p>' . esc_html__( 'Personnalisez l\'icône affichée sur le bouton flottant de feedback.', 'blazing-feedback' ) . '</p>';
+    }
+
+    /**
+     * Champ Mode de l'icône
+     *
+     * @since 1.7.0
+     * @return void
+     */
+    public static function render_icon_mode_field() {
+        $mode = get_option( 'wpvfh_icon_mode', 'emoji' );
+        $emoji = get_option( 'wpvfh_icon_emoji', '💬' );
+        $image_url = get_option( 'wpvfh_icon_image_url', '' );
+        ?>
+        <fieldset>
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                <input type="radio" name="wpvfh_icon_mode" value="emoji" <?php checked( $mode, 'emoji' ); ?>>
+                <?php esc_html_e( 'Emoji personnalisé', 'blazing-feedback' ); ?>
+            </label>
+
+            <div id="wpvfh-emoji-wrapper" style="margin-left: 24px; margin-bottom: 20px; <?php echo $mode !== 'emoji' ? 'display: none;' : ''; ?>">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="text" name="wpvfh_icon_emoji" id="wpvfh_icon_emoji"
+                           value="<?php echo esc_attr( $emoji ); ?>"
+                           style="width: 60px; text-align: center; font-size: 24px;"
+                           maxlength="4"
+                           placeholder="💬">
+                    <span class="description"><?php esc_html_e( 'Entrez un emoji', 'blazing-feedback' ); ?></span>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span class="description"><?php esc_html_e( 'Suggestions :', 'blazing-feedback' ); ?></span>
+                    <div style="display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap;">
+                        <?php
+                        $suggestions = array( '💬', '💭', '✨', '📝', '🔔', '💡', '❓', '🎯', '📌', '🗣️', '👋', '🚀' );
+                        foreach ( $suggestions as $suggestion ) :
+                        ?>
+                        <button type="button" class="button wpvfh-emoji-suggestion" data-emoji="<?php echo esc_attr( $suggestion ); ?>" style="font-size: 18px; padding: 2px 8px;">
+                            <?php echo esc_html( $suggestion ); ?>
+                        </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                <input type="radio" name="wpvfh_icon_mode" value="image" <?php checked( $mode, 'image' ); ?>>
+                <?php esc_html_e( 'Image personnalisée', 'blazing-feedback' ); ?>
+            </label>
+
+            <div id="wpvfh-image-wrapper" style="margin-left: 24px; <?php echo $mode !== 'image' ? 'display: none;' : ''; ?>">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" name="wpvfh_icon_image_url" id="wpvfh_icon_image_url"
+                           value="<?php echo esc_attr( $image_url ); ?>"
+                           class="regular-text"
+                           placeholder="<?php esc_attr_e( 'URL de l\'image ou sélectionner depuis la bibliothèque', 'blazing-feedback' ); ?>">
+                    <button type="button" class="button" id="wpvfh-select-icon-btn">
+                        <?php esc_html_e( 'Bibliothèque', 'blazing-feedback' ); ?>
+                    </button>
+                </div>
+                <?php if ( $image_url ) : ?>
+                <div style="margin-top: 10px;">
+                    <img src="<?php echo esc_url( $image_url ); ?>" alt="Preview" style="max-height: 40px; background: #f0f0f0; padding: 5px; border-radius: 4px;">
+                </div>
+                <?php endif; ?>
+                <p class="description" style="margin-top: 8px;">
+                    <?php esc_html_e( 'Recommandé : image carrée, 64x64px minimum, fond transparent (PNG ou SVG).', 'blazing-feedback' ); ?>
+                </p>
+            </div>
+        </fieldset>
+
+        <script>
+        jQuery(document).ready(function($) {
+            // Toggle icon input sections
+            $('input[name="wpvfh_icon_mode"]').on('change', function() {
+                const mode = $(this).val();
+                if (mode === 'emoji') {
+                    $('#wpvfh-emoji-wrapper').slideDown();
+                    $('#wpvfh-image-wrapper').slideUp();
+                } else {
+                    $('#wpvfh-emoji-wrapper').slideUp();
+                    $('#wpvfh-image-wrapper').slideDown();
+                }
+            });
+
+            // Emoji suggestions
+            $('.wpvfh-emoji-suggestion').on('click', function() {
+                const emoji = $(this).data('emoji');
+                $('#wpvfh_icon_emoji').val(emoji);
+            });
+
+            // Media library for icon
+            $('#wpvfh-select-icon-btn').on('click', function(e) {
+                e.preventDefault();
+                var frame = wp.media({
+                    title: '<?php echo esc_js( __( 'Sélectionner une icône', 'blazing-feedback' ) ); ?>',
+                    button: { text: '<?php echo esc_js( __( 'Utiliser cette image', 'blazing-feedback' ) ); ?>' },
+                    multiple: false,
+                    library: { type: 'image' }
+                });
+                frame.on('select', function() {
+                    var attachment = frame.state().get('selection').first().toJSON();
+                    $('#wpvfh_icon_image_url').val(attachment.url);
+                });
+                frame.open();
+            });
+        });
+        </script>
+        <?php
+    }
+
+    /**
      * Champ Mode du logo
      *
      * @since 1.0.0
@@ -1068,6 +1249,43 @@ class WPVFH_Admin_UI {
                 });
             });
         </script>
+        <?php
+    }
+
+    /**
+     * Champ Position du volet
+     *
+     * @since 1.7.0
+     * @return void
+     */
+    public static function render_panel_position_field() {
+        $value = get_option( 'wpvfh_panel_position', 'right' );
+        ?>
+        <fieldset>
+            <label style="display: inline-flex; align-items: center; gap: 5px; margin-right: 20px;">
+                <input type="radio" name="wpvfh_panel_position" value="left" <?php checked( $value, 'left' ); ?>>
+                <span style="display: inline-flex; align-items: center; gap: 5px;">
+                    <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.7;">
+                        <rect x="0.5" y="0.5" width="19" height="15" rx="1.5" stroke="currentColor"/>
+                        <rect x="1" y="1" width="6" height="14" fill="currentColor" opacity="0.3"/>
+                    </svg>
+                    <?php esc_html_e( 'Gauche', 'blazing-feedback' ); ?>
+                </span>
+            </label>
+            <label style="display: inline-flex; align-items: center; gap: 5px;">
+                <input type="radio" name="wpvfh_panel_position" value="right" <?php checked( $value, 'right' ); ?>>
+                <span style="display: inline-flex; align-items: center; gap: 5px;">
+                    <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.7;">
+                        <rect x="0.5" y="0.5" width="19" height="15" rx="1.5" stroke="currentColor"/>
+                        <rect x="13" y="1" width="6" height="14" fill="currentColor" opacity="0.3"/>
+                    </svg>
+                    <?php esc_html_e( 'Droite', 'blazing-feedback' ); ?>
+                </span>
+            </label>
+        </fieldset>
+        <p class="description">
+            <?php esc_html_e( 'Position du volet latéral de feedback.', 'blazing-feedback' ); ?>
+        </p>
         <?php
     }
 

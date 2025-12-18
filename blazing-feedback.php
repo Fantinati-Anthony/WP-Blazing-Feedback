@@ -3,7 +3,7 @@
  * Plugin Name: Blazing Feedback
  * Plugin URI: https://github.com/Fantinati-Anthony/WP-Blazing-Feedback
  * Description: Plugin de feedback visuel autonome pour WordPress. Annotations, captures d'écran, gestion de statuts. Alternative open-source à ProjectHuddle, Feedbucket et Marker.io.
- * Version: 1.6.0
+ * Version: 1.7.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Blazing Feedback Team
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Constantes du plugin
  */
-define( 'WPVFH_VERSION', '1.6.0' );
+define( 'WPVFH_VERSION', '1.7.0' );
 define( 'WPVFH_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPVFH_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPVFH_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -606,12 +606,18 @@ final class WP_Visual_Feedback_Hub {
      */
     private function render_default_widget() {
         $button_position = get_option( 'wpvfh_button_position', 'bottom-right' );
+        $panel_position = get_option( 'wpvfh_panel_position', 'right' );
         ?>
-        <div id="wpvfh-container" class="wpvfh-container" data-position="<?php echo esc_attr( $button_position ); ?>" role="complementary" aria-label="<?php esc_attr_e( 'Feedback visuel', 'blazing-feedback' ); ?>">
+        <div id="wpvfh-container" class="wpvfh-container" data-position="<?php echo esc_attr( $button_position ); ?>" data-panel-position="<?php echo esc_attr( $panel_position ); ?>" role="complementary" aria-label="<?php esc_attr_e( 'Feedback visuel', 'blazing-feedback' ); ?>">
             <!-- Overlay pour la sidebar -->
             <div id="wpvfh-sidebar-overlay" class="wpvfh-sidebar-overlay"></div>
 
             <!-- Bouton principal Feedback - Quart de cercle dans le coin -->
+            <?php
+            $icon_mode = get_option( 'wpvfh_icon_mode', 'emoji' );
+            $icon_emoji = get_option( 'wpvfh_icon_emoji', '💬' );
+            $icon_image_url = get_option( 'wpvfh_icon_image_url', '' );
+            ?>
             <button
                 type="button"
                 id="wpvfh-toggle-btn"
@@ -621,8 +627,16 @@ final class WP_Visual_Feedback_Hub {
                 aria-controls="wpvfh-panel"
                 title="<?php esc_attr_e( 'Voir les feedbacks', 'blazing-feedback' ); ?>"
             >
-                <span class="wpvfh-corner-icon" aria-hidden="true">💬</span>
-                <span class="wpvfh-corner-count" id="wpvfh-feedback-count" hidden></span>
+                <span class="wpvfh-corner-icon-wrapper">
+                    <span class="wpvfh-corner-icon" aria-hidden="true">
+                        <?php if ( $icon_mode === 'image' && ! empty( $icon_image_url ) ) : ?>
+                            <img src="<?php echo esc_url( $icon_image_url ); ?>" alt="">
+                        <?php else : ?>
+                            <?php echo esc_html( $icon_emoji ); ?>
+                        <?php endif; ?>
+                    </span>
+                    <span class="wpvfh-corner-count" id="wpvfh-feedback-count" hidden></span>
+                </span>
             </button>
 
             <!-- Sidebar de feedback -->

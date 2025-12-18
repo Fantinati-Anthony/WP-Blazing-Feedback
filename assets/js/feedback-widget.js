@@ -1042,6 +1042,12 @@
             // Ajouter la classe au body pour pousser le contenu
             document.body.classList.add('wpvfh-panel-active');
 
+            // Ajouter la classe de position du panel (gauche/droite)
+            const panelPosition = this.elements.container?.dataset?.panelPosition || 'right';
+            if (panelPosition === 'left') {
+                document.body.classList.add('wpvfh-panel-left');
+            }
+
             if (this.elements.panel) {
                 // Retirer l'attribut hidden
                 this.elements.panel.removeAttribute('hidden');
@@ -1094,8 +1100,9 @@
             this.state.isOpen = false;
             this.state.feedbackMode = 'view';
 
-            // Retirer la classe du body
+            // Retirer les classes du body
             document.body.classList.remove('wpvfh-panel-active');
+            document.body.classList.remove('wpvfh-panel-left');
 
             if (this.elements.panel) {
                 this.elements.panel.classList.remove('wpvfh-panel-open');
