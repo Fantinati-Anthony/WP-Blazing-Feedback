@@ -2672,11 +2672,22 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     min-width: 18px !important;
     height: 18px !important;
     padding: 0 5px !important;
-    background: #ffffff !important;
-    color: #000000 !important;
+    background: currentColor !important;
     border-radius: 9px !important;
     font-size: 9px !important;
     font-weight: 700 !important;
+}
+
+.wpvfh-filter-btn .wpvfh-filter-count span {
+    color: #ffffff !important;
+}
+
+.wpvfh-filter-btn.active .wpvfh-filter-count {
+    background: #ffffff !important;
+}
+
+.wpvfh-filter-btn.active .wpvfh-filter-count span {
+    color: inherit !important;
 }
 
 /* ==========================================================================

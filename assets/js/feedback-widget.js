@@ -2860,7 +2860,7 @@
          */
         updateFeedbackPriority: async function(feedbackId, priority) {
             try {
-                await this.apiRequest('POST', `feedbacks/${feedbackId}`, {
+                await this.apiRequest('POST', `feedbacks/${feedbackId}/priority`, {
                     priority: priority
                 });
 

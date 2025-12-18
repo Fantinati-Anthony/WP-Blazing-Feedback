@@ -139,6 +139,28 @@ class WPVFH_REST_API {
             ),
         ) );
 
+        // PUT /feedbacks/{id}/priority - Changer la priorité
+        register_rest_route( self::NAMESPACE, '/feedbacks/(?P<id>\d+)/priority', array(
+            array(
+                'methods'             => WP_REST_Server::EDITABLE,
+                'callback'            => array( __CLASS__, 'update_priority' ),
+                'permission_callback' => array( __CLASS__, 'can_change_status' ), // Same permission as status
+                'args'                => array(
+                    'id'       => array(
+                        'required'          => true,
+                        'type'              => 'integer',
+                        'sanitize_callback' => function( $value ) { return absint( $value ); },
+                    ),
+                    'priority' => array(
+                        'required'          => true,
+                        'type'              => 'string',
+                        'enum'              => array( 'none', 'low', 'medium', 'high' ),
+                        'sanitize_callback' => 'sanitize_key',
+                    ),
+                ),
+            ),
+        ) );
+
         // POST /feedbacks/{id}/screenshot - Upload un screenshot
         register_rest_route( self::NAMESPACE, '/feedbacks/(?P<id>\d+)/screenshot', array(
             array(
@@ -1090,6 +1112,55 @@ class WPVFH_REST_API {
             'status'     => $status,
             'old_status' => $old_status,
             'label'      => $statuses[ $status ]['label'] ?? $status,
+        ) );
+    }
+
+    /**
+     * Mettre à jour la priorité d'un feedback
+     *
+     * @since 1.0.0
+     * @param WP_REST_Request $request Requête REST
+     * @return WP_REST_Response|WP_Error
+     */
+    public static function update_priority( $request ) {
+        $feedback_id = $request->get_param( 'id' );
+        $priority = $request->get_param( 'priority' );
+
+        $post = get_post( $feedback_id );
+        if ( ! $post || WPVFH_CPT_Feedback::POST_TYPE !== $post->post_type ) {
+            return new WP_Error(
+                'feedback_not_found',
+                __( 'Feedback non trouvé.', 'blazing-feedback' ),
+                array( 'status' => 404 )
+            );
+        }
+
+        $old_priority = get_post_meta( $feedback_id, '_wpvfh_priority', true );
+
+        update_post_meta( $feedback_id, '_wpvfh_priority', $priority );
+
+        /**
+         * Action après changement de priorité via l'API
+         *
+         * @since 1.0.0
+         * @param int    $feedback_id  ID du feedback
+         * @param string $priority     Nouvelle priorité
+         * @param string $old_priority Ancienne priorité
+         */
+        do_action( 'wpvfh_rest_priority_updated', $feedback_id, $priority, $old_priority );
+
+        $priority_labels = array(
+            'none'   => __( 'Aucune', 'blazing-feedback' ),
+            'low'    => __( 'Basse', 'blazing-feedback' ),
+            'medium' => __( 'Moyenne', 'blazing-feedback' ),
+            'high'   => __( 'Haute', 'blazing-feedback' ),
+        );
+
+        return new WP_REST_Response( array(
+            'id'           => $feedback_id,
+            'priority'     => $priority,
+            'old_priority' => $old_priority,
+            'label'        => $priority_labels[ $priority ] ?? $priority,
         ) );
     }
 
