@@ -92,7 +92,9 @@ class WPVFH_Admin_UI {
      * @return void
      */
     public static function register_settings() {
-        // Groupe de paramètres généraux
+        // ========================================
+        // Onglet Général
+        // ========================================
         register_setting(
             'wpvfh_general_settings',
             'wpvfh_screenshot_enabled',
@@ -125,11 +127,11 @@ class WPVFH_Admin_UI {
 
         register_setting(
             'wpvfh_general_settings',
-            'wpvfh_button_color',
+            'wpvfh_panel_position',
             array(
                 'type'              => 'string',
-                'sanitize_callback' => 'sanitize_hex_color',
-                'default'           => '#e74c3c',
+                'sanitize_callback' => 'sanitize_key',
+                'default'           => 'right',
             )
         );
 
@@ -143,79 +145,17 @@ class WPVFH_Admin_UI {
             )
         );
 
-        // Section générale
-        add_settings_section(
-            'wpvfh_general_section',
-            __( 'Paramètres généraux', 'blazing-feedback' ),
-            array( __CLASS__, 'render_general_section' ),
-            'wpvfh_settings'
-        );
-
-        // Champs de paramètres
-        add_settings_field(
-            'wpvfh_screenshot_enabled',
-            __( 'Capture d\'écran', 'blazing-feedback' ),
-            array( __CLASS__, 'render_screenshot_field' ),
-            'wpvfh_settings',
-            'wpvfh_general_section'
-        );
-
-        add_settings_field(
-            'wpvfh_guest_feedback',
-            __( 'Feedback anonyme', 'blazing-feedback' ),
-            array( __CLASS__, 'render_guest_field' ),
-            'wpvfh_settings',
-            'wpvfh_general_section'
-        );
-
-        add_settings_field(
-            'wpvfh_button_position',
-            __( 'Position du bouton', 'blazing-feedback' ),
-            array( __CLASS__, 'render_position_field' ),
-            'wpvfh_settings',
-            'wpvfh_general_section'
-        );
-
+        // ========================================
+        // Onglet Graphisme
+        // ========================================
         register_setting(
             'wpvfh_general_settings',
-            'wpvfh_panel_position',
+            'wpvfh_button_color',
             array(
                 'type'              => 'string',
-                'sanitize_callback' => 'sanitize_key',
-                'default'           => 'right',
+                'sanitize_callback' => 'sanitize_hex_color',
+                'default'           => '#e74c3c',
             )
-        );
-
-        add_settings_field(
-            'wpvfh_panel_position',
-            __( 'Position du volet', 'blazing-feedback' ),
-            array( __CLASS__, 'render_panel_position_field' ),
-            'wpvfh_settings',
-            'wpvfh_general_section'
-        );
-
-        add_settings_field(
-            'wpvfh_button_color',
-            __( 'Couleur du bouton', 'blazing-feedback' ),
-            array( __CLASS__, 'render_color_field' ),
-            'wpvfh_settings',
-            'wpvfh_general_section'
-        );
-
-        add_settings_field(
-            'wpvfh_enabled_pages',
-            __( 'Pages actives', 'blazing-feedback' ),
-            array( __CLASS__, 'render_pages_field' ),
-            'wpvfh_settings',
-            'wpvfh_general_section'
-        );
-
-        // Section Icône du bouton
-        add_settings_section(
-            'wpvfh_icon_section',
-            __( 'Icône du bouton', 'blazing-feedback' ),
-            array( __CLASS__, 'render_icon_section' ),
-            'wpvfh_settings'
         );
 
         register_setting(
@@ -248,22 +188,6 @@ class WPVFH_Admin_UI {
             )
         );
 
-        add_settings_field(
-            'wpvfh_icon_mode',
-            __( 'Type d\'icône', 'blazing-feedback' ),
-            array( __CLASS__, 'render_icon_mode_field' ),
-            'wpvfh_settings',
-            'wpvfh_icon_section'
-        );
-
-        // Section Logo
-        add_settings_section(
-            'wpvfh_logo_section',
-            __( 'Logo du panneau', 'blazing-feedback' ),
-            array( __CLASS__, 'render_logo_section' ),
-            'wpvfh_settings'
-        );
-
         register_setting(
             'wpvfh_general_settings',
             'wpvfh_logo_mode',
@@ -284,22 +208,36 @@ class WPVFH_Admin_UI {
             )
         );
 
-        add_settings_field(
-            'wpvfh_logo_mode',
-            __( 'Mode du logo', 'blazing-feedback' ),
-            array( __CLASS__, 'render_logo_mode_field' ),
-            'wpvfh_settings',
-            'wpvfh_logo_section'
+        // Couleurs du thème
+        $theme_colors = array(
+            'wpvfh_color_primary'       => '#e74c3c',
+            'wpvfh_color_primary_hover' => '#c0392b',
+            'wpvfh_color_secondary'     => '#3498db',
+            'wpvfh_color_success'       => '#27ae60',
+            'wpvfh_color_warning'       => '#f39c12',
+            'wpvfh_color_danger'        => '#e74c3c',
+            'wpvfh_color_text'          => '#333333',
+            'wpvfh_color_text_light'    => '#666666',
+            'wpvfh_color_bg'            => '#ffffff',
+            'wpvfh_color_bg_light'      => '#f5f5f5',
+            'wpvfh_color_border'        => '#dddddd',
         );
 
-        // Section notifications
-        add_settings_section(
-            'wpvfh_notification_section',
-            __( 'Notifications', 'blazing-feedback' ),
-            array( __CLASS__, 'render_notification_section' ),
-            'wpvfh_settings'
-        );
+        foreach ( $theme_colors as $option_name => $default ) {
+            register_setting(
+                'wpvfh_general_settings',
+                $option_name,
+                array(
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_hex_color',
+                    'default'           => $default,
+                )
+            );
+        }
 
+        // ========================================
+        // Onglet Notifications
+        // ========================================
         register_setting(
             'wpvfh_general_settings',
             'wpvfh_email_notifications',
@@ -320,101 +258,48 @@ class WPVFH_Admin_UI {
             )
         );
 
-        add_settings_field(
-            'wpvfh_email_notifications',
-            __( 'Notifications par email', 'blazing-feedback' ),
-            array( __CLASS__, 'render_email_notifications_field' ),
-            'wpvfh_settings',
-            'wpvfh_notification_section'
+        // ========================================
+        // Onglet IA
+        // ========================================
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_ai_enabled',
+            array(
+                'type'              => 'boolean',
+                'sanitize_callback' => 'rest_sanitize_boolean',
+                'default'           => false,
+            )
         );
 
-        add_settings_field(
-            'wpvfh_notification_email',
-            __( 'Email de notification', 'blazing-feedback' ),
-            array( __CLASS__, 'render_notification_email_field' ),
-            'wpvfh_settings',
-            'wpvfh_notification_section'
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_ai_api_key',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_text_field',
+                'default'           => '',
+            )
         );
 
-        // Section Couleurs du thème
-        add_settings_section(
-            'wpvfh_colors_section',
-            __( 'Couleurs du thème', 'blazing-feedback' ),
-            array( __CLASS__, 'render_colors_section' ),
-            'wpvfh_settings'
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_ai_system_prompt',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_textarea_field',
+                'default'           => '',
+            )
         );
 
-        // Couleurs du thème
-        $theme_colors = array(
-            'wpvfh_color_primary'       => array(
-                'label'   => __( 'Couleur principale', 'blazing-feedback' ),
-                'default' => '#e74c3c',
-            ),
-            'wpvfh_color_primary_hover' => array(
-                'label'   => __( 'Couleur principale (survol)', 'blazing-feedback' ),
-                'default' => '#c0392b',
-            ),
-            'wpvfh_color_secondary'     => array(
-                'label'   => __( 'Couleur secondaire', 'blazing-feedback' ),
-                'default' => '#3498db',
-            ),
-            'wpvfh_color_success'       => array(
-                'label'   => __( 'Couleur succès', 'blazing-feedback' ),
-                'default' => '#27ae60',
-            ),
-            'wpvfh_color_warning'       => array(
-                'label'   => __( 'Couleur avertissement', 'blazing-feedback' ),
-                'default' => '#f39c12',
-            ),
-            'wpvfh_color_danger'        => array(
-                'label'   => __( 'Couleur danger', 'blazing-feedback' ),
-                'default' => '#e74c3c',
-            ),
-            'wpvfh_color_text'          => array(
-                'label'   => __( 'Couleur du texte', 'blazing-feedback' ),
-                'default' => '#333333',
-            ),
-            'wpvfh_color_text_light'    => array(
-                'label'   => __( 'Couleur du texte secondaire', 'blazing-feedback' ),
-                'default' => '#666666',
-            ),
-            'wpvfh_color_bg'            => array(
-                'label'   => __( 'Couleur de fond', 'blazing-feedback' ),
-                'default' => '#ffffff',
-            ),
-            'wpvfh_color_bg_light'      => array(
-                'label'   => __( 'Couleur de fond secondaire', 'blazing-feedback' ),
-                'default' => '#f5f5f5',
-            ),
-            'wpvfh_color_border'        => array(
-                'label'   => __( 'Couleur des bordures', 'blazing-feedback' ),
-                'default' => '#dddddd',
-            ),
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_ai_analysis_prompt',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_textarea_field',
+                'default'           => '',
+            )
         );
-
-        foreach ( $theme_colors as $option_name => $config ) {
-            register_setting(
-                'wpvfh_general_settings',
-                $option_name,
-                array(
-                    'type'              => 'string',
-                    'sanitize_callback' => 'sanitize_hex_color',
-                    'default'           => $config['default'],
-                )
-            );
-
-            add_settings_field(
-                $option_name,
-                $config['label'],
-                array( __CLASS__, 'render_theme_color_field' ),
-                'wpvfh_settings',
-                'wpvfh_colors_section',
-                array(
-                    'option_name' => $option_name,
-                    'default'     => $config['default'],
-                )
-            );
-        }
     }
 
     /**
@@ -813,185 +698,599 @@ class WPVFH_Admin_UI {
         if ( ! current_user_can( 'manage_feedback' ) ) {
             wp_die( esc_html__( 'Vous n\'avez pas les permissions nécessaires.', 'blazing-feedback' ) );
         }
+
+        // Onglet actif
+        $active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'general';
+
+        // Afficher les messages de succès
+        $message = isset( $_GET['message'] ) ? sanitize_key( $_GET['message'] ) : '';
         ?>
-        <div class="wrap">
+        <div class="wrap wpvfh-settings-wrap">
             <h1><?php esc_html_e( 'Blazing Feedback - Paramètres', 'blazing-feedback' ); ?></h1>
 
-            <form method="post" action="options.php">
-                <?php
-                settings_fields( 'wpvfh_general_settings' );
-                do_settings_sections( 'wpvfh_settings' );
-                submit_button();
-                ?>
-            </form>
-
-            <?php
-            // Afficher les messages de succès
-            $message = isset( $_GET['message'] ) ? sanitize_key( $_GET['message'] ) : '';
-            if ( $message ) {
+            <?php if ( $message ) :
                 $messages = array(
                     'feedbacks_truncated' => __( 'Tous les feedbacks ont été supprimés.', 'blazing-feedback' ),
                     'all_truncated'       => __( 'Toutes les tables ont été vidées.', 'blazing-feedback' ),
                     'tables_dropped'      => __( 'Toutes les tables ont été supprimées.', 'blazing-feedback' ),
                     'tables_recreated'    => __( 'Les tables ont été recréées avec succès.', 'blazing-feedback' ),
                 );
-                if ( isset( $messages[ $message ] ) ) {
-                    echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $messages[ $message ] ) . '</p></div>';
-                }
-            }
-
-            // Vérifier si les tables existent
-            $tables_exist = WPVFH_Database::tables_exist();
-            $table_stats = $tables_exist ? WPVFH_Database::get_table_stats() : array();
+                if ( isset( $messages[ $message ] ) ) :
             ?>
+                <div class="notice notice-success is-dismissible"><p><?php echo esc_html( $messages[ $message ] ); ?></p></div>
+            <?php endif; endif; ?>
 
-            <!-- Section Danger -->
-            <div class="wpvfh-danger-zone" style="margin-top: 40px; padding: 20px; background: #fff; border: 2px solid #dc3545; border-radius: 4px;">
-                <h2 style="color: #dc3545; margin-top: 0;">
-                    <span class="dashicons dashicons-warning" style="color: #dc3545;"></span>
+            <!-- Navigation par onglets -->
+            <nav class="nav-tab-wrapper wpvfh-nav-tabs">
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-settings&tab=general' ) ); ?>"
+                   class="nav-tab <?php echo 'general' === $active_tab ? 'nav-tab-active' : ''; ?>">
+                    <span class="dashicons dashicons-admin-settings"></span>
+                    <?php esc_html_e( 'Général', 'blazing-feedback' ); ?>
+                </a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-settings&tab=design' ) ); ?>"
+                   class="nav-tab <?php echo 'design' === $active_tab ? 'nav-tab-active' : ''; ?>">
+                    <span class="dashicons dashicons-admin-appearance"></span>
+                    <?php esc_html_e( 'Graphisme', 'blazing-feedback' ); ?>
+                </a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-settings&tab=notifications' ) ); ?>"
+                   class="nav-tab <?php echo 'notifications' === $active_tab ? 'nav-tab-active' : ''; ?>">
+                    <span class="dashicons dashicons-email"></span>
+                    <?php esc_html_e( 'Notifications', 'blazing-feedback' ); ?>
+                </a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-settings&tab=ai' ) ); ?>"
+                   class="nav-tab <?php echo 'ai' === $active_tab ? 'nav-tab-active' : ''; ?>">
+                    <span class="dashicons dashicons-welcome-learn-more"></span>
+                    <?php esc_html_e( 'IA', 'blazing-feedback' ); ?>
+                </a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger' ) ); ?>"
+                   class="nav-tab <?php echo 'danger' === $active_tab ? 'nav-tab-active' : ''; ?>" style="color: #dc3545;">
+                    <span class="dashicons dashicons-warning"></span>
                     <?php esc_html_e( 'Zone de danger', 'blazing-feedback' ); ?>
-                </h2>
-                <p style="color: #666;"><?php esc_html_e( 'Ces actions sont irréversibles. Utilisez-les avec précaution.', 'blazing-feedback' ); ?></p>
+                </a>
+            </nav>
 
-                <?php if ( $tables_exist ) : ?>
-                    <!-- Stats des tables -->
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-                        <h4 style="margin-top: 0;"><?php esc_html_e( 'État des tables', 'blazing-feedback' ); ?></h4>
-                        <table class="widefat" style="margin-bottom: 0;">
-                            <thead>
-                                <tr>
-                                    <th><?php esc_html_e( 'Table', 'blazing-feedback' ); ?></th>
-                                    <th style="text-align: right;"><?php esc_html_e( 'Entrées', 'blazing-feedback' ); ?></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ( $table_stats as $key => $stat ) : ?>
-                                    <tr>
-                                        <td><code><?php echo esc_html( $stat['table'] ); ?></code></td>
-                                        <td style="text-align: right;"><?php echo esc_html( number_format_i18n( $stat['count'] ) ); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+            <form method="post" action="options.php" class="wpvfh-settings-form">
+                <?php settings_fields( 'wpvfh_general_settings' ); ?>
 
-                    <!-- Actions -->
-                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                        <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&action=truncate_feedbacks' ), 'wpvfh_truncate_feedbacks' ) ); ?>"
-                           class="button"
-                           style="border-color: #f0ad4e; color: #856404;"
-                           onclick="return confirm('<?php esc_attr_e( 'Êtes-vous sûr de vouloir supprimer TOUS les feedbacks et réponses ? Cette action est irréversible.', 'blazing-feedback' ); ?>');">
-                            <span class="dashicons dashicons-trash" style="vertical-align: middle;"></span>
-                            <?php esc_html_e( 'Vider les feedbacks', 'blazing-feedback' ); ?>
-                        </a>
+                <!-- Onglet Général -->
+                <div class="wpvfh-tab-content <?php echo 'general' === $active_tab ? 'active' : ''; ?>" id="tab-general">
+                    <?php self::render_tab_general(); ?>
+                </div>
 
-                        <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&action=truncate_all' ), 'wpvfh_truncate_all' ) ); ?>"
-                           class="button"
-                           style="border-color: #dc3545; color: #dc3545;"
-                           onclick="return confirm('<?php esc_attr_e( 'Êtes-vous sûr de vouloir vider TOUTES les tables (feedbacks, métadonnées, groupes, paramètres) ? Cette action est irréversible.', 'blazing-feedback' ); ?>');">
-                            <span class="dashicons dashicons-database-remove" style="vertical-align: middle;"></span>
-                            <?php esc_html_e( 'Vider toutes les tables', 'blazing-feedback' ); ?>
-                        </a>
+                <!-- Onglet Graphisme -->
+                <div class="wpvfh-tab-content <?php echo 'design' === $active_tab ? 'active' : ''; ?>" id="tab-design">
+                    <?php self::render_tab_design(); ?>
+                </div>
 
-                        <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&action=drop_tables' ), 'wpvfh_drop_tables' ) ); ?>"
-                           class="button button-link-delete"
-                           style="background: #dc3545; border-color: #dc3545; color: #fff;"
-                           onclick="return confirm('<?php esc_attr_e( 'ATTENTION : Êtes-vous sûr de vouloir SUPPRIMER toutes les tables de la base de données ? Vous devrez réactiver le plugin pour les recréer.', 'blazing-feedback' ); ?>');">
-                            <span class="dashicons dashicons-database-remove" style="vertical-align: middle;"></span>
-                            <?php esc_html_e( 'Supprimer les tables', 'blazing-feedback' ); ?>
-                        </a>
-                    </div>
+                <!-- Onglet Notifications -->
+                <div class="wpvfh-tab-content <?php echo 'notifications' === $active_tab ? 'active' : ''; ?>" id="tab-notifications">
+                    <?php self::render_tab_notifications(); ?>
+                </div>
 
-                <?php else : ?>
-                    <!-- Tables n'existent pas -->
-                    <div class="notice notice-warning inline" style="margin: 0 0 15px 0;">
-                        <p>
-                            <strong><?php esc_html_e( 'Les tables de base de données n\'existent pas.', 'blazing-feedback' ); ?></strong><br>
-                            <?php esc_html_e( 'Cliquez sur le bouton ci-dessous pour les créer.', 'blazing-feedback' ); ?>
-                        </p>
-                    </div>
-                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&action=recreate_tables' ), 'wpvfh_recreate_tables' ) ); ?>"
-                       class="button button-primary">
-                        <span class="dashicons dashicons-database-add" style="vertical-align: middle;"></span>
-                        <?php esc_html_e( 'Créer les tables', 'blazing-feedback' ); ?>
-                    </a>
+                <!-- Onglet IA -->
+                <div class="wpvfh-tab-content <?php echo 'ai' === $active_tab ? 'active' : ''; ?>" id="tab-ai">
+                    <?php self::render_tab_ai(); ?>
+                </div>
+
+                <?php if ( 'danger' !== $active_tab ) : ?>
+                    <?php submit_button(); ?>
                 <?php endif; ?>
+            </form>
+
+            <!-- Onglet Zone de danger (hors formulaire) -->
+            <div class="wpvfh-tab-content <?php echo 'danger' === $active_tab ? 'active' : ''; ?>" id="tab-danger">
+                <?php self::render_tab_danger(); ?>
             </div>
+        </div>
 
-            <!-- Script pour les couleurs du thème -->
-            <script>
-            jQuery(document).ready(function($) {
-                // Synchroniser les inputs couleur et texte
-                $('input[type="color"]').on('input change', function() {
-                    var optionName = $(this).attr('name');
-                    var hexInput = $('[data-color-input="' + optionName + '"]');
-                    hexInput.val($(this).val());
-                });
+        <style>
+            .wpvfh-settings-wrap { max-width: 1200px; }
+            .wpvfh-nav-tabs { margin-bottom: 20px; }
+            .wpvfh-nav-tabs .nav-tab { display: inline-flex; align-items: center; gap: 5px; }
+            .wpvfh-nav-tabs .dashicons { font-size: 16px; width: 16px; height: 16px; }
+            .wpvfh-tab-content { display: none; background: #fff; padding: 20px; border: 1px solid #c3c4c7; border-top: none; }
+            .wpvfh-tab-content.active { display: block; }
+            .wpvfh-settings-section { margin-bottom: 30px; }
+            .wpvfh-settings-section h2 { font-size: 1.3em; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
+            .wpvfh-settings-row { display: flex; margin-bottom: 15px; align-items: flex-start; }
+            .wpvfh-settings-row label { flex: 0 0 200px; font-weight: 500; padding-top: 5px; }
+            .wpvfh-settings-row .wpvfh-field { flex: 1; }
+            .wpvfh-settings-row .description { color: #666; font-size: 13px; margin-top: 5px; }
+            .wpvfh-preview-container { display: flex; gap: 30px; margin-top: 20px; }
+            .wpvfh-preview-settings { flex: 1; }
+            .wpvfh-preview-widget { flex: 0 0 400px; position: sticky; top: 50px; }
+            .wpvfh-preview-box { background: #f0f0f1; border-radius: 8px; padding: 20px; min-height: 300px; position: relative; }
+            .wpvfh-color-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            @media (max-width: 1200px) {
+                .wpvfh-preview-container { flex-direction: column; }
+                .wpvfh-preview-widget { flex: none; position: static; }
+            }
+        </style>
+        <?php
+    }
 
-                // Synchroniser le texte vers l'input couleur
-                $('.wpvfh-color-hex-input').on('input change', function() {
-                    var optionName = $(this).data('color-input');
-                    var colorInput = $('#' + optionName);
-                    var value = $(this).val();
-                    // Valider le format hex
-                    if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
-                        colorInput.val(value);
-                    }
-                });
+    /**
+     * Rendu de l'onglet Général
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public static function render_tab_general() {
+        ?>
+        <div class="wpvfh-settings-section">
+            <h2><?php esc_html_e( 'Paramètres généraux', 'blazing-feedback' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Configurez le comportement général du widget de feedback.', 'blazing-feedback' ); ?></p>
 
-                // Réinitialiser la couleur par défaut
-                $('.wpvfh-reset-color').on('click', function() {
-                    var optionName = $(this).data('option');
-                    var defaultValue = $(this).data('default');
-                    var colorInput = $('#' + optionName);
-                    var hexInput = $('[data-color-input="' + optionName + '"]');
-                    colorInput.val(defaultValue);
-                    hexInput.val(defaultValue);
-                });
-            });
-            </script>
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Capture d\'écran', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <?php self::render_screenshot_field(); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Feedback anonyme', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <?php self::render_guest_field(); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Position du bouton', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <?php self::render_position_field(); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Position du volet', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <?php self::render_panel_position_field(); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Pages actives', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <?php self::render_pages_field(); ?>
+                    </td>
+                </tr>
+            </table>
         </div>
         <?php
     }
 
     /**
-     * Rendu de la section générale
+     * Rendu de l'onglet Graphisme
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public static function render_tab_design() {
+        $button_color = get_option( 'wpvfh_button_color', '#e74c3c' );
+        $icon_mode = get_option( 'wpvfh_icon_mode', 'emoji' );
+        $icon_emoji = get_option( 'wpvfh_icon_emoji', '💬' );
+        $icon_image = get_option( 'wpvfh_icon_image_url', '' );
+        ?>
+        <div class="wpvfh-preview-container">
+            <div class="wpvfh-preview-settings">
+                <!-- Bouton flottant -->
+                <div class="wpvfh-settings-section">
+                    <h2><?php esc_html_e( 'Bouton flottant', 'blazing-feedback' ); ?></h2>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Couleur du bouton', 'blazing-feedback' ); ?></th>
+                            <td>
+                                <?php self::render_color_field(); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Icône du bouton', 'blazing-feedback' ); ?></th>
+                            <td>
+                                <?php self::render_icon_mode_field(); ?>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Logo du panneau -->
+                <div class="wpvfh-settings-section">
+                    <h2><?php esc_html_e( 'Logo du panneau', 'blazing-feedback' ); ?></h2>
+                    <p class="description"><?php esc_html_e( 'Personnalisez le logo affiché dans l\'entête du panneau.', 'blazing-feedback' ); ?></p>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Mode du logo', 'blazing-feedback' ); ?></th>
+                            <td>
+                                <?php self::render_logo_mode_field(); ?>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Couleurs du thème -->
+                <div class="wpvfh-settings-section">
+                    <h2><?php esc_html_e( 'Couleurs du thème', 'blazing-feedback' ); ?></h2>
+                    <p class="description"><?php esc_html_e( 'Personnalisez les couleurs du widget de feedback.', 'blazing-feedback' ); ?></p>
+
+                    <div class="wpvfh-color-grid">
+                        <?php
+                        $colors = array(
+                            'wpvfh_color_primary'       => __( 'Principale', 'blazing-feedback' ),
+                            'wpvfh_color_primary_hover' => __( 'Principale (survol)', 'blazing-feedback' ),
+                            'wpvfh_color_secondary'     => __( 'Secondaire', 'blazing-feedback' ),
+                            'wpvfh_color_success'       => __( 'Succès', 'blazing-feedback' ),
+                            'wpvfh_color_warning'       => __( 'Avertissement', 'blazing-feedback' ),
+                            'wpvfh_color_danger'        => __( 'Danger', 'blazing-feedback' ),
+                            'wpvfh_color_text'          => __( 'Texte', 'blazing-feedback' ),
+                            'wpvfh_color_text_light'    => __( 'Texte secondaire', 'blazing-feedback' ),
+                            'wpvfh_color_bg'            => __( 'Fond', 'blazing-feedback' ),
+                            'wpvfh_color_bg_light'      => __( 'Fond secondaire', 'blazing-feedback' ),
+                            'wpvfh_color_border'        => __( 'Bordures', 'blazing-feedback' ),
+                        );
+                        $defaults = array(
+                            'wpvfh_color_primary'       => '#e74c3c',
+                            'wpvfh_color_primary_hover' => '#c0392b',
+                            'wpvfh_color_secondary'     => '#3498db',
+                            'wpvfh_color_success'       => '#27ae60',
+                            'wpvfh_color_warning'       => '#f39c12',
+                            'wpvfh_color_danger'        => '#e74c3c',
+                            'wpvfh_color_text'          => '#333333',
+                            'wpvfh_color_text_light'    => '#666666',
+                            'wpvfh_color_bg'            => '#ffffff',
+                            'wpvfh_color_bg_light'      => '#f5f5f5',
+                            'wpvfh_color_border'        => '#dddddd',
+                        );
+                        foreach ( $colors as $option_name => $label ) :
+                            $value = get_option( $option_name, $defaults[ $option_name ] );
+                        ?>
+                        <div class="wpvfh-color-item" style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
+                            <input type="color" name="<?php echo esc_attr( $option_name ); ?>" id="<?php echo esc_attr( $option_name ); ?>" value="<?php echo esc_attr( $value ); ?>">
+                            <input type="text" value="<?php echo esc_attr( $value ); ?>" class="wpvfh-color-hex-input" data-color-input="<?php echo esc_attr( $option_name ); ?>" style="width: 70px; font-family: monospace; font-size: 12px;" maxlength="7">
+                            <span style="flex: 1; font-size: 13px;"><?php echo esc_html( $label ); ?></span>
+                            <button type="button" class="button button-small wpvfh-reset-color" data-option="<?php echo esc_attr( $option_name ); ?>" data-default="<?php echo esc_attr( $defaults[ $option_name ] ); ?>" title="<?php esc_attr_e( 'Réinitialiser', 'blazing-feedback' ); ?>">
+                                <span class="dashicons dashicons-image-rotate" style="vertical-align: middle; margin-top: -2px; font-size: 14px; width: 14px; height: 14px;"></span>
+                            </button>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prévisualisation -->
+            <div class="wpvfh-preview-widget">
+                <h3 style="margin-top: 0;"><?php esc_html_e( 'Prévisualisation', 'blazing-feedback' ); ?></h3>
+                <div class="wpvfh-preview-box" id="wpvfh-preview-box">
+                    <!-- Bouton de feedback preview -->
+                    <div id="wpvfh-preview-button" style="position: absolute; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.2s; background: <?php echo esc_attr( $button_color ); ?>;">
+                        <span style="font-size: 24px; color: #fff;" id="wpvfh-preview-icon">
+                            <?php if ( 'emoji' === $icon_mode ) : ?>
+                                <?php echo esc_html( $icon_emoji ); ?>
+                            <?php elseif ( 'image' === $icon_mode && $icon_image ) : ?>
+                                <img src="<?php echo esc_url( $icon_image ); ?>" alt="" style="width: 28px; height: 28px; object-fit: contain;">
+                            <?php else : ?>
+                                💬
+                            <?php endif; ?>
+                        </span>
+                    </div>
+                    <!-- Compteur preview -->
+                    <div id="wpvfh-preview-badge" style="position: absolute; bottom: 62px; right: 16px; background: #dc3545; color: #fff; font-size: 11px; font-weight: bold; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center;">3</div>
+                </div>
+                <p class="description" style="margin-top: 10px; text-align: center;">
+                    <?php esc_html_e( 'Aperçu du bouton de feedback', 'blazing-feedback' ); ?>
+                </p>
+            </div>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            // Synchroniser les inputs couleur et texte
+            $('input[type="color"]').on('input change', function() {
+                var optionName = $(this).attr('name');
+                var hexInput = $('[data-color-input="' + optionName + '"]');
+                hexInput.val($(this).val());
+                updatePreview();
+            });
+
+            // Synchroniser le texte vers l'input couleur
+            $('.wpvfh-color-hex-input').on('input change', function() {
+                var optionName = $(this).data('color-input');
+                var colorInput = $('#' + optionName);
+                var value = $(this).val();
+                if (/^#[0-9A-Fa-f]{6}$/.test(value)) {
+                    colorInput.val(value);
+                    updatePreview();
+                }
+            });
+
+            // Réinitialiser la couleur par défaut
+            $('.wpvfh-reset-color').on('click', function() {
+                var optionName = $(this).data('option');
+                var defaultValue = $(this).data('default');
+                var colorInput = $('#' + optionName);
+                var hexInput = $('[data-color-input="' + optionName + '"]');
+                colorInput.val(defaultValue);
+                hexInput.val(defaultValue);
+                updatePreview();
+            });
+
+            // Mise à jour couleur du bouton
+            $('input[name="wpvfh_button_color"]').on('input change', function() {
+                $('#wpvfh-preview-button').css('background', $(this).val());
+            });
+
+            // Mise à jour icône
+            $('input[name="wpvfh_icon_mode"]').on('change', function() {
+                updateIconPreview();
+            });
+            $('input[name="wpvfh_icon_emoji"]').on('input', function() {
+                if ($('input[name="wpvfh_icon_mode"]:checked').val() === 'emoji') {
+                    $('#wpvfh-preview-icon').html($(this).val() || '💬');
+                }
+            });
+
+            function updateIconPreview() {
+                var mode = $('input[name="wpvfh_icon_mode"]:checked').val();
+                if (mode === 'emoji') {
+                    var emoji = $('input[name="wpvfh_icon_emoji"]').val() || '💬';
+                    $('#wpvfh-preview-icon').html(emoji);
+                } else if (mode === 'image') {
+                    var imgUrl = $('input[name="wpvfh_icon_image_url"]').val();
+                    if (imgUrl) {
+                        $('#wpvfh-preview-icon').html('<img src="' + imgUrl + '" style="width: 28px; height: 28px; object-fit: contain;">');
+                    }
+                }
+            }
+
+            function updatePreview() {
+                // Mise à jour des couleurs CSS variables pour la preview
+                var primary = $('#wpvfh_color_primary').val();
+                var bg = $('#wpvfh_color_bg').val();
+                var bgLight = $('#wpvfh_color_bg_light').val();
+                $('#wpvfh-preview-box').css('background', bgLight);
+            }
+        });
+        </script>
+        <?php
+    }
+
+    /**
+     * Rendu de l'onglet Notifications
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public static function render_tab_notifications() {
+        ?>
+        <div class="wpvfh-settings-section">
+            <h2><?php esc_html_e( 'Notifications par email', 'blazing-feedback' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Configurez les notifications par email pour les nouveaux feedbacks.', 'blazing-feedback' ); ?></p>
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Activer les notifications', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <?php self::render_email_notifications_field(); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Email de notification', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <?php self::render_notification_email_field(); ?>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <?php
+    }
+
+    /**
+     * Rendu de l'onglet IA
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public static function render_tab_ai() {
+        $ai_enabled = get_option( 'wpvfh_ai_enabled', false );
+        $api_key = get_option( 'wpvfh_ai_api_key', '' );
+        $system_prompt = get_option( 'wpvfh_ai_system_prompt', '' );
+        $analysis_prompt = get_option( 'wpvfh_ai_analysis_prompt', '' );
+        ?>
+        <div class="wpvfh-settings-section">
+            <h2><?php esc_html_e( 'Intelligence Artificielle', 'blazing-feedback' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Activez l\'IA pour analyser automatiquement les feedbacks et générer des suggestions.', 'blazing-feedback' ); ?></p>
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Activer l\'IA', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="wpvfh_ai_enabled" id="wpvfh_ai_enabled" value="1" <?php checked( $ai_enabled, true ); ?>>
+                            <?php esc_html_e( 'Activer les fonctionnalités d\'intelligence artificielle', 'blazing-feedback' ); ?>
+                        </label>
+                        <p class="description"><?php esc_html_e( 'Permet d\'utiliser l\'IA pour analyser et catégoriser les feedbacks.', 'blazing-feedback' ); ?></p>
+                    </td>
+                </tr>
+            </table>
+
+            <div id="wpvfh-ai-settings" style="<?php echo ! $ai_enabled ? 'display: none;' : ''; ?>">
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Clé API', 'blazing-feedback' ); ?></th>
+                        <td>
+                            <input type="password" name="wpvfh_ai_api_key" id="wpvfh_ai_api_key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" autocomplete="off">
+                            <button type="button" class="button button-small" id="wpvfh-toggle-api-key">
+                                <span class="dashicons dashicons-visibility" style="vertical-align: middle;"></span>
+                            </button>
+                            <p class="description"><?php esc_html_e( 'Votre clé API pour le service d\'IA (OpenAI, Anthropic, etc.)', 'blazing-feedback' ); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Prompt système', 'blazing-feedback' ); ?></th>
+                        <td>
+                            <textarea name="wpvfh_ai_system_prompt" id="wpvfh_ai_system_prompt" rows="5" class="large-text" placeholder="<?php esc_attr_e( 'Vous êtes un assistant qui aide à analyser les retours utilisateurs...', 'blazing-feedback' ); ?>"><?php echo esc_textarea( $system_prompt ); ?></textarea>
+                            <p class="description"><?php esc_html_e( 'Le prompt système définit le comportement général de l\'IA.', 'blazing-feedback' ); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php esc_html_e( 'Prompt d\'analyse', 'blazing-feedback' ); ?></th>
+                        <td>
+                            <textarea name="wpvfh_ai_analysis_prompt" id="wpvfh_ai_analysis_prompt" rows="5" class="large-text" placeholder="<?php esc_attr_e( 'Analysez ce feedback et suggérez une catégorie, une priorité et une réponse type...', 'blazing-feedback' ); ?>"><?php echo esc_textarea( $analysis_prompt ); ?></textarea>
+                            <p class="description"><?php esc_html_e( 'Le prompt utilisé pour analyser chaque feedback.', 'blazing-feedback' ); ?></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <script>
+        jQuery(document).ready(function($) {
+            // Toggle AI settings visibility
+            $('#wpvfh_ai_enabled').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#wpvfh-ai-settings').slideDown();
+                } else {
+                    $('#wpvfh-ai-settings').slideUp();
+                }
+            });
+
+            // Toggle API key visibility
+            $('#wpvfh-toggle-api-key').on('click', function() {
+                var input = $('#wpvfh_ai_api_key');
+                var icon = $(this).find('.dashicons');
+                if (input.attr('type') === 'password') {
+                    input.attr('type', 'text');
+                    icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+                } else {
+                    input.attr('type', 'password');
+                    icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+                }
+            });
+        });
+        </script>
+        <?php
+    }
+
+    /**
+     * Rendu de l'onglet Zone de danger
+     *
+     * @since 1.8.0
+     * @return void
+     */
+    public static function render_tab_danger() {
+        $tables_exist = WPVFH_Database::tables_exist();
+        $table_stats = $tables_exist ? WPVFH_Database::get_table_stats() : array();
+        ?>
+        <div class="wpvfh-danger-zone" style="padding: 20px; background: #fff; border: 2px solid #dc3545; border-radius: 4px;">
+            <h2 style="color: #dc3545; margin-top: 0;">
+                <span class="dashicons dashicons-warning" style="color: #dc3545;"></span>
+                <?php esc_html_e( 'Zone de danger', 'blazing-feedback' ); ?>
+            </h2>
+            <p style="color: #666;"><?php esc_html_e( 'Ces actions sont irréversibles. Utilisez-les avec précaution.', 'blazing-feedback' ); ?></p>
+
+            <?php if ( $tables_exist ) : ?>
+                <!-- Stats des tables -->
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                    <h4 style="margin-top: 0;"><?php esc_html_e( 'État des tables', 'blazing-feedback' ); ?></h4>
+                    <table class="widefat" style="margin-bottom: 0;">
+                        <thead>
+                            <tr>
+                                <th><?php esc_html_e( 'Table', 'blazing-feedback' ); ?></th>
+                                <th style="text-align: right;"><?php esc_html_e( 'Entrées', 'blazing-feedback' ); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ( $table_stats as $key => $stat ) : ?>
+                                <tr>
+                                    <td><code><?php echo esc_html( $stat['table'] ); ?></code></td>
+                                    <td style="text-align: right;"><?php echo esc_html( number_format_i18n( $stat['count'] ) ); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Actions -->
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger&action=truncate_feedbacks' ), 'wpvfh_truncate_feedbacks' ) ); ?>"
+                       class="button"
+                       style="border-color: #f0ad4e; color: #856404;"
+                       onclick="return confirm('<?php esc_attr_e( 'Êtes-vous sûr de vouloir supprimer TOUS les feedbacks et réponses ? Cette action est irréversible.', 'blazing-feedback' ); ?>');">
+                        <span class="dashicons dashicons-trash" style="vertical-align: middle;"></span>
+                        <?php esc_html_e( 'Vider les feedbacks', 'blazing-feedback' ); ?>
+                    </a>
+
+                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger&action=truncate_all' ), 'wpvfh_truncate_all' ) ); ?>"
+                       class="button"
+                       style="border-color: #dc3545; color: #dc3545;"
+                       onclick="return confirm('<?php esc_attr_e( 'Êtes-vous sûr de vouloir vider TOUTES les tables (feedbacks, métadonnées, groupes, paramètres) ? Cette action est irréversible.', 'blazing-feedback' ); ?>');">
+                        <span class="dashicons dashicons-database-remove" style="vertical-align: middle;"></span>
+                        <?php esc_html_e( 'Vider toutes les tables', 'blazing-feedback' ); ?>
+                    </a>
+
+                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger&action=drop_tables' ), 'wpvfh_drop_tables' ) ); ?>"
+                       class="button button-link-delete"
+                       style="background: #dc3545; border-color: #dc3545; color: #fff;"
+                       onclick="return confirm('<?php esc_attr_e( 'ATTENTION : Êtes-vous sûr de vouloir SUPPRIMER toutes les tables de la base de données ? Vous devrez réactiver le plugin pour les recréer.', 'blazing-feedback' ); ?>');">
+                        <span class="dashicons dashicons-database-remove" style="vertical-align: middle;"></span>
+                        <?php esc_html_e( 'Supprimer les tables', 'blazing-feedback' ); ?>
+                    </a>
+                </div>
+
+            <?php else : ?>
+                <!-- Tables n'existent pas -->
+                <div class="notice notice-warning inline" style="margin: 0 0 15px 0;">
+                    <p>
+                        <strong><?php esc_html_e( 'Les tables de base de données n\'existent pas.', 'blazing-feedback' ); ?></strong><br>
+                        <?php esc_html_e( 'Cliquez sur le bouton ci-dessous pour les créer.', 'blazing-feedback' ); ?>
+                    </p>
+                </div>
+                <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger&action=recreate_tables' ), 'wpvfh_recreate_tables' ) ); ?>"
+                   class="button button-primary">
+                    <span class="dashicons dashicons-database-add" style="vertical-align: middle;"></span>
+                    <?php esc_html_e( 'Créer les tables', 'blazing-feedback' ); ?>
+                </a>
+            <?php endif; ?>
+        </div>
+        <?php
+    }
+
+    /**
+     * Rendu de la section générale (legacy - unused)
      *
      * @since 1.0.0
      * @return void
      */
     public static function render_general_section() {
-        echo '<p>' . esc_html__( 'Configurez le comportement du widget de feedback.', 'blazing-feedback' ) . '</p>';
+        // Legacy function - kept for backwards compatibility
     }
 
     /**
-     * Rendu de la section notifications
+     * Rendu de la section notifications (legacy - unused)
      *
      * @since 1.0.0
      * @return void
      */
     public static function render_notification_section() {
-        echo '<p>' . esc_html__( 'Configurez les notifications par email pour les nouveaux feedbacks.', 'blazing-feedback' ) . '</p>';
+        // Legacy function - kept for backwards compatibility
     }
 
     /**
-     * Rendu de la section logo
+     * Rendu de la section logo (legacy - unused)
      *
      * @since 1.0.0
      * @return void
      */
     public static function render_logo_section() {
-        echo '<p>' . esc_html__( 'Personnalisez le logo affiché dans l\'entête du panneau de feedback.', 'blazing-feedback' ) . '</p>';
+        // Legacy function - kept for backwards compatibility
     }
 
     /**
-     * Rendu de la section icône du bouton
+     * Rendu de la section icône du bouton (legacy - unused)
      *
      * @since 1.7.0
      * @return void
      */
     public static function render_icon_section() {
-        echo '<p>' . esc_html__( 'Personnalisez l\'icône affichée sur le bouton flottant de feedback.', 'blazing-feedback' ) . '</p>';
+        // Legacy function - kept for backwards compatibility
     }
 
     /**
