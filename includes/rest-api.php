@@ -238,6 +238,45 @@ class WPVFH_REST_API {
             ),
         ) );
 
+        // GET /feedbacks/search - Recherche globale de feedbacks
+        register_rest_route( self::NAMESPACE, '/feedbacks/search', array(
+            array(
+                'methods'             => WP_REST_Server::READABLE,
+                'callback'            => array( __CLASS__, 'search_feedbacks' ),
+                'permission_callback' => array( __CLASS__, 'can_read_feedbacks' ),
+                'args'                => array(
+                    'id' => array(
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ),
+                    'text' => array(
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ),
+                    'status' => array(
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ),
+                    'priority' => array(
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ),
+                    'author' => array(
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ),
+                    'dateFrom' => array(
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ),
+                    'dateTo' => array(
+                        'type'              => 'string',
+                        'sanitize_callback' => 'sanitize_text_field',
+                    ),
+                ),
+            ),
+        ) );
+
         /**
          * Action pour enregistrer des routes supplémentaires
          *
@@ -1376,6 +1415,97 @@ class WPVFH_REST_API {
         }
 
         return new WP_REST_Response( $users );
+    }
+
+    /**
+     * Rechercher des feedbacks selon plusieurs critères
+     *
+     * @since 1.0.0
+     * @param WP_REST_Request $request Requête REST
+     * @return WP_REST_Response
+     */
+    public static function search_feedbacks( $request ) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'visual_feedback';
+
+        $id       = $request->get_param( 'id' );
+        $text     = $request->get_param( 'text' );
+        $status   = $request->get_param( 'status' );
+        $priority = $request->get_param( 'priority' );
+        $author   = $request->get_param( 'author' );
+        $dateFrom = $request->get_param( 'dateFrom' );
+        $dateTo   = $request->get_param( 'dateTo' );
+
+        $where = array( '1=1' );
+        $values = array();
+
+        // Filtre par ID
+        if ( ! empty( $id ) ) {
+            $where[] = 'f.id = %d';
+            $values[] = intval( $id );
+        }
+
+        // Filtre par texte (recherche dans comment et transcript)
+        if ( ! empty( $text ) ) {
+            $where[] = '(f.comment LIKE %s OR f.transcript LIKE %s)';
+            $like = '%' . $wpdb->esc_like( $text ) . '%';
+            $values[] = $like;
+            $values[] = $like;
+        }
+
+        // Filtre par statut
+        if ( ! empty( $status ) ) {
+            $where[] = 'f.status = %s';
+            $values[] = $status;
+        }
+
+        // Filtre par priorité
+        if ( ! empty( $priority ) ) {
+            $where[] = 'f.priority = %s';
+            $values[] = $priority;
+        }
+
+        // Filtre par auteur
+        if ( ! empty( $author ) ) {
+            $where[] = '(u.display_name LIKE %s OR u.user_login LIKE %s)';
+            $like = '%' . $wpdb->esc_like( $author ) . '%';
+            $values[] = $like;
+            $values[] = $like;
+        }
+
+        // Filtre par date de début
+        if ( ! empty( $dateFrom ) ) {
+            $where[] = 'f.created_at >= %s';
+            $values[] = $dateFrom . ' 00:00:00';
+        }
+
+        // Filtre par date de fin
+        if ( ! empty( $dateTo ) ) {
+            $where[] = 'f.created_at <= %s';
+            $values[] = $dateTo . ' 23:59:59';
+        }
+
+        $where_clause = implode( ' AND ', $where );
+
+        $sql = "SELECT f.*, u.display_name as author_name
+                FROM {$table} f
+                LEFT JOIN {$wpdb->users} u ON f.author_id = u.ID
+                WHERE {$where_clause}
+                ORDER BY f.created_at DESC
+                LIMIT 100";
+
+        if ( ! empty( $values ) ) {
+            $sql = $wpdb->prepare( $sql, $values );
+        }
+
+        $results = $wpdb->get_results( $sql, ARRAY_A );
+
+        $feedbacks = array();
+        foreach ( $results as $row ) {
+            $feedbacks[] = self::prepare_feedback_response( $row );
+        }
+
+        return new WP_REST_Response( array( 'feedbacks' => $feedbacks ) );
     }
 
     /**

@@ -565,9 +565,14 @@ final class WP_Visual_Feedback_Hub {
                     <?php else : ?>
                     <h3 class="wpvfh-panel-title"><?php esc_html_e( 'Feedbacks', 'blazing-feedback' ); ?></h3>
                     <?php endif; ?>
-                    <button type="button" class="wpvfh-close-btn" aria-label="<?php esc_attr_e( 'Fermer', 'blazing-feedback' ); ?>">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <div class="wpvfh-header-actions">
+                        <button type="button" class="wpvfh-search-btn" id="wpvfh-search-btn" aria-label="<?php esc_attr_e( 'Rechercher', 'blazing-feedback' ); ?>" title="<?php esc_attr_e( 'Rechercher un feedback', 'blazing-feedback' ); ?>">
+                            <span aria-hidden="true">🔍</span>
+                        </button>
+                        <button type="button" class="wpvfh-close-btn" aria-label="<?php esc_attr_e( 'Fermer', 'blazing-feedback' ); ?>">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Onglets -->
@@ -987,6 +992,93 @@ final class WP_Visual_Feedback_Hub {
                         <button type="button" class="wpvfh-btn wpvfh-btn-success" id="wpvfh-confirm-validate">
                             <?php esc_html_e( 'Valider', 'blazing-feedback' ); ?>
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de recherche -->
+            <div id="wpvfh-search-modal" class="wpvfh-modal wpvfh-search-modal" hidden>
+                <div class="wpvfh-modal-overlay"></div>
+                <div class="wpvfh-modal-content wpvfh-search-content">
+                    <div class="wpvfh-search-header">
+                        <h3 class="wpvfh-modal-title">🔍 <?php esc_html_e( 'Rechercher un feedback', 'blazing-feedback' ); ?></h3>
+                        <button type="button" class="wpvfh-search-close" id="wpvfh-search-close">&times;</button>
+                    </div>
+                    <form id="wpvfh-search-form" class="wpvfh-search-form">
+                        <!-- Recherche par ID -->
+                        <div class="wpvfh-search-group">
+                            <label for="wpvfh-search-id"><?php esc_html_e( 'Numéro du feedback', 'blazing-feedback' ); ?></label>
+                            <input type="number" id="wpvfh-search-id" placeholder="<?php esc_attr_e( 'Ex: 123', 'blazing-feedback' ); ?>" min="1">
+                        </div>
+
+                        <!-- Recherche par texte -->
+                        <div class="wpvfh-search-group">
+                            <label for="wpvfh-search-text"><?php esc_html_e( 'Contenu du commentaire', 'blazing-feedback' ); ?></label>
+                            <input type="text" id="wpvfh-search-text" placeholder="<?php esc_attr_e( 'Rechercher dans le texte...', 'blazing-feedback' ); ?>">
+                        </div>
+
+                        <!-- Filtres sur une ligne -->
+                        <div class="wpvfh-search-filters">
+                            <!-- Statut -->
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-status"><?php esc_html_e( 'Statut', 'blazing-feedback' ); ?></label>
+                                <select id="wpvfh-search-status">
+                                    <option value=""><?php esc_html_e( 'Tous', 'blazing-feedback' ); ?></option>
+                                    <option value="new"><?php esc_html_e( 'Nouveau', 'blazing-feedback' ); ?></option>
+                                    <option value="in_progress"><?php esc_html_e( 'En cours', 'blazing-feedback' ); ?></option>
+                                    <option value="resolved"><?php esc_html_e( 'Résolu', 'blazing-feedback' ); ?></option>
+                                    <option value="rejected"><?php esc_html_e( 'Rejeté', 'blazing-feedback' ); ?></option>
+                                </select>
+                            </div>
+
+                            <!-- Priorité -->
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-priority"><?php esc_html_e( 'Priorité', 'blazing-feedback' ); ?></label>
+                                <select id="wpvfh-search-priority">
+                                    <option value=""><?php esc_html_e( 'Toutes', 'blazing-feedback' ); ?></option>
+                                    <option value="high"><?php esc_html_e( 'Haute', 'blazing-feedback' ); ?></option>
+                                    <option value="medium"><?php esc_html_e( 'Moyenne', 'blazing-feedback' ); ?></option>
+                                    <option value="low"><?php esc_html_e( 'Basse', 'blazing-feedback' ); ?></option>
+                                    <option value="none"><?php esc_html_e( 'Aucune', 'blazing-feedback' ); ?></option>
+                                </select>
+                            </div>
+
+                            <!-- Auteur -->
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-author"><?php esc_html_e( 'Auteur', 'blazing-feedback' ); ?></label>
+                                <input type="text" id="wpvfh-search-author" placeholder="<?php esc_attr_e( 'Nom...', 'blazing-feedback' ); ?>">
+                            </div>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="wpvfh-search-dates">
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-date-from"><?php esc_html_e( 'Du', 'blazing-feedback' ); ?></label>
+                                <input type="date" id="wpvfh-search-date-from">
+                            </div>
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-date-to"><?php esc_html_e( 'Au', 'blazing-feedback' ); ?></label>
+                                <input type="date" id="wpvfh-search-date-to">
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="wpvfh-search-actions">
+                            <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-search-reset">
+                                <?php esc_html_e( 'Réinitialiser', 'blazing-feedback' ); ?>
+                            </button>
+                            <button type="submit" class="wpvfh-btn wpvfh-btn-primary">
+                                <?php esc_html_e( 'Rechercher', 'blazing-feedback' ); ?>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Résultats -->
+                    <div id="wpvfh-search-results" class="wpvfh-search-results" hidden>
+                        <div class="wpvfh-search-results-header">
+                            <span id="wpvfh-search-results-count"></span>
+                        </div>
+                        <div id="wpvfh-search-results-list" class="wpvfh-search-results-list"></div>
                     </div>
                 </div>
             </div>

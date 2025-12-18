@@ -3813,3 +3813,311 @@ button#wpvfh-validate-page-btn {
     font-size: 12px;
     padding: 12px;
 }
+
+/* =====================================================
+   Header Actions & Search Button
+   ===================================================== */
+
+.wpvfh-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wpvfh-search-btn {
+    background: transparent !important;
+    border: none !important;
+    padding: 4px 8px !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    opacity: 0.7;
+    transition: opacity 0.2s ease !important;
+}
+
+.wpvfh-search-btn:hover {
+    opacity: 1;
+}
+
+/* =====================================================
+   Feedback ID Display
+   ===================================================== */
+
+.wpvfh-pin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.wpvfh-pin-id {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--wpvfh-primary);
+    background: rgba(52, 152, 219, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* =====================================================
+   Search Modal
+   ===================================================== */
+
+.wpvfh-search-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000001;
+    justify-content: center;
+    align-items: center;
+}
+
+.wpvfh-search-modal.active {
+    display: flex;
+}
+
+.wpvfh-search-content {
+    background: var(--wpvfh-bg);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.wpvfh-search-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--wpvfh-border);
+    background: var(--wpvfh-bg-light);
+}
+
+.wpvfh-search-header h3 {
+    margin: 0 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text) !important;
+}
+
+.wpvfh-search-close {
+    background: transparent !important;
+    border: none !important;
+    font-size: 24px !important;
+    cursor: pointer !important;
+    color: var(--wpvfh-text-light) !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    transition: background 0.2s ease !important;
+}
+
+.wpvfh-search-close:hover {
+    background: var(--wpvfh-border) !important;
+}
+
+.wpvfh-search-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.wpvfh-search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.wpvfh-search-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.wpvfh-search-field label {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.wpvfh-search-field input,
+.wpvfh-search-field select {
+    padding: 10px 12px !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    background: var(--wpvfh-bg) !important;
+    color: var(--wpvfh-text) !important;
+    transition: border-color 0.2s ease !important;
+}
+
+.wpvfh-search-field input:focus,
+.wpvfh-search-field select:focus {
+    outline: none !important;
+    border-color: var(--wpvfh-primary) !important;
+}
+
+.wpvfh-search-field input::placeholder {
+    color: var(--wpvfh-text-light) !important;
+}
+
+.wpvfh-search-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.wpvfh-search-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.wpvfh-search-actions button {
+    flex: 1;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+#wpvfh-search-submit {
+    background: var(--wpvfh-primary) !important;
+    color: white !important;
+    border: none !important;
+}
+
+#wpvfh-search-submit:hover {
+    background: #2980b9 !important;
+}
+
+#wpvfh-search-reset {
+    background: transparent !important;
+    color: var(--wpvfh-text) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+}
+
+#wpvfh-search-reset:hover {
+    background: var(--wpvfh-bg-light) !important;
+}
+
+/* Search Results */
+.wpvfh-search-results {
+    margin-top: 20px;
+    border-top: 1px solid var(--wpvfh-border);
+    padding-top: 16px;
+    display: none;
+}
+
+.wpvfh-search-results.active {
+    display: block;
+}
+
+.wpvfh-search-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.wpvfh-search-results-header h4 {
+    margin: 0 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text) !important;
+}
+
+.wpvfh-search-count {
+    font-size: 12px;
+    color: var(--wpvfh-text-light);
+    background: var(--wpvfh-bg-light);
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.wpvfh-search-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.wpvfh-search-result-item {
+    padding: 12px;
+    background: var(--wpvfh-bg-light);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.wpvfh-search-result-item:hover {
+    border-color: var(--wpvfh-primary);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.wpvfh-search-result-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.wpvfh-search-result-id {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--wpvfh-primary);
+    background: rgba(52, 152, 219, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.wpvfh-search-result-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.wpvfh-search-result-text {
+    font-size: 13px;
+    color: var(--wpvfh-text);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.wpvfh-search-result-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--wpvfh-text-light);
+}
+
+.wpvfh-search-no-results {
+    text-align: center;
+    padding: 24px;
+    color: var(--wpvfh-text-light);
+    font-size: 14px;
+}
