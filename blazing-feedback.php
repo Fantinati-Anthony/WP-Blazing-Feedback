@@ -385,6 +385,9 @@ final class WP_Visual_Feedback_Hub {
          * @since 1.0.0
          * @param array $data Données localisées
          */
+        // Préparer les groupes de métadonnées avec leurs paramètres
+        $metadata_groups = $this->get_metadata_groups_for_frontend();
+
         return apply_filters( 'wpvfh_frontend_data', array(
             'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
             'restUrl'        => rest_url( 'blazing-feedback/v1/' ),
@@ -400,10 +403,13 @@ final class WP_Visual_Feedback_Hub {
             'canManage'      => current_user_can( 'manage_feedback' ),
             'pluginUrl'      => WPVFH_PLUGIN_URL,
             'screenshotEnabled' => $this->is_screenshot_enabled(),
+            // Métadonnées standards
             'statuses'       => WPVFH_CPT_Feedback::get_statuses(),
             'feedbackTypes'  => WPVFH_Options_Manager::get_types(),
             'priorities'     => WPVFH_Options_Manager::get_priorities(),
             'predefinedTags' => WPVFH_Options_Manager::get_predefined_tags(),
+            // Groupes de métadonnées avec paramètres
+            'metadataGroups' => $metadata_groups,
             'i18n'           => array(
                 'feedbackButton'    => __( 'Donner un feedback', 'blazing-feedback' ),
                 'closeButton'       => __( 'Fermer', 'blazing-feedback' ),
@@ -462,6 +468,84 @@ final class WP_Visual_Feedback_Hub {
          * @param bool $enabled Activé ou non (défaut: true)
          */
         return apply_filters( 'wpvfh_screenshot_enabled', get_option( 'wpvfh_screenshot_enabled', true ) );
+    }
+
+    /**
+     * Obtenir tous les groupes de métadonnées pour le frontend
+     *
+     * Retourne les groupes standards et personnalisés avec leurs items et paramètres
+     *
+     * @since 1.7.0
+     * @return array
+     */
+    private function get_metadata_groups_for_frontend() {
+        $groups = array();
+
+        // Groupes standards
+        $standard_groups = array( 'statuses', 'types', 'priorities', 'tags' );
+
+        foreach ( $standard_groups as $slug ) {
+            $settings = WPVFH_Options_Manager::get_group_settings( $slug );
+
+            // Vérifier l'accès de l'utilisateur
+            if ( ! WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
+                continue;
+            }
+
+            $groups[ $slug ] = array(
+                'slug'     => $slug,
+                'name'     => $this->get_group_label( $slug ),
+                'type'     => 'standard',
+                'settings' => array(
+                    'enabled'  => $settings['enabled'],
+                    'required' => $settings['required'],
+                ),
+                'items'    => WPVFH_Options_Manager::get_items_by_type( $slug ),
+            );
+        }
+
+        // Groupes personnalisés
+        $custom_groups = WPVFH_Options_Manager::get_custom_groups();
+
+        foreach ( $custom_groups as $slug => $group ) {
+            $settings = WPVFH_Options_Manager::get_group_settings( $slug );
+
+            // Vérifier l'accès de l'utilisateur
+            if ( ! WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
+                continue;
+            }
+
+            $groups[ $slug ] = array(
+                'slug'     => $slug,
+                'name'     => $group['name'],
+                'type'     => 'custom',
+                'settings' => array(
+                    'enabled'  => $settings['enabled'],
+                    'required' => $settings['required'],
+                ),
+                'items'    => WPVFH_Options_Manager::get_custom_group_items( $slug ),
+            );
+        }
+
+        return $groups;
+    }
+
+    /**
+     * Obtenir le label traduit d'un groupe standard
+     *
+     * @since 1.7.0
+     * @param string $slug Slug du groupe
+     * @return string
+     */
+    private function get_group_label( $slug ) {
+        $labels = array(
+            'statuses'   => __( 'Statuts', 'blazing-feedback' ),
+            'types'      => __( 'Types', 'blazing-feedback' ),
+            'priorities' => __( 'Priorités', 'blazing-feedback' ),
+            'tags'       => __( 'Tags', 'blazing-feedback' ),
+        );
+
+        return isset( $labels[ $slug ] ) ? $labels[ $slug ] : $slug;
     }
 
     /**
@@ -728,64 +812,121 @@ final class WP_Visual_Feedback_Hub {
                             <p class="wpvfh-attachments-hint"><?php esc_html_e( 'Images, PDF, documents (max 5 fichiers, 10 Mo chacun)', 'blazing-feedback' ); ?></p>
                         </div>
 
-                        <!-- Champs déroulants (Type, Priorité, Tags) -->
+                        <!-- Champs déroulants (Type, Priorité, Tags, Groupes personnalisés) -->
                         <?php
-                        $feedback_types = WPVFH_Options_Manager::get_types();
-                        $priorities     = WPVFH_Options_Manager::get_priorities();
-                        $predefined_tags = WPVFH_Options_Manager::get_predefined_tags();
+                        $feedback_types    = WPVFH_Options_Manager::get_types();
+                        $priorities        = WPVFH_Options_Manager::get_priorities();
+                        $predefined_tags   = WPVFH_Options_Manager::get_predefined_tags();
+                        $custom_groups     = WPVFH_Options_Manager::get_custom_groups();
+                        $types_settings    = WPVFH_Options_Manager::get_group_settings( 'types' );
+                        $priority_settings = WPVFH_Options_Manager::get_group_settings( 'priorities' );
+                        $tags_settings     = WPVFH_Options_Manager::get_group_settings( 'tags' );
                         ?>
                         <div class="wpvfh-form-dropdowns">
                             <!-- Type de feedback -->
+                            <?php if ( $types_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'types' ) ) : ?>
                             <div class="wpvfh-dropdown-group">
                                 <label for="wpvfh-feedback-type">
                                     <span class="wpvfh-dropdown-icon">🏷️</span>
                                     <?php esc_html_e( 'Type', 'blazing-feedback' ); ?>
+                                    <?php if ( $types_settings['required'] ) : ?>
+                                        <span class="wpvfh-required-badge">*</span>
+                                    <?php endif; ?>
                                 </label>
-                                <select id="wpvfh-feedback-type" name="feedback_type" class="wpvfh-dropdown">
+                                <select id="wpvfh-feedback-type" name="feedback_type" class="wpvfh-dropdown" <?php echo $types_settings['required'] ? 'required' : ''; ?>>
                                     <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
                                     <?php foreach ( $feedback_types as $type ) : ?>
+                                        <?php if ( ! empty( $type['enabled'] ) ) : ?>
                                         <option value="<?php echo esc_attr( $type['id'] ); ?>" data-color="<?php echo esc_attr( $type['color'] ); ?>">
                                             <?php echo esc_html( $type['emoji'] . ' ' . $type['label'] ); ?>
                                         </option>
+                                        <?php endif; ?>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <?php endif; ?>
 
                             <!-- Niveau de priorité -->
+                            <?php if ( $priority_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'priorities' ) ) : ?>
                             <div class="wpvfh-dropdown-group">
                                 <label for="wpvfh-feedback-priority">
                                     <span class="wpvfh-dropdown-icon">⚡</span>
                                     <?php esc_html_e( 'Priorité', 'blazing-feedback' ); ?>
+                                    <?php if ( $priority_settings['required'] ) : ?>
+                                        <span class="wpvfh-required-badge">*</span>
+                                    <?php endif; ?>
                                 </label>
-                                <select id="wpvfh-feedback-priority" name="feedback_priority" class="wpvfh-dropdown">
+                                <select id="wpvfh-feedback-priority" name="feedback_priority" class="wpvfh-dropdown" <?php echo $priority_settings['required'] ? 'required' : ''; ?>>
                                     <?php foreach ( $priorities as $index => $priority ) : ?>
+                                        <?php if ( ! empty( $priority['enabled'] ) ) : ?>
                                         <option value="<?php echo esc_attr( $priority['id'] ); ?>" data-color="<?php echo esc_attr( $priority['color'] ); ?>" <?php selected( $index, 0 ); ?>>
                                             <?php echo esc_html( $priority['emoji'] . ' ' . $priority['label'] ); ?>
                                         </option>
+                                        <?php endif; ?>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
+                            <?php endif; ?>
 
                             <!-- Tags -->
+                            <?php if ( $tags_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'tags' ) ) : ?>
                             <div class="wpvfh-dropdown-group wpvfh-tags-group">
                                 <label for="wpvfh-feedback-tags-input">
                                     <span class="wpvfh-dropdown-icon">🔖</span>
                                     <?php esc_html_e( 'Tags', 'blazing-feedback' ); ?>
+                                    <?php if ( $tags_settings['required'] ) : ?>
+                                        <span class="wpvfh-required-badge">*</span>
+                                    <?php endif; ?>
                                 </label>
                                 <div class="wpvfh-tags-container" id="wpvfh-feedback-tags-container">
                                     <?php if ( ! empty( $predefined_tags ) ) : ?>
                                         <div class="wpvfh-predefined-tags" id="wpvfh-predefined-tags">
                                             <?php foreach ( $predefined_tags as $tag ) : ?>
+                                                <?php if ( ! empty( $tag['enabled'] ) ) : ?>
                                                 <button type="button" class="wpvfh-predefined-tag-btn" data-tag="<?php echo esc_attr( $tag['label'] ); ?>" data-color="<?php echo esc_attr( $tag['color'] ); ?>">
                                                     <?php echo esc_html( $tag['label'] ); ?>
                                                 </button>
+                                                <?php endif; ?>
                                             <?php endforeach; ?>
                                         </div>
                                     <?php endif; ?>
-                                    <input type="text" id="wpvfh-feedback-tags-input" class="wpvfh-tags-input-inline" placeholder="<?php esc_attr_e( 'Ajouter...', 'blazing-feedback' ); ?>">
+                                    <input type="text" id="wpvfh-feedback-tags-input" class="wpvfh-tags-input-inline" placeholder="<?php esc_attr_e( 'Ajouter...', 'blazing-feedback' ); ?>" <?php echo $tags_settings['required'] ? 'data-required="true"' : ''; ?>>
                                 </div>
-                                <input type="hidden" id="wpvfh-feedback-tags" name="feedback_tags">
+                                <input type="hidden" id="wpvfh-feedback-tags" name="feedback_tags" <?php echo $tags_settings['required'] ? 'required' : ''; ?>>
                             </div>
+                            <?php endif; ?>
+
+                            <!-- Groupes personnalisés -->
+                            <?php foreach ( $custom_groups as $slug => $group ) :
+                                $group_settings = WPVFH_Options_Manager::get_group_settings( $slug );
+                                if ( ! $group_settings['enabled'] || ! WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
+                                    continue;
+                                }
+                                $group_items = WPVFH_Options_Manager::get_custom_group_items( $slug );
+                                if ( empty( $group_items ) ) {
+                                    continue;
+                                }
+                            ?>
+                            <div class="wpvfh-dropdown-group wpvfh-custom-group" data-group="<?php echo esc_attr( $slug ); ?>">
+                                <label for="wpvfh-custom-<?php echo esc_attr( $slug ); ?>">
+                                    <span class="wpvfh-dropdown-icon">📋</span>
+                                    <?php echo esc_html( $group['name'] ); ?>
+                                    <?php if ( $group_settings['required'] ) : ?>
+                                        <span class="wpvfh-required-badge">*</span>
+                                    <?php endif; ?>
+                                </label>
+                                <select id="wpvfh-custom-<?php echo esc_attr( $slug ); ?>" name="custom_<?php echo esc_attr( $slug ); ?>" class="wpvfh-dropdown wpvfh-custom-dropdown" <?php echo $group_settings['required'] ? 'required' : ''; ?>>
+                                    <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
+                                    <?php foreach ( $group_items as $item ) : ?>
+                                        <?php if ( ! empty( $item['enabled'] ) ) : ?>
+                                        <option value="<?php echo esc_attr( $item['id'] ); ?>" data-color="<?php echo esc_attr( $item['color'] ); ?>">
+                                            <?php echo esc_html( $item['emoji'] . ' ' . $item['label'] ); ?>
+                                        </option>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <?php endforeach; ?>
                         </div>
 
                         <!-- Info pin -->
@@ -948,8 +1089,9 @@ final class WP_Visual_Feedback_Hub {
                                 </div>
                             </div>
 
-                            <!-- Champs éditables (Type, Priorité) -->
+                            <!-- Champs éditables (Type, Priorité, Groupes personnalisés) -->
                             <div class="wpvfh-detail-dropdowns" id="wpvfh-detail-dropdowns">
+                                <?php if ( $types_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'types' ) ) : ?>
                                 <div class="wpvfh-dropdown-group">
                                     <label for="wpvfh-detail-type">
                                         <span class="wpvfh-dropdown-icon">🏷️</span>
@@ -957,26 +1099,61 @@ final class WP_Visual_Feedback_Hub {
                                     </label>
                                     <select id="wpvfh-detail-type" class="wpvfh-dropdown">
                                         <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
-                                        <option value="bug">🐛 <?php esc_html_e( 'Bug', 'blazing-feedback' ); ?></option>
-                                        <option value="improvement">💡 <?php esc_html_e( 'Amélioration', 'blazing-feedback' ); ?></option>
-                                        <option value="question">❓ <?php esc_html_e( 'Question', 'blazing-feedback' ); ?></option>
-                                        <option value="design">🎨 <?php esc_html_e( 'Design', 'blazing-feedback' ); ?></option>
-                                        <option value="content">📝 <?php esc_html_e( 'Contenu', 'blazing-feedback' ); ?></option>
-                                        <option value="other">📌 <?php esc_html_e( 'Autre', 'blazing-feedback' ); ?></option>
+                                        <?php foreach ( $feedback_types as $type ) : ?>
+                                            <?php if ( ! empty( $type['enabled'] ) ) : ?>
+                                            <option value="<?php echo esc_attr( $type['id'] ); ?>" data-color="<?php echo esc_attr( $type['color'] ); ?>">
+                                                <?php echo esc_html( $type['emoji'] . ' ' . $type['label'] ); ?>
+                                            </option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
+                                <?php endif; ?>
+                                <?php if ( $priority_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'priorities' ) ) : ?>
                                 <div class="wpvfh-dropdown-group">
                                     <label for="wpvfh-detail-priority-select">
                                         <span class="wpvfh-dropdown-icon">⚡</span>
                                         <?php esc_html_e( 'Priorité', 'blazing-feedback' ); ?>
                                     </label>
                                     <select id="wpvfh-detail-priority-select" class="wpvfh-dropdown">
-                                        <option value="none">⚪ <?php esc_html_e( 'Aucune', 'blazing-feedback' ); ?></option>
-                                        <option value="low">🟢 <?php esc_html_e( 'Basse', 'blazing-feedback' ); ?></option>
-                                        <option value="medium">🟠 <?php esc_html_e( 'Moyenne', 'blazing-feedback' ); ?></option>
-                                        <option value="high">🔴 <?php esc_html_e( 'Haute', 'blazing-feedback' ); ?></option>
+                                        <?php foreach ( $priorities as $priority ) : ?>
+                                            <?php if ( ! empty( $priority['enabled'] ) ) : ?>
+                                            <option value="<?php echo esc_attr( $priority['id'] ); ?>" data-color="<?php echo esc_attr( $priority['color'] ); ?>">
+                                                <?php echo esc_html( $priority['emoji'] . ' ' . $priority['label'] ); ?>
+                                            </option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
+                                <?php endif; ?>
+                                <!-- Groupes personnalisés dans les détails -->
+                                <?php foreach ( $custom_groups as $slug => $group ) :
+                                    $group_settings = WPVFH_Options_Manager::get_group_settings( $slug );
+                                    if ( ! $group_settings['enabled'] || ! WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
+                                        continue;
+                                    }
+                                    $group_items = WPVFH_Options_Manager::get_custom_group_items( $slug );
+                                    if ( empty( $group_items ) ) {
+                                        continue;
+                                    }
+                                ?>
+                                <div class="wpvfh-dropdown-group wpvfh-custom-group" data-group="<?php echo esc_attr( $slug ); ?>">
+                                    <label for="wpvfh-detail-custom-<?php echo esc_attr( $slug ); ?>">
+                                        <span class="wpvfh-dropdown-icon">📋</span>
+                                        <?php echo esc_html( $group['name'] ); ?>
+                                    </label>
+                                    <select id="wpvfh-detail-custom-<?php echo esc_attr( $slug ); ?>" class="wpvfh-dropdown wpvfh-detail-custom-dropdown" data-group="<?php echo esc_attr( $slug ); ?>">
+                                        <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
+                                        <?php foreach ( $group_items as $item ) : ?>
+                                            <?php if ( ! empty( $item['enabled'] ) ) : ?>
+                                            <option value="<?php echo esc_attr( $item['id'] ); ?>" data-color="<?php echo esc_attr( $item['color'] ); ?>">
+                                                <?php echo esc_html( $item['emoji'] . ' ' . $item['label'] ); ?>
+                                            </option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <?php endforeach; ?>
                             </div>
 
                             <!-- Commentaire -->

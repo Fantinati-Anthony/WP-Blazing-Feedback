@@ -3964,6 +3964,17 @@ button#wpvfh-validate-page-btn {
     color: #6c757d;
 }
 
+/* Badge champ requis */
+.wpvfh-required-badge {
+    color: #e74c3c;
+    font-weight: 700;
+    margin-left: 2px;
+}
+
+.wpvfh-dropdown-group label .wpvfh-required-badge {
+    font-size: 14px;
+}
+
 .wpvfh-attachments-input {
     margin-bottom: 8px;
 }
