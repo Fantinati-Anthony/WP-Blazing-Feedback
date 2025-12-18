@@ -373,11 +373,14 @@
                 });
             }
 
-            // Bouton "Ajouter un feedback" dans l'onglet liste
+            // Bouton "Ajouter un feedback" dans l'onglet liste (même comportement que le bouton +)
             if (this.elements.addFeedbackBtn) {
                 this.elements.addFeedbackBtn.addEventListener('click', () => {
                     this.switchTab('new');
-                    this.startFeedbackMode();
+                    // Focus sur le champ commentaire
+                    if (this.elements.commentField) {
+                        setTimeout(() => this.elements.commentField.focus(), 350);
+                    }
                 });
             }
 

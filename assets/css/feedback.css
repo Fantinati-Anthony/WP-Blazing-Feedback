@@ -1903,6 +1903,22 @@ html body.elementor-default .wpvfh-btn-primary,
     border: none !important;
 }
 
+/* Texte blanc dans les boutons primaires - spécificité maximale */
+.wpvfh-container .wpvfh-btn-primary,
+.wpvfh-container .wpvfh-btn-primary *,
+.wpvfh-container .wpvfh-btn-primary span,
+.wpvfh-panel .wpvfh-btn-primary,
+.wpvfh-panel .wpvfh-btn-primary *,
+.wpvfh-panel .wpvfh-btn-primary span,
+html body .wpvfh-btn-primary,
+html body .wpvfh-btn-primary *,
+html body .wpvfh-add-feedback-btn,
+html body .wpvfh-add-feedback-btn *,
+.elementor .wpvfh-btn-primary,
+.elementor .wpvfh-btn-primary * {
+    color: #fff !important;
+}
+
 .wpvfh-container .wpvfh-btn-primary:hover:not(:disabled),
 .wpvfh-container button.wpvfh-btn-primary:hover:not(:disabled),
 .wpvfh-panel .wpvfh-btn-primary:hover:not(:disabled),
