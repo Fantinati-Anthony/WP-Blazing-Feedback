@@ -39,6 +39,7 @@ class WPVFH_Options_Manager {
         add_action( 'wp_ajax_wpvfh_save_options_order', array( __CLASS__, 'ajax_save_order' ) );
         add_action( 'wp_ajax_wpvfh_save_option_item', array( __CLASS__, 'ajax_save_item' ) );
         add_action( 'wp_ajax_wpvfh_delete_option_item', array( __CLASS__, 'ajax_delete_item' ) );
+        add_action( 'wp_ajax_wpvfh_search_users_roles', array( __CLASS__, 'ajax_search_users_roles' ) );
     }
 
     /**
@@ -89,16 +90,44 @@ class WPVFH_Options_Manager {
             true
         );
 
+        // Obtenir les rôles disponibles
+        $roles = wp_roles()->get_names();
+
         wp_localize_script( 'wpvfh-options-admin', 'wpvfhOptionsAdmin', array(
-            'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-            'nonce'   => wp_create_nonce( 'wpvfh_options_nonce' ),
-            'i18n'    => array(
-                'confirmDelete' => __( 'Êtes-vous sûr de vouloir supprimer cet élément ?', 'blazing-feedback' ),
-                'saving'        => __( 'Enregistrement...', 'blazing-feedback' ),
-                'saved'         => __( 'Enregistré !', 'blazing-feedback' ),
-                'error'         => __( 'Erreur lors de l\'enregistrement', 'blazing-feedback' ),
+            'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
+            'nonce'     => wp_create_nonce( 'wpvfh_options_nonce' ),
+            'roles'     => $roles,
+            'i18n'      => array(
+                'confirmDelete'   => __( 'Êtes-vous sûr de vouloir supprimer cet élément ?', 'blazing-feedback' ),
+                'saving'          => __( 'Enregistrement...', 'blazing-feedback' ),
+                'saved'           => __( 'Enregistré !', 'blazing-feedback' ),
+                'error'           => __( 'Erreur lors de l\'enregistrement', 'blazing-feedback' ),
+                'searchPlaceholder' => __( 'Rechercher un utilisateur ou rôle...', 'blazing-feedback' ),
+                'noResults'       => __( 'Aucun résultat', 'blazing-feedback' ),
+                'allAllowed'      => __( 'Tous autorisés (vide)', 'blazing-feedback' ),
             ),
         ) );
+    }
+
+    /**
+     * Créer un élément par défaut avec tous les champs
+     *
+     * @since 1.2.0
+     * @param array $base Données de base
+     * @return array
+     */
+    private static function create_default_item( $base ) {
+        return array_merge( array(
+            'id'            => '',
+            'label'         => '',
+            'emoji'         => '📌',
+            'color'         => '#666666',
+            'display_mode'  => 'emoji', // 'emoji' ou 'color_dot'
+            'enabled'       => true,
+            'ai_prompt'     => '',
+            'allowed_roles' => array(), // vide = tous autorisés
+            'allowed_users' => array(), // vide = tous autorisés
+        ), $base );
     }
 
     /**
@@ -109,42 +138,42 @@ class WPVFH_Options_Manager {
      */
     public static function get_default_types() {
         return array(
-            array(
+            self::create_default_item( array(
                 'id'    => 'bug',
                 'label' => __( 'Bug', 'blazing-feedback' ),
                 'emoji' => '🐛',
                 'color' => '#e74c3c',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'improvement',
                 'label' => __( 'Amélioration', 'blazing-feedback' ),
                 'emoji' => '💡',
                 'color' => '#f39c12',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'question',
                 'label' => __( 'Question', 'blazing-feedback' ),
                 'emoji' => '❓',
                 'color' => '#3498db',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'design',
                 'label' => __( 'Design', 'blazing-feedback' ),
                 'emoji' => '🎨',
                 'color' => '#9b59b6',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'content',
                 'label' => __( 'Contenu', 'blazing-feedback' ),
                 'emoji' => '📝',
                 'color' => '#1abc9c',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'other',
                 'label' => __( 'Autre', 'blazing-feedback' ),
                 'emoji' => '📌',
                 'color' => '#95a5a6',
-            ),
+            ) ),
         );
     }
 
@@ -156,30 +185,30 @@ class WPVFH_Options_Manager {
      */
     public static function get_default_priorities() {
         return array(
-            array(
+            self::create_default_item( array(
                 'id'    => 'none',
                 'label' => __( 'Aucune', 'blazing-feedback' ),
                 'emoji' => '⚪',
                 'color' => '#bdc3c7',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'low',
                 'label' => __( 'Basse', 'blazing-feedback' ),
                 'emoji' => '🟢',
                 'color' => '#27ae60',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'medium',
                 'label' => __( 'Moyenne', 'blazing-feedback' ),
                 'emoji' => '🟠',
                 'color' => '#f39c12',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'high',
                 'label' => __( 'Haute', 'blazing-feedback' ),
                 'emoji' => '🔴',
                 'color' => '#e74c3c',
-            ),
+            ) ),
         );
     }
 
@@ -191,26 +220,34 @@ class WPVFH_Options_Manager {
      */
     public static function get_default_tags() {
         return array(
-            array(
-                'id'    => 'urgent',
-                'label' => __( 'Urgent', 'blazing-feedback' ),
-                'color' => '#e74c3c',
-            ),
-            array(
-                'id'    => 'frontend',
-                'label' => __( 'Frontend', 'blazing-feedback' ),
-                'color' => '#3498db',
-            ),
-            array(
-                'id'    => 'backend',
-                'label' => __( 'Backend', 'blazing-feedback' ),
-                'color' => '#9b59b6',
-            ),
-            array(
-                'id'    => 'mobile',
-                'label' => __( 'Mobile', 'blazing-feedback' ),
-                'color' => '#1abc9c',
-            ),
+            self::create_default_item( array(
+                'id'           => 'urgent',
+                'label'        => __( 'Urgent', 'blazing-feedback' ),
+                'emoji'        => '🚨',
+                'color'        => '#e74c3c',
+                'display_mode' => 'color_dot',
+            ) ),
+            self::create_default_item( array(
+                'id'           => 'frontend',
+                'label'        => __( 'Frontend', 'blazing-feedback' ),
+                'emoji'        => '🖥️',
+                'color'        => '#3498db',
+                'display_mode' => 'color_dot',
+            ) ),
+            self::create_default_item( array(
+                'id'           => 'backend',
+                'label'        => __( 'Backend', 'blazing-feedback' ),
+                'emoji'        => '⚙️',
+                'color'        => '#9b59b6',
+                'display_mode' => 'color_dot',
+            ) ),
+            self::create_default_item( array(
+                'id'           => 'mobile',
+                'label'        => __( 'Mobile', 'blazing-feedback' ),
+                'emoji'        => '📱',
+                'color'        => '#1abc9c',
+                'display_mode' => 'color_dot',
+            ) ),
         );
     }
 
@@ -222,31 +259,53 @@ class WPVFH_Options_Manager {
      */
     public static function get_default_statuses() {
         return array(
-            array(
+            self::create_default_item( array(
                 'id'    => 'new',
                 'label' => __( 'Nouveau', 'blazing-feedback' ),
                 'emoji' => '🆕',
                 'color' => '#3498db',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'in_progress',
                 'label' => __( 'En cours', 'blazing-feedback' ),
                 'emoji' => '🔄',
                 'color' => '#f39c12',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'resolved',
                 'label' => __( 'Résolu', 'blazing-feedback' ),
                 'emoji' => '✅',
                 'color' => '#27ae60',
-            ),
-            array(
+            ) ),
+            self::create_default_item( array(
                 'id'    => 'rejected',
                 'label' => __( 'Rejeté', 'blazing-feedback' ),
                 'emoji' => '❌',
                 'color' => '#e74c3c',
-            ),
+            ) ),
         );
+    }
+
+    /**
+     * Normaliser un élément avec les champs par défaut
+     *
+     * @since 1.2.0
+     * @param array $item Élément à normaliser
+     * @return array
+     */
+    private static function normalize_item( $item ) {
+        $defaults = array(
+            'id'            => '',
+            'label'         => '',
+            'emoji'         => '📌',
+            'color'         => '#666666',
+            'display_mode'  => 'emoji',
+            'enabled'       => true,
+            'ai_prompt'     => '',
+            'allowed_roles' => array(),
+            'allowed_users' => array(),
+        );
+        return array_merge( $defaults, $item );
     }
 
     /**
@@ -261,7 +320,8 @@ class WPVFH_Options_Manager {
             $types = self::get_default_types();
             update_option( self::OPTION_TYPES, $types );
         }
-        return $types;
+        // Normaliser chaque élément
+        return array_map( array( __CLASS__, 'normalize_item' ), $types );
     }
 
     /**
@@ -276,7 +336,7 @@ class WPVFH_Options_Manager {
             $priorities = self::get_default_priorities();
             update_option( self::OPTION_PRIORITIES, $priorities );
         }
-        return $priorities;
+        return array_map( array( __CLASS__, 'normalize_item' ), $priorities );
     }
 
     /**
@@ -291,7 +351,7 @@ class WPVFH_Options_Manager {
             $tags = self::get_default_tags();
             update_option( self::OPTION_TAGS, $tags );
         }
-        return $tags;
+        return array_map( array( __CLASS__, 'normalize_item' ), $tags );
     }
 
     /**
@@ -339,7 +399,7 @@ class WPVFH_Options_Manager {
             $statuses = self::get_default_statuses();
             update_option( self::OPTION_STATUSES, $statuses );
         }
-        return $statuses;
+        return array_map( array( __CLASS__, 'normalize_item' ), $statuses );
     }
 
     /**
@@ -405,6 +465,62 @@ class WPVFH_Options_Manager {
     }
 
     /**
+     * Vérifier si un utilisateur a accès à une option
+     *
+     * @since 1.2.0
+     * @param array    $item    L'élément d'option
+     * @param int|null $user_id ID utilisateur (null = utilisateur courant)
+     * @return bool
+     */
+    public static function user_can_access_option( $item, $user_id = null ) {
+        if ( null === $user_id ) {
+            $user_id = get_current_user_id();
+        }
+
+        // Si pas activé, pas d'accès
+        if ( isset( $item['enabled'] ) && ! $item['enabled'] ) {
+            return false;
+        }
+
+        // Si pas de restrictions, tout le monde a accès
+        $has_role_restriction = ! empty( $item['allowed_roles'] );
+        $has_user_restriction = ! empty( $item['allowed_users'] );
+
+        if ( ! $has_role_restriction && ! $has_user_restriction ) {
+            return true;
+        }
+
+        // Vérifier si l'utilisateur est dans la liste
+        if ( $has_user_restriction && in_array( $user_id, $item['allowed_users'], true ) ) {
+            return true;
+        }
+
+        // Vérifier si l'utilisateur a un des rôles autorisés
+        if ( $has_role_restriction ) {
+            $user = get_user_by( 'id', $user_id );
+            if ( $user && ! empty( array_intersect( $user->roles, $item['allowed_roles'] ) ) ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Filtrer les options accessibles par l'utilisateur
+     *
+     * @since 1.2.0
+     * @param array    $items   Liste des éléments
+     * @param int|null $user_id ID utilisateur
+     * @return array
+     */
+    public static function filter_accessible_options( $items, $user_id = null ) {
+        return array_filter( $items, function( $item ) use ( $user_id ) {
+            return self::user_can_access_option( $item, $user_id );
+        } );
+    }
+
+    /**
      * Gérer les actions admin
      *
      * @since 1.1.0
@@ -443,6 +559,56 @@ class WPVFH_Options_Manager {
             wp_safe_redirect( admin_url( 'admin.php?page=wpvfh-options&tab=' . $tab . '&reset=1' ) );
             exit;
         }
+    }
+
+    /**
+     * AJAX: Rechercher utilisateurs et rôles
+     *
+     * @since 1.2.0
+     * @return void
+     */
+    public static function ajax_search_users_roles() {
+        check_ajax_referer( 'wpvfh_options_nonce', 'nonce' );
+
+        if ( ! current_user_can( 'manage_feedback' ) ) {
+            wp_send_json_error( __( 'Permission refusée.', 'blazing-feedback' ) );
+        }
+
+        $search = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
+        $results = array();
+
+        // Rechercher les rôles
+        $roles = wp_roles()->get_names();
+        foreach ( $roles as $role_slug => $role_name ) {
+            if ( empty( $search ) || stripos( $role_name, $search ) !== false || stripos( $role_slug, $search ) !== false ) {
+                $results[] = array(
+                    'type'  => 'role',
+                    'id'    => $role_slug,
+                    'label' => $role_name,
+                    'icon'  => '👥',
+                );
+            }
+        }
+
+        // Rechercher les utilisateurs
+        if ( ! empty( $search ) ) {
+            $users = get_users( array(
+                'search'         => '*' . $search . '*',
+                'search_columns' => array( 'user_login', 'user_email', 'display_name' ),
+                'number'         => 10,
+            ) );
+
+            foreach ( $users as $user ) {
+                $results[] = array(
+                    'type'  => 'user',
+                    'id'    => $user->ID,
+                    'label' => $user->display_name . ' (' . $user->user_email . ')',
+                    'icon'  => '👤',
+                );
+            }
+        }
+
+        wp_send_json_success( $results );
     }
 
     /**
@@ -524,15 +690,25 @@ class WPVFH_Options_Manager {
             wp_send_json_error( __( 'Permission refusée.', 'blazing-feedback' ) );
         }
 
-        $option_type = isset( $_POST['option_type'] ) ? sanitize_key( $_POST['option_type'] ) : '';
-        $item_id     = isset( $_POST['item_id'] ) ? sanitize_key( $_POST['item_id'] ) : '';
-        $label       = isset( $_POST['label'] ) ? sanitize_text_field( $_POST['label'] ) : '';
-        $emoji       = isset( $_POST['emoji'] ) ? wp_kses( $_POST['emoji'], array() ) : '';
-        $color       = isset( $_POST['color'] ) ? sanitize_hex_color( $_POST['color'] ) : '#666666';
-        $is_new      = isset( $_POST['is_new'] ) && $_POST['is_new'] === 'true';
+        $option_type   = isset( $_POST['option_type'] ) ? sanitize_key( $_POST['option_type'] ) : '';
+        $item_id       = isset( $_POST['item_id'] ) ? sanitize_key( $_POST['item_id'] ) : '';
+        $label         = isset( $_POST['label'] ) ? sanitize_text_field( $_POST['label'] ) : '';
+        $emoji         = isset( $_POST['emoji'] ) ? wp_kses( $_POST['emoji'], array() ) : '📌';
+        $color         = isset( $_POST['color'] ) ? sanitize_hex_color( $_POST['color'] ) : '#666666';
+        $display_mode  = isset( $_POST['display_mode'] ) ? sanitize_key( $_POST['display_mode'] ) : 'emoji';
+        $enabled       = isset( $_POST['enabled'] ) ? ( $_POST['enabled'] === 'true' || $_POST['enabled'] === '1' ) : true;
+        $ai_prompt     = isset( $_POST['ai_prompt'] ) ? sanitize_textarea_field( $_POST['ai_prompt'] ) : '';
+        $allowed_roles = isset( $_POST['allowed_roles'] ) ? array_map( 'sanitize_key', (array) $_POST['allowed_roles'] ) : array();
+        $allowed_users = isset( $_POST['allowed_users'] ) ? array_map( 'absint', (array) $_POST['allowed_users'] ) : array();
+        $is_new        = isset( $_POST['is_new'] ) && $_POST['is_new'] === 'true';
 
         if ( empty( $option_type ) || empty( $label ) ) {
             wp_send_json_error( __( 'Données invalides.', 'blazing-feedback' ) );
+        }
+
+        // Valider display_mode
+        if ( ! in_array( $display_mode, array( 'emoji', 'color_dot' ), true ) ) {
+            $display_mode = 'emoji';
         }
 
         // Générer un ID si nouveau
@@ -541,15 +717,16 @@ class WPVFH_Options_Manager {
         }
 
         $new_item = array(
-            'id'    => $item_id,
-            'label' => $label,
-            'color' => $color,
+            'id'            => $item_id,
+            'label'         => $label,
+            'emoji'         => $emoji,
+            'color'         => $color,
+            'display_mode'  => $display_mode,
+            'enabled'       => $enabled,
+            'ai_prompt'     => $ai_prompt,
+            'allowed_roles' => array_filter( $allowed_roles ),
+            'allowed_users' => array_filter( $allowed_users ),
         );
-
-        // Ajouter l'emoji pour types, priorities et statuses
-        if ( in_array( $option_type, array( 'types', 'priorities', 'statuses' ), true ) ) {
-            $new_item['emoji'] = $emoji;
-        }
 
         // Obtenir les items existants
         $items = array();
@@ -732,7 +909,7 @@ class WPVFH_Options_Manager {
      */
     private static function render_statuses_tab() {
         $statuses = self::get_statuses();
-        self::render_items_table( 'statuses', $statuses, true );
+        self::render_items_table( 'statuses', $statuses );
     }
 
     /**
@@ -743,7 +920,7 @@ class WPVFH_Options_Manager {
      */
     private static function render_types_tab() {
         $types = self::get_types();
-        self::render_items_table( 'types', $types, true );
+        self::render_items_table( 'types', $types );
     }
 
     /**
@@ -754,7 +931,7 @@ class WPVFH_Options_Manager {
      */
     private static function render_priorities_tab() {
         $priorities = self::get_priorities();
-        self::render_items_table( 'priorities', $priorities, true );
+        self::render_items_table( 'priorities', $priorities );
     }
 
     /**
@@ -765,19 +942,18 @@ class WPVFH_Options_Manager {
      */
     private static function render_tags_tab() {
         $tags = self::get_predefined_tags();
-        self::render_items_table( 'tags', $tags, false );
+        self::render_items_table( 'tags', $tags );
     }
 
     /**
      * Rendu du tableau d'éléments
      *
      * @since 1.1.0
-     * @param string $type       Type d'option (types, priorities, tags)
-     * @param array  $items      Éléments à afficher
-     * @param bool   $show_emoji Afficher la colonne emoji
+     * @param string $type  Type d'option (types, priorities, tags, statuses)
+     * @param array  $items Éléments à afficher
      * @return void
      */
-    private static function render_items_table( $type, $items, $show_emoji = true ) {
+    private static function render_items_table( $type, $items ) {
         $reset_url = wp_nonce_url(
             admin_url( 'admin.php?page=wpvfh-options&tab=' . $type . '&action=reset' ),
             'wpvfh_reset_options'
@@ -815,94 +991,189 @@ class WPVFH_Options_Manager {
             </div>
         </div>
 
-        <table class="wp-list-table widefat fixed striped wpvfh-options-table" data-type="<?php echo esc_attr( $type ); ?>">
-            <thead>
-                <tr>
-                    <th class="wpvfh-col-drag" style="width: 30px;"></th>
-                    <?php if ( $show_emoji ) : ?>
-                    <th class="wpvfh-col-emoji" style="width: 60px;"><?php esc_html_e( 'Emoji', 'blazing-feedback' ); ?></th>
-                    <?php endif; ?>
-                    <th class="wpvfh-col-label"><?php esc_html_e( 'Label', 'blazing-feedback' ); ?></th>
-                    <th class="wpvfh-col-color" style="width: 120px;"><?php esc_html_e( 'Couleur', 'blazing-feedback' ); ?></th>
-                    <th class="wpvfh-col-preview" style="width: 150px;"><?php esc_html_e( 'Aperçu', 'blazing-feedback' ); ?></th>
-                    <th class="wpvfh-col-actions" style="width: 100px;"><?php esc_html_e( 'Actions', 'blazing-feedback' ); ?></th>
-                </tr>
-            </thead>
-            <tbody class="wpvfh-sortable-items">
-                <?php foreach ( $items as $item ) : ?>
-                    <?php self::render_item_row( $type, $item, $show_emoji ); ?>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="wpvfh-items-list" data-type="<?php echo esc_attr( $type ); ?>">
+            <?php foreach ( $items as $item ) : ?>
+                <?php self::render_item_card( $type, $item ); ?>
+            <?php endforeach; ?>
+        </div>
 
-        <!-- Template pour nouvelle ligne -->
+        <!-- Template pour nouvel élément -->
         <script type="text/template" id="wpvfh-item-template-<?php echo esc_attr( $type ); ?>">
-            <?php self::render_item_row( $type, array( 'id' => '', 'label' => '', 'emoji' => '📌', 'color' => '#666666' ), $show_emoji, true ); ?>
+            <?php
+            self::render_item_card( $type, array(
+                'id'            => '',
+                'label'         => '',
+                'emoji'         => '📌',
+                'color'         => '#666666',
+                'display_mode'  => 'emoji',
+                'enabled'       => true,
+                'ai_prompt'     => '',
+                'allowed_roles' => array(),
+                'allowed_users' => array(),
+            ), true );
+            ?>
         </script>
         <?php
     }
 
     /**
-     * Rendu d'une ligne d'élément
+     * Rendu d'une carte d'élément
      *
-     * @since 1.1.0
-     * @param string $type       Type d'option
-     * @param array  $item       Données de l'élément
-     * @param bool   $show_emoji Afficher l'emoji
-     * @param bool   $is_new     Est un nouvel élément
+     * @since 1.2.0
+     * @param string $type   Type d'option
+     * @param array  $item   Données de l'élément
+     * @param bool   $is_new Est un nouvel élément
      * @return void
      */
-    private static function render_item_row( $type, $item, $show_emoji = true, $is_new = false ) {
-        $id    = isset( $item['id'] ) ? $item['id'] : '';
-        $label = isset( $item['label'] ) ? $item['label'] : '';
-        $emoji = isset( $item['emoji'] ) ? $item['emoji'] : '📌';
-        $color = isset( $item['color'] ) ? $item['color'] : '#666666';
+    private static function render_item_card( $type, $item, $is_new = false ) {
+        $item = self::normalize_item( $item );
+        $id           = $item['id'];
+        $label        = $item['label'];
+        $emoji        = $item['emoji'];
+        $color        = $item['color'];
+        $display_mode = $item['display_mode'];
+        $enabled      = $item['enabled'];
+        $ai_prompt    = $item['ai_prompt'];
+        $allowed_roles = $item['allowed_roles'];
+        $allowed_users = $item['allowed_users'];
+
+        // Obtenir les noms des rôles/utilisateurs pour l'affichage
+        $access_labels = array();
+        $roles = wp_roles()->get_names();
+        foreach ( $allowed_roles as $role ) {
+            if ( isset( $roles[ $role ] ) ) {
+                $access_labels[] = array( 'type' => 'role', 'id' => $role, 'label' => '👥 ' . $roles[ $role ] );
+            }
+        }
+        foreach ( $allowed_users as $user_id ) {
+            $user = get_user_by( 'id', $user_id );
+            if ( $user ) {
+                $access_labels[] = array( 'type' => 'user', 'id' => $user_id, 'label' => '👤 ' . $user->display_name );
+            }
+        }
         ?>
-        <tr class="wpvfh-option-item <?php echo $is_new ? 'wpvfh-new-item' : ''; ?>" data-id="<?php echo esc_attr( $id ); ?>">
-            <td class="wpvfh-col-drag">
+        <div class="wpvfh-option-card <?php echo $is_new ? 'wpvfh-new-item' : ''; ?> <?php echo ! $enabled ? 'wpvfh-disabled' : ''; ?>" data-id="<?php echo esc_attr( $id ); ?>">
+            <div class="wpvfh-card-header">
                 <span class="wpvfh-drag-handle dashicons dashicons-menu"></span>
-            </td>
-            <?php if ( $show_emoji ) : ?>
-            <td class="wpvfh-col-emoji">
-                <input type="text" class="wpvfh-emoji-input" value="<?php echo esc_attr( $emoji ); ?>" maxlength="4" style="width: 40px; text-align: center; font-size: 18px;">
-            </td>
-            <?php endif; ?>
-            <td class="wpvfh-col-label">
-                <input type="text" class="wpvfh-label-input regular-text" value="<?php echo esc_attr( $label ); ?>" placeholder="<?php esc_attr_e( 'Label...', 'blazing-feedback' ); ?>">
-            </td>
-            <td class="wpvfh-col-color">
-                <input type="text" class="wpvfh-color-input" value="<?php echo esc_attr( $color ); ?>" data-default-color="<?php echo esc_attr( $color ); ?>">
-            </td>
-            <td class="wpvfh-col-preview">
-                <span class="wpvfh-preview-badge" style="background-color: <?php echo esc_attr( $color ); ?>20; color: <?php echo esc_attr( $color ); ?>; border: 1px solid <?php echo esc_attr( $color ); ?>40;">
-                    <?php if ( $show_emoji ) : ?><span class="wpvfh-preview-emoji"><?php echo esc_html( $emoji ); ?></span><?php endif; ?>
-                    <span class="wpvfh-preview-label"><?php echo esc_html( $label ?: __( 'Aperçu', 'blazing-feedback' ) ); ?></span>
-                </span>
-            </td>
-            <td class="wpvfh-col-actions">
-                <button type="button" class="button wpvfh-save-item-btn" title="<?php esc_attr_e( 'Enregistrer', 'blazing-feedback' ); ?>">
-                    <span class="dashicons dashicons-saved"></span>
-                </button>
-                <button type="button" class="button wpvfh-delete-item-btn" title="<?php esc_attr_e( 'Supprimer', 'blazing-feedback' ); ?>">
-                    <span class="dashicons dashicons-trash"></span>
-                </button>
-            </td>
-        </tr>
+                <div class="wpvfh-card-preview">
+                    <?php if ( $display_mode === 'emoji' ) : ?>
+                        <span class="wpvfh-preview-emoji"><?php echo esc_html( $emoji ); ?></span>
+                    <?php else : ?>
+                        <span class="wpvfh-preview-dot" style="background-color: <?php echo esc_attr( $color ); ?>;"></span>
+                    <?php endif; ?>
+                    <span class="wpvfh-preview-label"><?php echo esc_html( $label ?: __( 'Nouveau', 'blazing-feedback' ) ); ?></span>
+                </div>
+                <div class="wpvfh-card-actions">
+                    <label class="wpvfh-toggle">
+                        <input type="checkbox" class="wpvfh-enabled-toggle" <?php checked( $enabled ); ?>>
+                        <span class="wpvfh-toggle-slider"></span>
+                    </label>
+                    <button type="button" class="wpvfh-expand-btn" title="<?php esc_attr_e( 'Développer', 'blazing-feedback' ); ?>">
+                        <span class="dashicons dashicons-arrow-down-alt2"></span>
+                    </button>
+                    <button type="button" class="button wpvfh-delete-item-btn" title="<?php esc_attr_e( 'Supprimer', 'blazing-feedback' ); ?>">
+                        <span class="dashicons dashicons-trash"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="wpvfh-card-body" style="display: none;">
+                <div class="wpvfh-form-row">
+                    <div class="wpvfh-form-group wpvfh-form-group-half">
+                        <label><?php esc_html_e( 'Label', 'blazing-feedback' ); ?></label>
+                        <input type="text" class="wpvfh-label-input regular-text" value="<?php echo esc_attr( $label ); ?>" placeholder="<?php esc_attr_e( 'Label...', 'blazing-feedback' ); ?>">
+                    </div>
+                    <div class="wpvfh-form-group wpvfh-form-group-quarter">
+                        <label><?php esc_html_e( 'Couleur', 'blazing-feedback' ); ?></label>
+                        <input type="text" class="wpvfh-color-input" value="<?php echo esc_attr( $color ); ?>" data-default-color="<?php echo esc_attr( $color ); ?>">
+                    </div>
+                </div>
+
+                <div class="wpvfh-form-row">
+                    <div class="wpvfh-form-group">
+                        <label><?php esc_html_e( 'Mode d\'affichage', 'blazing-feedback' ); ?></label>
+                        <div class="wpvfh-display-mode-selector">
+                            <label class="wpvfh-radio-card <?php echo $display_mode === 'emoji' ? 'selected' : ''; ?>">
+                                <input type="radio" name="display_mode_<?php echo esc_attr( $id ?: 'new' ); ?>" value="emoji" <?php checked( $display_mode, 'emoji' ); ?>>
+                                <span class="wpvfh-radio-content">
+                                    <span class="wpvfh-radio-icon"><?php echo esc_html( $emoji ); ?></span>
+                                    <span class="wpvfh-radio-label"><?php esc_html_e( 'Emoji', 'blazing-feedback' ); ?></span>
+                                </span>
+                            </label>
+                            <label class="wpvfh-radio-card <?php echo $display_mode === 'color_dot' ? 'selected' : ''; ?>">
+                                <input type="radio" name="display_mode_<?php echo esc_attr( $id ?: 'new' ); ?>" value="color_dot" <?php checked( $display_mode, 'color_dot' ); ?>>
+                                <span class="wpvfh-radio-content">
+                                    <span class="wpvfh-radio-dot" style="background-color: <?php echo esc_attr( $color ); ?>;"></span>
+                                    <span class="wpvfh-radio-label"><?php esc_html_e( 'Rond coloré', 'blazing-feedback' ); ?></span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wpvfh-form-row wpvfh-emoji-row" style="<?php echo $display_mode !== 'emoji' ? 'display: none;' : ''; ?>">
+                    <div class="wpvfh-form-group">
+                        <label><?php esc_html_e( 'Emoji', 'blazing-feedback' ); ?></label>
+                        <input type="text" class="wpvfh-emoji-input" value="<?php echo esc_attr( $emoji ); ?>" maxlength="4" style="width: 60px; text-align: center; font-size: 20px;">
+                    </div>
+                </div>
+
+                <div class="wpvfh-form-row">
+                    <div class="wpvfh-form-group">
+                        <label><?php esc_html_e( 'Accès autorisé (vide = tous)', 'blazing-feedback' ); ?></label>
+                        <div class="wpvfh-access-control">
+                            <div class="wpvfh-access-search-wrapper">
+                                <input type="text" class="wpvfh-access-search" placeholder="<?php esc_attr_e( 'Rechercher un rôle ou utilisateur...', 'blazing-feedback' ); ?>">
+                                <div class="wpvfh-access-dropdown" style="display: none;"></div>
+                            </div>
+                            <div class="wpvfh-access-tags">
+                                <?php foreach ( $access_labels as $access ) : ?>
+                                    <span class="wpvfh-access-tag" data-type="<?php echo esc_attr( $access['type'] ); ?>" data-id="<?php echo esc_attr( $access['id'] ); ?>">
+                                        <?php echo esc_html( $access['label'] ); ?>
+                                        <button type="button" class="wpvfh-access-tag-remove">&times;</button>
+                                    </span>
+                                <?php endforeach; ?>
+                            </div>
+                            <input type="hidden" class="wpvfh-allowed-roles" value="<?php echo esc_attr( implode( ',', $allowed_roles ) ); ?>">
+                            <input type="hidden" class="wpvfh-allowed-users" value="<?php echo esc_attr( implode( ',', $allowed_users ) ); ?>">
+                        </div>
+                        <p class="description"><?php esc_html_e( 'Si vide, tous les utilisateurs peuvent utiliser cette option.', 'blazing-feedback' ); ?></p>
+                    </div>
+                </div>
+
+                <div class="wpvfh-form-row">
+                    <div class="wpvfh-form-group">
+                        <label><?php esc_html_e( 'Prompt IA (optionnel)', 'blazing-feedback' ); ?></label>
+                        <textarea class="wpvfh-ai-prompt large-text" rows="3" placeholder="<?php esc_attr_e( 'Instructions pour l\'IA lors du traitement de ce type de feedback...', 'blazing-feedback' ); ?>"><?php echo esc_textarea( $ai_prompt ); ?></textarea>
+                        <p class="description"><?php esc_html_e( 'Ce prompt sera utilisé par l\'IA pour traiter les feedbacks de ce type.', 'blazing-feedback' ); ?></p>
+                    </div>
+                </div>
+
+                <div class="wpvfh-form-actions">
+                    <button type="button" class="button button-primary wpvfh-save-item-btn">
+                        <span class="dashicons dashicons-saved"></span>
+                        <?php esc_html_e( 'Enregistrer', 'blazing-feedback' ); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
         <?php
     }
 
     /**
      * Obtenir toutes les options pour le frontend
+     * Filtre par utilisateur et options activées
      *
      * @since 1.1.0
+     * @param int|null $user_id ID utilisateur (null = courant)
      * @return array
      */
-    public static function get_all_options_for_frontend() {
+    public static function get_all_options_for_frontend( $user_id = null ) {
         return array(
-            'statuses'   => self::get_statuses(),
-            'types'      => self::get_types(),
-            'priorities' => self::get_priorities(),
-            'tags'       => self::get_predefined_tags(),
+            'statuses'   => array_values( self::filter_accessible_options( self::get_statuses(), $user_id ) ),
+            'types'      => array_values( self::filter_accessible_options( self::get_types(), $user_id ) ),
+            'priorities' => array_values( self::filter_accessible_options( self::get_priorities(), $user_id ) ),
+            'tags'       => array_values( self::filter_accessible_options( self::get_predefined_tags(), $user_id ) ),
         );
     }
 }
