@@ -944,19 +944,130 @@ class WPVFH_Admin_UI {
     public static function render_position_field() {
         $value = get_option( 'wpvfh_button_position', 'bottom-right' );
         $positions = array(
-            'bottom-right' => __( 'Bas droite', 'blazing-feedback' ),
-            'bottom-left'  => __( 'Bas gauche', 'blazing-feedback' ),
-            'top-right'    => __( 'Haut droite', 'blazing-feedback' ),
-            'top-left'     => __( 'Haut gauche', 'blazing-feedback' ),
+            'top-left'      => __( 'Haut gauche', 'blazing-feedback' ),
+            'top-center'    => __( 'Haut centre', 'blazing-feedback' ),
+            'top-right'     => __( 'Haut droite', 'blazing-feedback' ),
+            'middle-left'   => __( 'Milieu gauche', 'blazing-feedback' ),
+            'middle-right'  => __( 'Milieu droite', 'blazing-feedback' ),
+            'bottom-left'   => __( 'Bas gauche', 'blazing-feedback' ),
+            'bottom-center' => __( 'Bas centre', 'blazing-feedback' ),
+            'bottom-right'  => __( 'Bas droite', 'blazing-feedback' ),
         );
         ?>
-        <select name="wpvfh_button_position">
-            <?php foreach ( $positions as $key => $label ) : ?>
-                <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $value, $key ); ?>>
-                    <?php echo esc_html( $label ); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <input type="hidden" name="wpvfh_button_position" id="wpvfh_button_position" value="<?php echo esc_attr( $value ); ?>">
+
+        <div class="wpvfh-position-selector">
+            <div class="wpvfh-position-grid">
+                <!-- Ligne du haut -->
+                <button type="button" class="wpvfh-position-btn <?php echo $value === 'top-left' ? 'active' : ''; ?>" data-position="top-left" title="<?php echo esc_attr( $positions['top-left'] ); ?>">
+                    <span class="wpvfh-position-dot"></span>
+                </button>
+                <button type="button" class="wpvfh-position-btn <?php echo $value === 'top-center' ? 'active' : ''; ?>" data-position="top-center" title="<?php echo esc_attr( $positions['top-center'] ); ?>">
+                    <span class="wpvfh-position-dot"></span>
+                </button>
+                <button type="button" class="wpvfh-position-btn <?php echo $value === 'top-right' ? 'active' : ''; ?>" data-position="top-right" title="<?php echo esc_attr( $positions['top-right'] ); ?>">
+                    <span class="wpvfh-position-dot"></span>
+                </button>
+
+                <!-- Ligne du milieu -->
+                <button type="button" class="wpvfh-position-btn <?php echo $value === 'middle-left' ? 'active' : ''; ?>" data-position="middle-left" title="<?php echo esc_attr( $positions['middle-left'] ); ?>">
+                    <span class="wpvfh-position-dot"></span>
+                </button>
+                <div class="wpvfh-position-preview">
+                    <span>📄</span>
+                </div>
+                <button type="button" class="wpvfh-position-btn <?php echo $value === 'middle-right' ? 'active' : ''; ?>" data-position="middle-right" title="<?php echo esc_attr( $positions['middle-right'] ); ?>">
+                    <span class="wpvfh-position-dot"></span>
+                </button>
+
+                <!-- Ligne du bas -->
+                <button type="button" class="wpvfh-position-btn <?php echo $value === 'bottom-left' ? 'active' : ''; ?>" data-position="bottom-left" title="<?php echo esc_attr( $positions['bottom-left'] ); ?>">
+                    <span class="wpvfh-position-dot"></span>
+                </button>
+                <button type="button" class="wpvfh-position-btn <?php echo $value === 'bottom-center' ? 'active' : ''; ?>" data-position="bottom-center" title="<?php echo esc_attr( $positions['bottom-center'] ); ?>">
+                    <span class="wpvfh-position-dot"></span>
+                </button>
+                <button type="button" class="wpvfh-position-btn <?php echo $value === 'bottom-right' ? 'active' : ''; ?>" data-position="bottom-right" title="<?php echo esc_attr( $positions['bottom-right'] ); ?>">
+                    <span class="wpvfh-position-dot"></span>
+                </button>
+            </div>
+            <p class="description" style="margin-top: 10px;">
+                <?php esc_html_e( 'Cliquez pour choisir la position du bouton.', 'blazing-feedback' ); ?>
+            </p>
+        </div>
+
+        <style>
+            .wpvfh-position-selector {
+                max-width: 200px;
+            }
+            .wpvfh-position-grid {
+                display: grid;
+                grid-template-columns: 40px 1fr 40px;
+                grid-template-rows: 40px 60px 40px;
+                gap: 4px;
+                background: #f0f0f1;
+                border: 2px solid #c3c4c7;
+                border-radius: 8px;
+                padding: 4px;
+            }
+            .wpvfh-position-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #fff;
+                border: 2px solid #dcdcde;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                padding: 0;
+            }
+            .wpvfh-position-btn:hover {
+                border-color: #2271b1;
+                background: #f0f7fc;
+            }
+            .wpvfh-position-btn.active {
+                border-color: #2271b1;
+                background: #2271b1;
+            }
+            .wpvfh-position-btn.active .wpvfh-position-dot {
+                background: #fff;
+            }
+            .wpvfh-position-dot {
+                width: 12px;
+                height: 12px;
+                background: #c3c4c7;
+                border-radius: 50%;
+                transition: all 0.2s ease;
+            }
+            .wpvfh-position-btn:hover .wpvfh-position-dot {
+                background: #2271b1;
+            }
+            .wpvfh-position-preview {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #fff;
+                border: 1px dashed #c3c4c7;
+                border-radius: 4px;
+                font-size: 24px;
+                color: #787c82;
+            }
+        </style>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const buttons = document.querySelectorAll('.wpvfh-position-btn');
+                const input = document.getElementById('wpvfh_button_position');
+
+                buttons.forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        buttons.forEach(function(b) { b.classList.remove('active'); });
+                        this.classList.add('active');
+                        input.value = this.dataset.position;
+                    });
+                });
+            });
+        </script>
         <?php
     }
 

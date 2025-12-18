@@ -481,6 +481,107 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     padding-left: 8px !important;
 }
 
+.wpvfh-container[data-position="top-left"] .wpvfh-corner-icon,
+.wpvfh-container[data-position="top-left"] .wpvfh-corner-count {
+    margin-left: 0 !important;
+    margin-right: 12px !important;
+    margin-top: 0 !important;
+    margin-bottom: 4px !important;
+}
+
+/* Positions centrales - demi-cercles */
+.wpvfh-container[data-position="top-center"] .wpvfh-corner-btn {
+    bottom: auto !important;
+    top: 0 !important;
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100px !important;
+    height: 50px !important;
+    border-radius: 0 0 100px 100px !important;
+    padding: 8px 0 0 0 !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+}
+
+.wpvfh-container[data-position="top-center"] .wpvfh-corner-btn:hover {
+    width: 110px !important;
+    height: 55px !important;
+}
+
+.wpvfh-container[data-position="top-center"] .wpvfh-corner-icon,
+.wpvfh-container[data-position="top-center"] .wpvfh-corner-count {
+    margin: 0 !important;
+}
+
+.wpvfh-container[data-position="bottom-center"] .wpvfh-corner-btn {
+    top: auto !important;
+    bottom: 0 !important;
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100px !important;
+    height: 50px !important;
+    border-radius: 100px 100px 0 0 !important;
+    padding: 0 0 8px 0 !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+}
+
+.wpvfh-container[data-position="bottom-center"] .wpvfh-corner-btn:hover {
+    width: 110px !important;
+    height: 55px !important;
+}
+
+.wpvfh-container[data-position="bottom-center"] .wpvfh-corner-icon,
+.wpvfh-container[data-position="bottom-center"] .wpvfh-corner-count {
+    margin: 0 !important;
+}
+
+.wpvfh-container[data-position="middle-left"] .wpvfh-corner-btn {
+    bottom: auto !important;
+    top: 50% !important;
+    right: auto !important;
+    left: 0 !important;
+    transform: translateY(-50%) !important;
+    width: 50px !important;
+    height: 100px !important;
+    border-radius: 0 100px 100px 0 !important;
+    padding: 0 0 0 8px !important;
+}
+
+.wpvfh-container[data-position="middle-left"] .wpvfh-corner-btn:hover {
+    width: 55px !important;
+    height: 110px !important;
+}
+
+.wpvfh-container[data-position="middle-left"] .wpvfh-corner-icon,
+.wpvfh-container[data-position="middle-left"] .wpvfh-corner-count {
+    margin: 0 !important;
+}
+
+.wpvfh-container[data-position="middle-right"] .wpvfh-corner-btn {
+    bottom: auto !important;
+    top: 50% !important;
+    left: auto !important;
+    right: 0 !important;
+    transform: translateY(-50%) !important;
+    width: 50px !important;
+    height: 100px !important;
+    border-radius: 100px 0 0 100px !important;
+    padding: 0 8px 0 0 !important;
+}
+
+.wpvfh-container[data-position="middle-right"] .wpvfh-corner-btn:hover {
+    width: 55px !important;
+    height: 110px !important;
+}
+
+.wpvfh-container[data-position="middle-right"] .wpvfh-corner-icon,
+.wpvfh-container[data-position="middle-right"] .wpvfh-corner-count {
+    margin: 0 !important;
+}
+
 /* ==========================================================================
    Footer de la sidebar (boutons + et visibilité)
    ========================================================================== */
