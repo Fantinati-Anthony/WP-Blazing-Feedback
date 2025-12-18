@@ -196,6 +196,15 @@
                 audioData: document.getElementById('wpvfh-audio-data'),
                 videoData: document.getElementById('wpvfh-video-data'),
                 transcriptField: document.getElementById('wpvfh-transcript'),
+                // Priorité
+                tabPriority: document.getElementById('wpvfh-tab-priority'),
+                priorityDropzones: document.querySelectorAll('.wpvfh-dropzone'),
+                priorityLists: {
+                    high: document.getElementById('wpvfh-priority-high-list'),
+                    medium: document.getElementById('wpvfh-priority-medium-list'),
+                    low: document.getElementById('wpvfh-priority-low-list'),
+                    none: document.getElementById('wpvfh-priority-none-list'),
+                },
             };
         },
 
@@ -999,6 +1008,9 @@
             if (this.elements.tabPages) {
                 this.elements.tabPages.classList.toggle('active', tabName === 'pages');
             }
+            if (this.elements.tabPriority) {
+                this.elements.tabPriority.classList.toggle('active', tabName === 'priority');
+            }
 
             // Si on va sur la liste, charger les feedbacks
             if (tabName === 'list') {
@@ -1012,6 +1024,11 @@
             // Si on va sur les pages, charger la liste des pages
             if (tabName === 'pages') {
                 this.loadAllPages();
+            }
+
+            // Si on va sur la priorité, charger les feedbacks par priorité
+            if (tabName === 'priority') {
+                this.renderPriorityLists();
             }
         },
 
@@ -1060,8 +1077,7 @@
                 const hasPosition = feedback.selector || feedback.position_x || feedback.position_y;
 
                 return `
-                    <div class="wpvfh-pin-item" data-feedback-id="${feedback.id}" data-pin-number="${pinNumber}" draggable="true">
-                        <div class="wpvfh-drag-handle" title="Glisser pour réorganiser">⋮⋮</div>
+                    <div class="wpvfh-pin-item" data-feedback-id="${feedback.id}" data-pin-number="${pinNumber}">
                         ${hasPosition ? `
                         <div class="wpvfh-pin-marker status-${status}">
                             ${pinNumber}
@@ -1096,8 +1112,8 @@
             this.elements.pinsList.querySelectorAll('.wpvfh-pin-item').forEach(item => {
                 // Clic pour voir les détails du feedback
                 item.addEventListener('click', (e) => {
-                    // Ne pas réagir si on drag ou si on clique sur une action
-                    if (e.target.closest('.wpvfh-drag-handle') || e.target.closest('.wpvfh-pin-action')) {
+                    // Ne pas réagir si on clique sur une action
+                    if (e.target.closest('.wpvfh-pin-action')) {
                         return;
                     }
                     const feedbackId = parseInt(item.dataset.feedbackId, 10);
@@ -1130,9 +1146,6 @@
                     });
                 }
             });
-
-            // Initialiser le drag-and-drop
-            this.initDragAndDrop();
         },
 
         /**
@@ -2571,6 +2584,249 @@
             } catch (error) {
                 console.error('[Blazing Feedback] Erreur chargement utilisateurs:', error);
                 this.state.mentionUsers = [];
+            }
+        },
+
+        // ===========================================
+        // PRIORITÉ
+        // ===========================================
+
+        /**
+         * Rendre les listes de priorité
+         */
+        renderPriorityLists: function() {
+            const lists = this.elements.priorityLists;
+            if (!lists || !lists.none) return;
+
+            // Vider les listes
+            Object.values(lists).forEach(list => {
+                if (list) list.innerHTML = '';
+            });
+
+            // Grouper les feedbacks par priorité
+            const feedbacksByPriority = {
+                high: [],
+                medium: [],
+                low: [],
+                none: []
+            };
+
+            this.state.currentFeedbacks.forEach(feedback => {
+                const priority = feedback.priority || 'none';
+                if (feedbacksByPriority[priority]) {
+                    feedbacksByPriority[priority].push(feedback);
+                } else {
+                    feedbacksByPriority.none.push(feedback);
+                }
+            });
+
+            // Trier par ordre dans chaque groupe
+            Object.keys(feedbacksByPriority).forEach(priority => {
+                feedbacksByPriority[priority].sort((a, b) => (a.priority_order || 0) - (b.priority_order || 0));
+            });
+
+            // Rendre les feedbacks dans chaque liste
+            Object.keys(feedbacksByPriority).forEach(priority => {
+                const list = lists[priority];
+                if (!list) return;
+
+                feedbacksByPriority[priority].forEach(feedback => {
+                    const item = this.createPriorityItem(feedback);
+                    list.appendChild(item);
+                });
+            });
+
+            // Initialiser le drag-drop
+            this.initPriorityDragDrop();
+        },
+
+        /**
+         * Créer un élément de priorité
+         */
+        createPriorityItem: function(feedback) {
+            const item = document.createElement('div');
+            item.className = 'wpvfh-pin-item';
+            item.draggable = true;
+            item.dataset.feedbackId = feedback.id;
+
+            const statusClass = `status-${feedback.status || 'new'}`;
+            const statusLabels = {
+                'new': 'Nouveau',
+                'in_progress': 'En cours',
+                'resolved': 'Résolu',
+                'rejected': 'Rejeté'
+            };
+
+            item.innerHTML = `
+                <span class="wpvfh-pin-marker ${statusClass}"></span>
+                <div class="wpvfh-pin-content">
+                    <div class="wpvfh-pin-text">${this.escapeHtml(feedback.content || feedback.comment || 'Sans commentaire')}</div>
+                    <div class="wpvfh-pin-meta">
+                        <span class="wpvfh-pin-status ${statusClass}">${statusLabels[feedback.status] || 'Nouveau'}</span>
+                    </div>
+                </div>
+            `;
+
+            // Clic pour voir les détails
+            item.addEventListener('click', (e) => {
+                if (e.target.closest('.wpvfh-drag-handle')) return;
+                this.showFeedbackDetails(feedback);
+            });
+
+            return item;
+        },
+
+        /**
+         * Initialiser le drag-drop pour la priorité
+         */
+        initPriorityDragDrop: function() {
+            const lists = this.elements.priorityLists;
+            const dropzones = this.elements.priorityDropzones;
+            let draggedItem = null;
+            let draggedFeedbackId = null;
+
+            // Gestionnaires pour les items
+            Object.values(lists).forEach(list => {
+                if (!list) return;
+
+                list.querySelectorAll('.wpvfh-pin-item').forEach(item => {
+                    item.addEventListener('dragstart', (e) => {
+                        draggedItem = item;
+                        draggedFeedbackId = item.dataset.feedbackId;
+                        item.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/plain', draggedFeedbackId);
+                    });
+
+                    item.addEventListener('dragend', () => {
+                        if (draggedItem) {
+                            draggedItem.classList.remove('dragging');
+                        }
+                        draggedItem = null;
+                        draggedFeedbackId = null;
+                        // Retirer les classes drag-over
+                        document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                    });
+                });
+            });
+
+            // Gestionnaires pour les zones de dépôt (sticky)
+            dropzones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    const priority = zone.dataset.priority;
+                    if (draggedFeedbackId && priority) {
+                        this.updateFeedbackPriority(draggedFeedbackId, priority);
+                    }
+                });
+            });
+
+            // Gestionnaires pour les listes (réordonner dans la même priorité)
+            Object.entries(lists).forEach(([priority, list]) => {
+                if (!list) return;
+
+                list.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    list.classList.add('drag-over');
+
+                    // Trouver la position d'insertion
+                    const afterElement = this.getDragAfterElement(list, e.clientY);
+                    if (draggedItem) {
+                        if (afterElement) {
+                            list.insertBefore(draggedItem, afterElement);
+                        } else {
+                            list.appendChild(draggedItem);
+                        }
+                    }
+                });
+
+                list.addEventListener('dragleave', (e) => {
+                    if (!list.contains(e.relatedTarget)) {
+                        list.classList.remove('drag-over');
+                    }
+                });
+
+                list.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    list.classList.remove('drag-over');
+                    if (draggedFeedbackId) {
+                        this.updateFeedbackPriority(draggedFeedbackId, priority);
+                        this.savePriorityOrder(priority, list);
+                    }
+                });
+            });
+        },
+
+        /**
+         * Trouver l'élément après lequel insérer
+         */
+        getDragAfterElement: function(container, y) {
+            const draggableElements = [...container.querySelectorAll('.wpvfh-pin-item:not(.dragging)')];
+
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        },
+
+        /**
+         * Mettre à jour la priorité d'un feedback
+         */
+        updateFeedbackPriority: async function(feedbackId, priority) {
+            try {
+                await this.apiRequest('POST', `feedback/${feedbackId}`, {
+                    priority: priority
+                });
+
+                // Mettre à jour localement
+                const feedback = this.state.currentFeedbacks.find(f => f.id == feedbackId);
+                if (feedback) {
+                    feedback.priority = priority;
+                }
+
+                this.showNotification('Priorité mise à jour', 'success');
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur mise à jour priorité:', error);
+                this.showNotification('Erreur lors de la mise à jour', 'error');
+                // Re-rendre les listes en cas d'erreur
+                this.renderPriorityLists();
+            }
+        },
+
+        /**
+         * Sauvegarder l'ordre dans une liste de priorité
+         */
+        savePriorityOrder: async function(priority, list) {
+            const items = list.querySelectorAll('.wpvfh-pin-item');
+            const order = [...items].map((item, index) => ({
+                id: parseInt(item.dataset.feedbackId, 10),
+                order: index
+            }));
+
+            try {
+                await this.apiRequest('POST', 'feedback/reorder', {
+                    priority: priority,
+                    order: order
+                });
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur sauvegarde ordre:', error);
             }
         },
     };
