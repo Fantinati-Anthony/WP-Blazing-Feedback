@@ -640,7 +640,7 @@ final class WP_Visual_Feedback_Hub {
             </button>
 
             <!-- Sidebar de feedback -->
-            <div id="wpvfh-panel" class="wpvfh-panel" hidden aria-hidden="true">
+            <div id="wpvfh-panel" class="wpvfh-panel" data-panel-position="<?php echo esc_attr( $panel_position ); ?>" hidden aria-hidden="true">
                 <div class="wpvfh-panel-header">
                     <?php
                     $logo_mode = get_option( 'wpvfh_logo_mode', 'none' );

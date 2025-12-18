@@ -732,18 +732,19 @@ body.wpvfh-panel-active .wpvfh-sidebar-overlay {
 }
 
 /* ===== PANEL POSITION GAUCHE ===== */
-.wpvfh-container[data-panel-position="left"] .wpvfh-panel {
+/* Cibler directement le panel car il est déplacé vers body */
+.wpvfh-panel[data-panel-position="left"] {
     right: auto !important;
     left: 0 !important;
     transform: translateX(-100%) !important;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
 }
 
-.wpvfh-container[data-panel-position="left"] .wpvfh-panel.wpvfh-panel-open {
+.wpvfh-panel[data-panel-position="left"].wpvfh-panel-open {
     transform: translateX(0) !important;
 }
 
-.wpvfh-container[data-panel-position="left"] .wpvfh-panel[hidden]:not(.wpvfh-panel-open) {
+.wpvfh-panel[data-panel-position="left"][hidden]:not(.wpvfh-panel-open) {
     transform: translateX(-100%) !important;
 }
 
