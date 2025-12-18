@@ -1194,7 +1194,7 @@ class WPVFH_Admin_UI {
 
             // Déterminer la forme selon la position
             function getShapeFromPosition() {
-                var position = $('select[name="wpvfh_button_position"]').val();
+                var position = $('#wpvfh_button_position').val();
                 return cornerPositions.indexOf(position) !== -1 ? 'quarter' : 'half';
             }
 
@@ -1216,43 +1216,101 @@ class WPVFH_Admin_UI {
             // Fonction de mise à jour du bouton preview
             function updateButtonPreview() {
                 var style = $('input[name="wpvfh_button_style"]:checked').val();
+                var position = $('#wpvfh_button_position').val();
                 var size = parseInt($('#wpvfh_button_size').val()) || 56;
                 var color = $('input[name="wpvfh_button_color"]').val();
                 var $btn = $('#wpvfh-preview-button');
                 var $wrapper = $('#wpvfh-preview-button-wrapper');
                 var $badge = $('#wpvfh-preview-badge');
 
+                // Réinitialiser les positions
+                $wrapper.css({
+                    'top': 'auto',
+                    'bottom': 'auto',
+                    'left': 'auto',
+                    'right': 'auto'
+                });
+
                 if (style === 'attached') {
                     var shape = getShapeFromPosition();
+                    var btnCss = {
+                        'background': color,
+                        'box-shadow': '0 0 12px rgba(0,0,0,0.2)'
+                    };
+                    var wrapperCss = {};
+                    var badgeCss = {};
+
                     if (shape === 'quarter') {
-                        $btn.css({
-                            'width': size + 'px',
-                            'height': size + 'px',
-                            'border-radius': '100% 0 0 0',
-                            'background': color,
-                            'box-shadow': '-2px -2px 12px rgba(0,0,0,0.2)'
-                        });
+                        // Quart de cercle pour les angles
+                        btnCss.width = size + 'px';
+                        btnCss.height = size + 'px';
+
+                        switch(position) {
+                            case 'bottom-right':
+                                btnCss['border-radius'] = size + 'px 0 0 0';
+                                wrapperCss = { 'bottom': '0', 'right': '0' };
+                                badgeCss = { 'top': '-8px', 'left': '50%', 'right': 'auto', 'transform': 'translateX(-50%)' };
+                                break;
+                            case 'bottom-left':
+                                btnCss['border-radius'] = '0 ' + size + 'px 0 0';
+                                wrapperCss = { 'bottom': '0', 'left': '0' };
+                                badgeCss = { 'top': '-8px', 'left': '50%', 'right': 'auto', 'transform': 'translateX(-50%)' };
+                                break;
+                            case 'top-right':
+                                btnCss['border-radius'] = '0 0 0 ' + size + 'px';
+                                wrapperCss = { 'top': '0', 'right': '0' };
+                                badgeCss = { 'bottom': '-8px', 'top': 'auto', 'left': '50%', 'right': 'auto', 'transform': 'translateX(-50%)' };
+                                break;
+                            case 'top-left':
+                                btnCss['border-radius'] = '0 0 ' + size + 'px 0';
+                                wrapperCss = { 'top': '0', 'left': '0' };
+                                badgeCss = { 'bottom': '-8px', 'top': 'auto', 'left': '50%', 'right': 'auto', 'transform': 'translateX(-50%)' };
+                                break;
+                        }
                     } else {
-                        $btn.css({
-                            'width': (size / 2) + 'px',
-                            'height': size + 'px',
-                            'border-radius': size + 'px 0 0 ' + size + 'px',
-                            'background': color,
-                            'box-shadow': '-2px 0 12px rgba(0,0,0,0.2)'
-                        });
+                        // Demi-cercle pour les positions centrales
+                        var halfSize = size / 2;
+
+                        switch(position) {
+                            case 'bottom-center':
+                                btnCss.width = size + 'px';
+                                btnCss.height = halfSize + 'px';
+                                btnCss['border-radius'] = size + 'px ' + size + 'px 0 0';
+                                wrapperCss = { 'bottom': '0', 'left': '50%', 'transform': 'translateX(-50%)' };
+                                badgeCss = { 'top': '-8px', 'left': '50%', 'right': 'auto', 'transform': 'translateX(-50%)' };
+                                break;
+                            case 'top-center':
+                                btnCss.width = size + 'px';
+                                btnCss.height = halfSize + 'px';
+                                btnCss['border-radius'] = '0 0 ' + size + 'px ' + size + 'px';
+                                wrapperCss = { 'top': '0', 'left': '50%', 'transform': 'translateX(-50%)' };
+                                badgeCss = { 'bottom': '-8px', 'top': 'auto', 'left': '50%', 'right': 'auto', 'transform': 'translateX(-50%)' };
+                                break;
+                            case 'middle-left':
+                                btnCss.width = halfSize + 'px';
+                                btnCss.height = size + 'px';
+                                btnCss['border-radius'] = '0 ' + size + 'px ' + size + 'px 0';
+                                wrapperCss = { 'top': '50%', 'left': '0', 'transform': 'translateY(-50%)' };
+                                badgeCss = { 'top': '-8px', 'right': '-8px', 'left': 'auto', 'transform': 'none' };
+                                break;
+                            case 'middle-right':
+                                btnCss.width = halfSize + 'px';
+                                btnCss.height = size + 'px';
+                                btnCss['border-radius'] = size + 'px 0 0 ' + size + 'px';
+                                wrapperCss = { 'top': '50%', 'right': '0', 'transform': 'translateY(-50%)' };
+                                badgeCss = { 'top': '-8px', 'left': '-8px', 'right': 'auto', 'transform': 'none' };
+                                break;
+                        }
                     }
-                    $wrapper.css({
-                        'bottom': '0',
-                        'right': '0'
-                    });
-                    $badge.css({
-                        'top': '-8px',
-                        'right': shape === 'quarter' ? (size - 20) + 'px' : (size / 2 - 15) + 'px'
-                    });
+
+                    $btn.css(btnCss);
+                    $wrapper.css(wrapperCss);
+                    $badge.css(badgeCss);
                 } else {
+                    // Bouton séparé
                     var radius = $('#wpvfh_button_border_radius').val();
                     var unit = $('#wpvfh_button_border_radius_unit').val();
-                    var margin = $('#wpvfh_button_margin').val();
+                    var margin = parseInt($('#wpvfh_button_margin').val()) || 20;
                     var radiusValue = radius + (unit === 'percent' ? '%' : 'px');
 
                     $btn.css({
@@ -1262,14 +1320,39 @@ class WPVFH_Admin_UI {
                         'box-shadow': '0 4px 12px rgba(0,0,0,0.15)',
                         'background': color
                     });
-                    $wrapper.css({
-                        'bottom': margin + 'px',
-                        'right': margin + 'px'
-                    });
-                    $badge.css({
-                        'top': '-5px',
-                        'right': '-5px'
-                    });
+
+                    var wrapperCss = {};
+                    var badgeCss = { 'top': '-5px', 'right': '-5px', 'left': 'auto', 'bottom': 'auto', 'transform': 'none' };
+
+                    switch(position) {
+                        case 'bottom-right':
+                            wrapperCss = { 'bottom': margin + 'px', 'right': margin + 'px' };
+                            break;
+                        case 'bottom-left':
+                            wrapperCss = { 'bottom': margin + 'px', 'left': margin + 'px' };
+                            break;
+                        case 'top-right':
+                            wrapperCss = { 'top': margin + 'px', 'right': margin + 'px' };
+                            break;
+                        case 'top-left':
+                            wrapperCss = { 'top': margin + 'px', 'left': margin + 'px' };
+                            break;
+                        case 'bottom-center':
+                            wrapperCss = { 'bottom': margin + 'px', 'left': '50%', 'transform': 'translateX(-50%)' };
+                            break;
+                        case 'top-center':
+                            wrapperCss = { 'top': margin + 'px', 'left': '50%', 'transform': 'translateX(-50%)' };
+                            break;
+                        case 'middle-left':
+                            wrapperCss = { 'top': '50%', 'left': margin + 'px', 'transform': 'translateY(-50%)' };
+                            break;
+                        case 'middle-right':
+                            wrapperCss = { 'top': '50%', 'right': margin + 'px', 'transform': 'translateY(-50%)' };
+                            break;
+                    }
+
+                    $wrapper.css(wrapperCss);
+                    $badge.css(badgeCss);
                 }
             }
 
@@ -1279,8 +1362,8 @@ class WPVFH_Admin_UI {
                 $(this).toggleClass('active', previewActive);
             });
 
-            // Changement de position
-            $('select[name="wpvfh_button_position"]').on('change', function() {
+            // Changement de position (input caché mis à jour par le sélecteur de grille)
+            $('#wpvfh_button_position').on('change', function() {
                 updateAttachedStyleInfo();
                 updateButtonPreview();
             });
@@ -1387,6 +1470,7 @@ class WPVFH_Admin_UI {
             }
 
             // Initialisation
+            updateAttachedStyleInfo();
             updateButtonPreview();
         });
         </script>
@@ -1998,6 +2082,8 @@ class WPVFH_Admin_UI {
                         buttons.forEach(function(b) { b.classList.remove('active'); });
                         this.classList.add('active');
                         input.value = this.dataset.position;
+                        // Déclencher un événement pour mettre à jour la prévisualisation
+                        jQuery(input).trigger('change');
                     });
                 });
             });
