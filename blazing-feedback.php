@@ -464,6 +464,11 @@ final class WP_Visual_Feedback_Hub {
         // Préparer les groupes de métadonnées avec leurs paramètres
         $metadata_groups = $this->get_metadata_groups_for_frontend();
 
+        // Forme automatique selon la position (angle = quart de cercle, centre = demi-cercle)
+        $button_position = get_option( 'wpvfh_button_position', 'bottom-right' );
+        $corner_positions = array( 'bottom-right', 'bottom-left', 'top-right', 'top-left' );
+        $auto_shape = in_array( $button_position, $corner_positions, true ) ? 'quarter' : 'half';
+
         return apply_filters( 'wpvfh_frontend_data', array(
             'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
             'restUrl'        => rest_url( 'blazing-feedback/v1/' ),
@@ -482,7 +487,7 @@ final class WP_Visual_Feedback_Hub {
             // Style du bouton
             'buttonStyle'    => array(
                 'style'       => get_option( 'wpvfh_button_style', 'detached' ),
-                'shape'       => get_option( 'wpvfh_button_attached_shape', 'quarter' ),
+                'shape'       => $auto_shape,
                 'size'        => absint( get_option( 'wpvfh_button_size', 56 ) ),
                 'borderRadius'=> absint( get_option( 'wpvfh_button_border_radius', 50 ) ),
                 'borderRadiusUnit' => get_option( 'wpvfh_button_border_radius_unit', 'percent' ),
@@ -705,7 +710,9 @@ final class WP_Visual_Feedback_Hub {
             $icon_emoji = get_option( 'wpvfh_icon_emoji', '💬' );
             $icon_image_url = get_option( 'wpvfh_icon_image_url', '' );
             $button_style = get_option( 'wpvfh_button_style', 'detached' );
-            $button_shape = get_option( 'wpvfh_button_attached_shape', 'quarter' );
+            // Forme automatique selon la position (angle = quart de cercle, centre = demi-cercle)
+            $corner_positions = array( 'bottom-right', 'bottom-left', 'top-right', 'top-left' );
+            $button_shape = in_array( $button_position, $corner_positions, true ) ? 'quarter' : 'half';
             $button_size = absint( get_option( 'wpvfh_button_size', 56 ) );
             $button_border_radius = absint( get_option( 'wpvfh_button_border_radius', 50 ) );
             $button_border_radius_unit = get_option( 'wpvfh_button_border_radius_unit', 'percent' );
