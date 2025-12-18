@@ -206,6 +206,70 @@ final class WP_Visual_Feedback_Hub {
     }
 
     /**
+     * Générer le CSS inline pour les couleurs personnalisées
+     *
+     * @since 1.8.0
+     * @return string
+     */
+    public function get_custom_colors_css() {
+        $colors = array(
+            'primary'       => get_option( 'wpvfh_color_primary', '#e74c3c' ),
+            'primary_hover' => get_option( 'wpvfh_color_primary_hover', '#c0392b' ),
+            'secondary'     => get_option( 'wpvfh_color_secondary', '#3498db' ),
+            'success'       => get_option( 'wpvfh_color_success', '#27ae60' ),
+            'warning'       => get_option( 'wpvfh_color_warning', '#f39c12' ),
+            'danger'        => get_option( 'wpvfh_color_danger', '#e74c3c' ),
+            'text'          => get_option( 'wpvfh_color_text', '#333333' ),
+            'text_light'    => get_option( 'wpvfh_color_text_light', '#666666' ),
+            'bg'            => get_option( 'wpvfh_color_bg', '#ffffff' ),
+            'bg_light'      => get_option( 'wpvfh_color_bg_light', '#f5f5f5' ),
+            'border'        => get_option( 'wpvfh_color_border', '#dddddd' ),
+        );
+
+        $defaults = array(
+            'primary'       => '#e74c3c',
+            'primary_hover' => '#c0392b',
+            'secondary'     => '#3498db',
+            'success'       => '#27ae60',
+            'warning'       => '#f39c12',
+            'danger'        => '#e74c3c',
+            'text'          => '#333333',
+            'text_light'    => '#666666',
+            'bg'            => '#ffffff',
+            'bg_light'      => '#f5f5f5',
+            'border'        => '#dddddd',
+        );
+
+        $has_custom = false;
+        foreach ( $colors as $key => $value ) {
+            if ( strtolower( $value ) !== strtolower( $defaults[ $key ] ) ) {
+                $has_custom = true;
+                break;
+            }
+        }
+
+        if ( ! $has_custom ) {
+            return '';
+        }
+
+        $css = ':root {';
+        $css .= '--wpvfh-primary: ' . esc_attr( $colors['primary'] ) . ';';
+        $css .= '--wpvfh-primary-hover: ' . esc_attr( $colors['primary_hover'] ) . ';';
+        $css .= '--wpvfh-secondary: ' . esc_attr( $colors['secondary'] ) . ';';
+        $css .= '--wpvfh-success: ' . esc_attr( $colors['success'] ) . ';';
+        $css .= '--wpvfh-warning: ' . esc_attr( $colors['warning'] ) . ';';
+        $css .= '--wpvfh-danger: ' . esc_attr( $colors['danger'] ) . ';';
+        $css .= '--wpvfh-text: ' . esc_attr( $colors['text'] ) . ';';
+        $css .= '--wpvfh-text-light: ' . esc_attr( $colors['text_light'] ) . ';';
+        $css .= '--wpvfh-bg: ' . esc_attr( $colors['bg'] ) . ';';
+        $css .= '--wpvfh-bg-light: ' . esc_attr( $colors['bg_light'] ) . ';';
+        $css .= '--wpvfh-border: ' . esc_attr( $colors['border'] ) . ';';
+        $css .= '}';
+
+        return $css;
+    }
+
+    /**
      * Créer le dossier d'upload pour les screenshots
      *
      * @since 1.0.0
@@ -322,7 +386,7 @@ final class WP_Visual_Feedback_Hub {
         );
 
         // Couleurs personnalisées
-        $custom_colors_css = WPVFH_Admin_UI::get_custom_colors_css();
+        $custom_colors_css = $this->get_custom_colors_css();
         if ( ! empty( $custom_colors_css ) ) {
             wp_add_inline_style( 'wpvfh-feedback', $custom_colors_css );
         }
@@ -366,7 +430,7 @@ final class WP_Visual_Feedback_Hub {
         );
 
         // Couleurs personnalisées
-        $custom_colors_css = WPVFH_Admin_UI::get_custom_colors_css();
+        $custom_colors_css = $this->get_custom_colors_css();
         if ( ! empty( $custom_colors_css ) ) {
             wp_add_inline_style( 'wpvfh-admin', $custom_colors_css );
         }
