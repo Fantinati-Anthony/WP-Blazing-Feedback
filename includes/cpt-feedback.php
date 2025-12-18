@@ -932,6 +932,7 @@ class WPVFH_CPT_Feedback {
             'position_x'      => (float) get_post_meta( $post->ID, '_wpvfh_position_x', true ),
             'position_y'      => (float) get_post_meta( $post->ID, '_wpvfh_position_y', true ),
             'status'          => get_post_meta( $post->ID, '_wpvfh_status', true ) ?: 'new',
+            'priority'        => get_post_meta( $post->ID, '_wpvfh_priority', true ) ?: 'none',
             'screenshot_id'   => $screenshot_id,
             'screenshot_url'  => $screenshot_url,
             'screen_width'    => (int) get_post_meta( $post->ID, '_wpvfh_screen_width', true ),
