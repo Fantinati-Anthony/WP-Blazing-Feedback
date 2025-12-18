@@ -2040,9 +2040,7 @@
 
             // Mettre à jour l'indice
             if (this.elements.validationHint) {
-                if (this.config.canManage && !allResolved) {
-                    this.elements.validationHint.textContent = 'En tant qu\'admin, vous pouvez valider même si des points sont en cours.';
-                } else if (!allResolved) {
+                if (!allResolved) {
                     this.elements.validationHint.textContent = 'Tous les points doivent être résolus ou rejetés avant validation.';
                 } else {
                     this.elements.validationHint.textContent = '';

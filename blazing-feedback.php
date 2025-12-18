@@ -734,7 +734,7 @@ final class WP_Visual_Feedback_Hub {
                     <!-- Onglet: Liste des feedbacks -->
                     <div id="wpvfh-tab-list" class="wpvfh-tab-content active">
                         <!-- Filtres par état -->
-                        <div class="wpvfh-filters" id="wpvfh-filters">
+                        <div class="wpvfh-legend" id="wpvfh-filters">
                             <button type="button" class="wpvfh-filter-btn active" data-status="all">
                                 <?php esc_html_e( 'Tous', 'blazing-feedback' ); ?>
                                 <span class="wpvfh-filter-count" id="wpvfh-filter-all-count">0</span>

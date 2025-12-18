@@ -1174,6 +1174,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     border-bottom: 1px solid var(--wpvfh-border) !important;
     margin-bottom: 16px !important;
     flex-wrap: wrap !important;
+    justify-content: space-evenly !important;
 }
 
 .wpvfh-container .wpvfh-tool-btn,
@@ -2591,15 +2592,6 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
    Filtres par état
    ========================================================================== */
 
-.wpvfh-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 12px 16px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-}
-
 .wpvfh-filter-btn {
     display: inline-flex !important;
     align-items: center !important;
@@ -2607,7 +2599,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     padding: 6px 12px !important;
     border: 2px solid transparent !important;
     border-radius: 20px !important;
-    font-size: 12px !important;
+    font-size: 11px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
@@ -2625,6 +2617,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 
 .wpvfh-filter-btn.active {
     border-color: currentColor !important;
+    color: #fff !important;
 }
 
 .wpvfh-filter-btn[data-status="new"] {
@@ -2632,7 +2625,8 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 }
 
 .wpvfh-filter-btn[data-status="new"].active {
-    background: rgba(52, 152, 219, 0.1) !important;
+    background: #3498db !important;
+    color: #fff !important;
 }
 
 .wpvfh-filter-btn[data-status="in_progress"] {
@@ -2640,7 +2634,8 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 }
 
 .wpvfh-filter-btn[data-status="in_progress"].active {
-    background: rgba(243, 156, 18, 0.1) !important;
+    background: #f39c12 !important;
+    color: #fff !important;
 }
 
 .wpvfh-filter-btn[data-status="resolved"] {
@@ -2648,7 +2643,8 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 }
 
 .wpvfh-filter-btn[data-status="resolved"].active {
-    background: rgba(39, 174, 96, 0.1) !important;
+    background: #27ae60 !important;
+    color: #fff !important;
 }
 
 .wpvfh-filter-btn[data-status="rejected"] {
@@ -2656,7 +2652,8 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 }
 
 .wpvfh-filter-btn[data-status="rejected"].active {
-    background: rgba(149, 165, 166, 0.1) !important;
+    background: #95a5a6 !important;
+    color: #fff !important;
 }
 
 .wpvfh-filter-btn .wpvfh-filter-count {
@@ -3003,10 +3000,10 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 /* Pièces jointes */
 .wpvfh-attachments-section {
     margin-top: 12px;
-    border: 1px solid #888;
+    border: 1px solid var(--wpvfh-border);
     padding: 10px;
     border-radius: 5px;
-    background: #efefef;
+    background: var(--wpvfh-bg-light);
     text-align: center;
 }
 
@@ -3413,21 +3410,22 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 
 .wpvfh-page-validation {
     padding: 16px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
-    border-top: 2px solid #e9ecef;
+    background: var(--wpvfh-bg-light);
+    border: 1px solid var(--wpvfh-border);
     margin-top: 16px;
-    border-radius: 0 0 8px 8px;
+    border-radius: 5px;
 }
 
 .wpvfh-page-validation .wpvfh-validation-status {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 16px;
+    padding: 0px;
     border-radius: 10px;
     margin-bottom: 12px;
     background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.05) 100%);
     border: 2px solid rgba(243, 156, 18, 0.3);
+    justify-content: center;
 }
 
 .wpvfh-page-validation.ready .wpvfh-validation-status {
