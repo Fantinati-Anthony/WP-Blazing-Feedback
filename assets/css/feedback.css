@@ -3843,6 +3843,53 @@ button#wpvfh-validate-page-btn {
     padding: 12px;
 }
 
+/* Zone dépliable pour feedbacks archivés */
+.wpvfh-priority-archived {
+    margin-top: 12px;
+    border-top: 1px dashed var(--wpvfh-border);
+    padding-top: 8px;
+}
+
+.wpvfh-archived-toggle {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    padding: 8px 12px !important;
+    background: var(--wpvfh-bg-light) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: var(--wpvfh-text-light) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.wpvfh-archived-toggle:hover {
+    background: var(--wpvfh-border) !important;
+    color: var(--wpvfh-text) !important;
+}
+
+.wpvfh-archived-icon {
+    font-size: 10px;
+    transition: transform 0.2s ease;
+}
+
+.wpvfh-archived-content {
+    margin-top: 8px;
+    padding-left: 8px;
+    border-left: 2px solid var(--wpvfh-border);
+}
+
+.wpvfh-archived-content .wpvfh-pin-item {
+    opacity: 0.7;
+}
+
+.wpvfh-archived-content .wpvfh-pin-item:hover {
+    opacity: 1;
+}
+
 /* =====================================================
    Header Actions & Search Button
    ===================================================== */

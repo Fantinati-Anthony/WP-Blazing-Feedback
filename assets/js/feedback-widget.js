@@ -2689,17 +2689,54 @@
                 if (!list) return;
 
                 const section = list.closest('.wpvfh-priority-section');
-                const hasFeedbacks = feedbacksByPriority[priority].length > 0;
+                const allFeedbacks = feedbacksByPriority[priority];
+
+                // Séparer les feedbacks actifs et archivés
+                const activeFeedbacks = allFeedbacks.filter(f => !['resolved', 'rejected'].includes(f.status));
+                const archivedFeedbacks = allFeedbacks.filter(f => ['resolved', 'rejected'].includes(f.status));
+
+                const hasFeedbacks = allFeedbacks.length > 0;
 
                 // Masquer la section si vide
                 if (section) {
                     section.style.display = hasFeedbacks ? '' : 'none';
                 }
 
-                feedbacksByPriority[priority].forEach(feedback => {
+                // Ajouter les feedbacks actifs
+                activeFeedbacks.forEach(feedback => {
                     const item = this.createPriorityItem(feedback);
                     list.appendChild(item);
                 });
+
+                // Ajouter la zone dépliable pour les feedbacks archivés
+                if (archivedFeedbacks.length > 0) {
+                    const collapsible = document.createElement('div');
+                    collapsible.className = 'wpvfh-priority-archived';
+
+                    const toggle = document.createElement('button');
+                    toggle.type = 'button';
+                    toggle.className = 'wpvfh-archived-toggle';
+                    toggle.innerHTML = `<span class="wpvfh-archived-icon">▶</span> Résolu/Rejeté (${archivedFeedbacks.length})`;
+
+                    const content = document.createElement('div');
+                    content.className = 'wpvfh-archived-content';
+                    content.style.display = 'none';
+
+                    archivedFeedbacks.forEach(feedback => {
+                        const item = this.createPriorityItem(feedback);
+                        content.appendChild(item);
+                    });
+
+                    toggle.addEventListener('click', () => {
+                        const isExpanded = content.style.display !== 'none';
+                        content.style.display = isExpanded ? 'none' : 'block';
+                        toggle.querySelector('.wpvfh-archived-icon').textContent = isExpanded ? '▶' : '▼';
+                    });
+
+                    collapsible.appendChild(toggle);
+                    collapsible.appendChild(content);
+                    list.appendChild(collapsible);
+                }
             });
 
             // Initialiser le drag-drop
