@@ -604,6 +604,49 @@ final class WP_Visual_Feedback_Hub {
                     <!-- Onglet: Nouveau feedback -->
                     <div id="wpvfh-tab-new" class="wpvfh-tab-content">
                         <form id="wpvfh-form" class="wpvfh-form">
+                        <!-- Champs déroulants en haut du formulaire -->
+                        <div class="wpvfh-form-dropdowns">
+                            <!-- Type de feedback -->
+                            <div class="wpvfh-dropdown-group">
+                                <label for="wpvfh-feedback-type">
+                                    <span class="wpvfh-dropdown-icon">🏷️</span>
+                                    <?php esc_html_e( 'Type', 'blazing-feedback' ); ?>
+                                </label>
+                                <select id="wpvfh-feedback-type" name="feedback_type" class="wpvfh-dropdown">
+                                    <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
+                                    <option value="bug">🐛 <?php esc_html_e( 'Bug', 'blazing-feedback' ); ?></option>
+                                    <option value="improvement">💡 <?php esc_html_e( 'Amélioration', 'blazing-feedback' ); ?></option>
+                                    <option value="question">❓ <?php esc_html_e( 'Question', 'blazing-feedback' ); ?></option>
+                                    <option value="design">🎨 <?php esc_html_e( 'Design', 'blazing-feedback' ); ?></option>
+                                    <option value="content">📝 <?php esc_html_e( 'Contenu', 'blazing-feedback' ); ?></option>
+                                    <option value="other">📌 <?php esc_html_e( 'Autre', 'blazing-feedback' ); ?></option>
+                                </select>
+                            </div>
+
+                            <!-- Niveau de priorité -->
+                            <div class="wpvfh-dropdown-group">
+                                <label for="wpvfh-feedback-priority">
+                                    <span class="wpvfh-dropdown-icon">⚡</span>
+                                    <?php esc_html_e( 'Priorité', 'blazing-feedback' ); ?>
+                                </label>
+                                <select id="wpvfh-feedback-priority" name="feedback_priority" class="wpvfh-dropdown">
+                                    <option value="none" selected>⚪ <?php esc_html_e( 'Aucune', 'blazing-feedback' ); ?></option>
+                                    <option value="low">🟢 <?php esc_html_e( 'Basse', 'blazing-feedback' ); ?></option>
+                                    <option value="medium">🟠 <?php esc_html_e( 'Moyenne', 'blazing-feedback' ); ?></option>
+                                    <option value="high">🔴 <?php esc_html_e( 'Haute', 'blazing-feedback' ); ?></option>
+                                </select>
+                            </div>
+
+                            <!-- Tags -->
+                            <div class="wpvfh-dropdown-group wpvfh-tags-group">
+                                <label for="wpvfh-feedback-tags">
+                                    <span class="wpvfh-dropdown-icon">🔖</span>
+                                    <?php esc_html_e( 'Tags', 'blazing-feedback' ); ?>
+                                </label>
+                                <input type="text" id="wpvfh-feedback-tags" name="feedback_tags" class="wpvfh-tags-input" placeholder="<?php esc_attr_e( 'Ex: urgent, homepage...', 'blazing-feedback' ); ?>">
+                            </div>
+                        </div>
+
                         <!-- Zone de texte principale -->
                         <div class="wpvfh-form-group">
                             <textarea
@@ -866,6 +909,57 @@ final class WP_Visual_Feedback_Hub {
                             <div class="wpvfh-detail-meta">
                                 <div class="wpvfh-detail-author" id="wpvfh-detail-author"></div>
                                 <div class="wpvfh-detail-date" id="wpvfh-detail-date"></div>
+                            </div>
+
+                            <!-- Étiquettes (Type, Priorité, Tags) -->
+                            <div class="wpvfh-detail-labels" id="wpvfh-detail-labels">
+                                <div class="wpvfh-label-item wpvfh-label-type" id="wpvfh-detail-type-label" hidden>
+                                    <span class="wpvfh-label-icon"></span>
+                                    <span class="wpvfh-label-text"></span>
+                                </div>
+                                <div class="wpvfh-label-item wpvfh-label-priority" id="wpvfh-detail-priority-label" hidden>
+                                    <span class="wpvfh-label-icon"></span>
+                                    <span class="wpvfh-label-text"></span>
+                                </div>
+                                <div class="wpvfh-label-tags" id="wpvfh-detail-tags-labels"></div>
+                            </div>
+
+                            <!-- Champs éditables (Type, Priorité, Tags) -->
+                            <div class="wpvfh-detail-dropdowns" id="wpvfh-detail-dropdowns">
+                                <div class="wpvfh-dropdown-group">
+                                    <label for="wpvfh-detail-type">
+                                        <span class="wpvfh-dropdown-icon">🏷️</span>
+                                        <?php esc_html_e( 'Type', 'blazing-feedback' ); ?>
+                                    </label>
+                                    <select id="wpvfh-detail-type" class="wpvfh-dropdown">
+                                        <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
+                                        <option value="bug">🐛 <?php esc_html_e( 'Bug', 'blazing-feedback' ); ?></option>
+                                        <option value="improvement">💡 <?php esc_html_e( 'Amélioration', 'blazing-feedback' ); ?></option>
+                                        <option value="question">❓ <?php esc_html_e( 'Question', 'blazing-feedback' ); ?></option>
+                                        <option value="design">🎨 <?php esc_html_e( 'Design', 'blazing-feedback' ); ?></option>
+                                        <option value="content">📝 <?php esc_html_e( 'Contenu', 'blazing-feedback' ); ?></option>
+                                        <option value="other">📌 <?php esc_html_e( 'Autre', 'blazing-feedback' ); ?></option>
+                                    </select>
+                                </div>
+                                <div class="wpvfh-dropdown-group">
+                                    <label for="wpvfh-detail-priority-select">
+                                        <span class="wpvfh-dropdown-icon">⚡</span>
+                                        <?php esc_html_e( 'Priorité', 'blazing-feedback' ); ?>
+                                    </label>
+                                    <select id="wpvfh-detail-priority-select" class="wpvfh-dropdown">
+                                        <option value="none">⚪ <?php esc_html_e( 'Aucune', 'blazing-feedback' ); ?></option>
+                                        <option value="low">🟢 <?php esc_html_e( 'Basse', 'blazing-feedback' ); ?></option>
+                                        <option value="medium">🟠 <?php esc_html_e( 'Moyenne', 'blazing-feedback' ); ?></option>
+                                        <option value="high">🔴 <?php esc_html_e( 'Haute', 'blazing-feedback' ); ?></option>
+                                    </select>
+                                </div>
+                                <div class="wpvfh-dropdown-group wpvfh-tags-group">
+                                    <label for="wpvfh-detail-tags">
+                                        <span class="wpvfh-dropdown-icon">🔖</span>
+                                        <?php esc_html_e( 'Tags', 'blazing-feedback' ); ?>
+                                    </label>
+                                    <input type="text" id="wpvfh-detail-tags" class="wpvfh-tags-input" placeholder="<?php esc_attr_e( 'Ex: urgent, homepage...', 'blazing-feedback' ); ?>">
+                                </div>
                             </div>
 
                             <!-- Commentaire -->

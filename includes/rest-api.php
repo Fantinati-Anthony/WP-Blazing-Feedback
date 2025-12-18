@@ -452,6 +452,24 @@ class WPVFH_REST_API {
                 'type'              => 'integer',
                 'sanitize_callback' => function( $value ) { return absint( $value ); },
             ),
+            'feedback_type'   => array(
+                'type'              => 'string',
+                'enum'              => array( '', 'bug', 'improvement', 'question', 'design', 'content', 'other' ),
+                'sanitize_callback' => 'sanitize_key',
+                'description'       => __( 'Type de feedback', 'blazing-feedback' ),
+            ),
+            'priority'        => array(
+                'type'              => 'string',
+                'enum'              => array( 'none', 'low', 'medium', 'high' ),
+                'default'           => 'none',
+                'sanitize_callback' => 'sanitize_key',
+                'description'       => __( 'Niveau de priorité', 'blazing-feedback' ),
+            ),
+            'tags'            => array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_text_field',
+                'description'       => __( 'Tags séparés par des virgules', 'blazing-feedback' ),
+            ),
         );
     }
 
@@ -485,6 +503,17 @@ class WPVFH_REST_API {
             'type'              => 'string',
             'enum'              => array( 'none', 'low', 'medium', 'high' ),
             'sanitize_callback' => 'sanitize_key',
+        );
+
+        $params['feedback_type'] = array(
+            'type'              => 'string',
+            'enum'              => array( '', 'bug', 'improvement', 'question', 'design', 'content', 'other' ),
+            'sanitize_callback' => 'sanitize_key',
+        );
+
+        $params['tags'] = array(
+            'type'              => 'string',
+            'sanitize_callback' => 'sanitize_text_field',
         );
 
         return $params;
@@ -842,6 +871,10 @@ class WPVFH_REST_API {
             'scroll_y'         => $request->get_param( 'scroll_y' ),
             // Référent
             'referrer'         => $request->get_param( 'referrer' ),
+            // Type, Priorité, Tags
+            'feedback_type'    => $request->get_param( 'feedback_type' ),
+            'priority'         => $request->get_param( 'priority' ),
+            'tags'             => $request->get_param( 'tags' ),
         );
 
         // Créer le feedback
@@ -939,6 +972,18 @@ class WPVFH_REST_API {
         // Mise à jour de la priorité
         if ( $priority = $request->get_param( 'priority' ) ) {
             update_post_meta( $feedback_id, '_wpvfh_priority', $priority );
+        }
+
+        // Mise à jour du type de feedback
+        $feedback_type = $request->get_param( 'feedback_type' );
+        if ( null !== $feedback_type ) {
+            update_post_meta( $feedback_id, '_wpvfh_feedback_type', $feedback_type );
+        }
+
+        // Mise à jour des tags
+        $tags = $request->get_param( 'tags' );
+        if ( null !== $tags ) {
+            update_post_meta( $feedback_id, '_wpvfh_tags', $tags );
         }
 
         /**

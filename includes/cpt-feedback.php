@@ -848,6 +848,23 @@ class WPVFH_CPT_Feedback {
         update_post_meta( $post_id, '_wpvfh_status', $status );
         wp_set_object_terms( $post_id, $status, self::TAX_STATUS );
 
+        // Priorité
+        if ( isset( $data['priority'] ) && ! empty( $data['priority'] ) ) {
+            update_post_meta( $post_id, '_wpvfh_priority', sanitize_key( $data['priority'] ) );
+        } else {
+            update_post_meta( $post_id, '_wpvfh_priority', 'none' );
+        }
+
+        // Type de feedback
+        if ( isset( $data['feedback_type'] ) && ! empty( $data['feedback_type'] ) ) {
+            update_post_meta( $post_id, '_wpvfh_feedback_type', sanitize_key( $data['feedback_type'] ) );
+        }
+
+        // Tags
+        if ( isset( $data['tags'] ) && ! empty( $data['tags'] ) ) {
+            update_post_meta( $post_id, '_wpvfh_tags', sanitize_text_field( $data['tags'] ) );
+        }
+
         /**
          * Action déclenchée après la création d'un feedback
          *
@@ -933,6 +950,8 @@ class WPVFH_CPT_Feedback {
             'position_y'      => (float) get_post_meta( $post->ID, '_wpvfh_position_y', true ),
             'status'          => get_post_meta( $post->ID, '_wpvfh_status', true ) ?: 'new',
             'priority'        => get_post_meta( $post->ID, '_wpvfh_priority', true ) ?: 'none',
+            'feedback_type'   => get_post_meta( $post->ID, '_wpvfh_feedback_type', true ) ?: '',
+            'tags'            => get_post_meta( $post->ID, '_wpvfh_tags', true ) ?: '',
             'screenshot_id'   => $screenshot_id,
             'screenshot_url'  => $screenshot_url,
             'screen_width'    => (int) get_post_meta( $post->ID, '_wpvfh_screen_width', true ),

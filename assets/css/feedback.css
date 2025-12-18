@@ -1013,6 +1013,257 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     gap: 16px;
 }
 
+/* Dropdowns du formulaire (Type, Priorité, Tags) */
+.wpvfh-form-dropdowns,
+.wpvfh-detail-dropdowns {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    padding: 12px !important;
+    background: var(--wpvfh-bg-light) !important;
+    border-radius: var(--wpvfh-radius) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+}
+
+.wpvfh-dropdown-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    flex: 1 !important;
+    min-width: 100px !important;
+}
+
+.wpvfh-dropdown-group label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text-light) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.wpvfh-dropdown-icon {
+    font-size: 12px !important;
+}
+
+.wpvfh-dropdown {
+    width: 100% !important;
+    padding: 8px 10px !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: var(--wpvfh-radius-sm) !important;
+    background: var(--wpvfh-bg) !important;
+    color: var(--wpvfh-text) !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    transition: border-color var(--wpvfh-transition), box-shadow var(--wpvfh-transition) !important;
+}
+
+.wpvfh-dropdown:hover {
+    border-color: var(--wpvfh-secondary) !important;
+}
+
+.wpvfh-dropdown:focus {
+    outline: none !important;
+    border-color: var(--wpvfh-secondary) !important;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15) !important;
+}
+
+.wpvfh-tags-input {
+    width: 100% !important;
+    padding: 8px 10px !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: var(--wpvfh-radius-sm) !important;
+    background: var(--wpvfh-bg) !important;
+    color: var(--wpvfh-text) !important;
+    font-size: 13px !important;
+    transition: border-color var(--wpvfh-transition), box-shadow var(--wpvfh-transition) !important;
+}
+
+.wpvfh-tags-input:hover {
+    border-color: var(--wpvfh-secondary) !important;
+}
+
+.wpvfh-tags-input:focus {
+    outline: none !important;
+    border-color: var(--wpvfh-secondary) !important;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15) !important;
+}
+
+.wpvfh-tags-input::placeholder {
+    color: #999 !important;
+    font-size: 12px !important;
+}
+
+.wpvfh-tags-group {
+    flex: 2 !important;
+    min-width: 150px !important;
+}
+
+/* Étiquettes/Labels dans la vue Détails */
+.wpvfh-detail-labels {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin: 12px 0 !important;
+}
+
+.wpvfh-label-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+}
+
+/* Types de feedback avec couleurs */
+.wpvfh-label-type {
+    background: #e8f4fc !important;
+    color: #2980b9 !important;
+}
+
+.wpvfh-label-type[data-type="bug"] {
+    background: #fdecea !important;
+    color: #c0392b !important;
+}
+
+.wpvfh-label-type[data-type="improvement"] {
+    background: #fef9e7 !important;
+    color: #d68910 !important;
+}
+
+.wpvfh-label-type[data-type="question"] {
+    background: #ebf5fb !important;
+    color: #2e86de !important;
+}
+
+.wpvfh-label-type[data-type="design"] {
+    background: #f5eef8 !important;
+    color: #8e44ad !important;
+}
+
+.wpvfh-label-type[data-type="content"] {
+    background: #e8f8f5 !important;
+    color: #17a589 !important;
+}
+
+/* Priorité avec couleurs */
+.wpvfh-label-priority[data-priority="high"] {
+    background: #fdecea !important;
+    color: #c0392b !important;
+}
+
+.wpvfh-label-priority[data-priority="medium"] {
+    background: #fef5e7 !important;
+    color: #d35400 !important;
+}
+
+.wpvfh-label-priority[data-priority="low"] {
+    background: #e8f8f5 !important;
+    color: #27ae60 !important;
+}
+
+/* Tags */
+.wpvfh-label-tags {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+}
+
+.wpvfh-label-tag {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 3px 8px !important;
+    background: #f0f0f0 !important;
+    color: #555 !important;
+    border-radius: 12px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+}
+
+.wpvfh-label-tag::before {
+    content: "#" !important;
+    opacity: 0.6 !important;
+}
+
+/* Labels dans les éléments de liste (wpvfh-pin-item) */
+.wpvfh-pin-item-labels {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    margin-top: 6px !important;
+}
+
+.wpvfh-pin-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 2px 6px !important;
+    border-radius: 10px !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+}
+
+.wpvfh-pin-label-type {
+    background: #e8f4fc !important;
+    color: #2980b9 !important;
+}
+
+.wpvfh-pin-label-type[data-type="bug"] {
+    background: #fdecea !important;
+    color: #c0392b !important;
+}
+
+.wpvfh-pin-label-type[data-type="improvement"] {
+    background: #fef9e7 !important;
+    color: #d68910 !important;
+}
+
+.wpvfh-pin-label-type[data-type="question"] {
+    background: #ebf5fb !important;
+    color: #2e86de !important;
+}
+
+.wpvfh-pin-label-type[data-type="design"] {
+    background: #f5eef8 !important;
+    color: #8e44ad !important;
+}
+
+.wpvfh-pin-label-type[data-type="content"] {
+    background: #e8f8f5 !important;
+    color: #17a589 !important;
+}
+
+.wpvfh-pin-label-priority {
+    background: #f5f5f5 !important;
+    color: #666 !important;
+}
+
+.wpvfh-pin-label-priority[data-priority="high"] {
+    background: #fdecea !important;
+    color: #c0392b !important;
+}
+
+.wpvfh-pin-label-priority[data-priority="medium"] {
+    background: #fef5e7 !important;
+    color: #d35400 !important;
+}
+
+.wpvfh-pin-label-priority[data-priority="low"] {
+    background: #e8f8f5 !important;
+    color: #27ae60 !important;
+}
+
+.wpvfh-pin-label-tag {
+    background: #f0f0f0 !important;
+    color: #555 !important;
+}
+
 .wpvfh-form-group {
     display: flex;
     flex-direction: column;

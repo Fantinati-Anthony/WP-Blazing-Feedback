@@ -223,6 +223,19 @@
                 searchResults: document.getElementById('wpvfh-search-results'),
                 searchResultsList: document.getElementById('wpvfh-search-results-list'),
                 searchCount: document.getElementById('wpvfh-search-count'),
+                // Champs Type, Priorité, Tags (formulaire création)
+                feedbackType: document.getElementById('wpvfh-feedback-type'),
+                feedbackPriority: document.getElementById('wpvfh-feedback-priority'),
+                feedbackTags: document.getElementById('wpvfh-feedback-tags'),
+                // Champs Type, Priorité, Tags (vue détails)
+                detailType: document.getElementById('wpvfh-detail-type'),
+                detailPrioritySelect: document.getElementById('wpvfh-detail-priority-select'),
+                detailTags: document.getElementById('wpvfh-detail-tags'),
+                // Labels dans la vue détails
+                detailLabels: document.getElementById('wpvfh-detail-labels'),
+                detailTypeLabel: document.getElementById('wpvfh-detail-type-label'),
+                detailPriorityLabel: document.getElementById('wpvfh-detail-priority-label'),
+                detailTagsLabels: document.getElementById('wpvfh-detail-tags-labels'),
             };
         },
 
@@ -379,6 +392,37 @@
                     if (this.state.currentFeedbackId) {
                         this.updateFeedbackStatus(this.state.currentFeedbackId, e.target.value);
                     }
+                });
+            }
+
+            // Changement de type (vue détails)
+            if (this.elements.detailType) {
+                this.elements.detailType.addEventListener('change', (e) => {
+                    if (this.state.currentFeedbackId) {
+                        this.updateFeedbackMeta(this.state.currentFeedbackId, 'feedback_type', e.target.value);
+                    }
+                });
+            }
+
+            // Changement de priorité (vue détails)
+            if (this.elements.detailPrioritySelect) {
+                this.elements.detailPrioritySelect.addEventListener('change', (e) => {
+                    if (this.state.currentFeedbackId) {
+                        this.updateFeedbackPriority(this.state.currentFeedbackId, e.target.value);
+                    }
+                });
+            }
+
+            // Changement de tags (vue détails) - avec debounce
+            if (this.elements.detailTags) {
+                let tagsTimeout;
+                this.elements.detailTags.addEventListener('input', (e) => {
+                    clearTimeout(tagsTimeout);
+                    tagsTimeout = setTimeout(() => {
+                        if (this.state.currentFeedbackId) {
+                            this.updateFeedbackMeta(this.state.currentFeedbackId, 'tags', e.target.value);
+                        }
+                    }, 500);
                 });
             }
 
@@ -1134,6 +1178,7 @@
                                 <span class="wpvfh-pin-status status-${status}">${statusLabels[status]}</span>
                                 ${date ? `<span class="wpvfh-pin-date">${date}</span>` : ''}
                             </div>
+                            ${this.generateFeedbackLabelsHtml(feedback)}
                         </div>
                         <div class="wpvfh-pin-actions">
                             ${hasPosition ? `
@@ -1553,6 +1598,10 @@
                     scroll_y: this.state.pinPosition?.scrollY || metadata.scrollY,
                     // Référent
                     referrer: metadata.referrer,
+                    // Type, Priorité, Tags
+                    feedback_type: this.elements.feedbackType?.value || '',
+                    priority: this.elements.feedbackPriority?.value || 'none',
+                    tags: this.elements.feedbackTags?.value || '',
                 };
 
                 console.log('[Blazing Feedback] Envoi du feedback:', feedbackData);
@@ -1637,6 +1686,17 @@
             }
             if (this.elements.selectedElement) {
                 this.elements.selectedElement.hidden = true;
+            }
+
+            // Réinitialiser les champs Type, Priorité, Tags
+            if (this.elements.feedbackType) {
+                this.elements.feedbackType.value = '';
+            }
+            if (this.elements.feedbackPriority) {
+                this.elements.feedbackPriority.value = 'none';
+            }
+            if (this.elements.feedbackTags) {
+                this.elements.feedbackTags.value = '';
             }
         },
 
@@ -1760,6 +1820,20 @@
 
             if (this.elements.detailComment) {
                 this.elements.detailComment.textContent = feedback.comment || feedback.content || '';
+            }
+
+            // Type, Priorité, Tags - Labels et dropdowns
+            this.updateDetailLabels(feedback);
+
+            // Mettre à jour les valeurs des dropdowns
+            if (this.elements.detailType) {
+                this.elements.detailType.value = feedback.feedback_type || '';
+            }
+            if (this.elements.detailPrioritySelect) {
+                this.elements.detailPrioritySelect.value = feedback.priority || 'none';
+            }
+            if (this.elements.detailTags) {
+                this.elements.detailTags.value = feedback.tags || '';
             }
 
             // Screenshot
@@ -2053,6 +2127,116 @@
             if (progressCount) progressCount.textContent = counts.in_progress;
             if (resolvedCount) resolvedCount.textContent = counts.resolved;
             if (rejectedCount) rejectedCount.textContent = counts.rejected;
+        },
+
+        /**
+         * Mettre à jour les labels (Type, Priorité, Tags) dans la vue détails
+         * @param {Object} feedback - Données du feedback
+         */
+        updateDetailLabels: function(feedback) {
+            // Configuration des types
+            const typeConfig = {
+                bug: { icon: '🐛', label: 'Bug' },
+                improvement: { icon: '💡', label: 'Amélioration' },
+                question: { icon: '❓', label: 'Question' },
+                design: { icon: '🎨', label: 'Design' },
+                content: { icon: '📝', label: 'Contenu' },
+                other: { icon: '📌', label: 'Autre' },
+            };
+
+            // Configuration des priorités
+            const priorityConfig = {
+                high: { icon: '🔴', label: 'Haute' },
+                medium: { icon: '🟠', label: 'Moyenne' },
+                low: { icon: '🟢', label: 'Basse' },
+            };
+
+            // Type label
+            if (this.elements.detailTypeLabel) {
+                const type = feedback.feedback_type;
+                if (type && typeConfig[type]) {
+                    const iconEl = this.elements.detailTypeLabel.querySelector('.wpvfh-label-icon');
+                    const textEl = this.elements.detailTypeLabel.querySelector('.wpvfh-label-text');
+                    if (iconEl) iconEl.textContent = typeConfig[type].icon;
+                    if (textEl) textEl.textContent = typeConfig[type].label;
+                    this.elements.detailTypeLabel.setAttribute('data-type', type);
+                    this.elements.detailTypeLabel.hidden = false;
+                } else {
+                    this.elements.detailTypeLabel.hidden = true;
+                }
+            }
+
+            // Priority label
+            if (this.elements.detailPriorityLabel) {
+                const priority = feedback.priority;
+                if (priority && priority !== 'none' && priorityConfig[priority]) {
+                    const iconEl = this.elements.detailPriorityLabel.querySelector('.wpvfh-label-icon');
+                    const textEl = this.elements.detailPriorityLabel.querySelector('.wpvfh-label-text');
+                    if (iconEl) iconEl.textContent = priorityConfig[priority].icon;
+                    if (textEl) textEl.textContent = priorityConfig[priority].label;
+                    this.elements.detailPriorityLabel.setAttribute('data-priority', priority);
+                    this.elements.detailPriorityLabel.hidden = false;
+                } else {
+                    this.elements.detailPriorityLabel.hidden = true;
+                }
+            }
+
+            // Tags labels
+            if (this.elements.detailTagsLabels) {
+                const tags = feedback.tags;
+                if (tags && tags.trim()) {
+                    const tagList = tags.split(',').map(t => t.trim()).filter(t => t);
+                    this.elements.detailTagsLabels.innerHTML = tagList.map(tag =>
+                        `<span class="wpvfh-label-tag">${this.escapeHtml(tag)}</span>`
+                    ).join('');
+                } else {
+                    this.elements.detailTagsLabels.innerHTML = '';
+                }
+            }
+        },
+
+        /**
+         * Générer le HTML des labels pour un feedback (utilisé dans la liste)
+         * @param {Object} feedback - Données du feedback
+         * @returns {string} HTML des labels
+         */
+        generateFeedbackLabelsHtml: function(feedback) {
+            let html = '';
+
+            // Type
+            const typeConfig = {
+                bug: { icon: '🐛', label: 'Bug' },
+                improvement: { icon: '💡', label: 'Amélioration' },
+                question: { icon: '❓', label: 'Question' },
+                design: { icon: '🎨', label: 'Design' },
+                content: { icon: '📝', label: 'Contenu' },
+                other: { icon: '📌', label: 'Autre' },
+            };
+
+            const priorityConfig = {
+                high: { icon: '🔴', label: 'Haute' },
+                medium: { icon: '🟠', label: 'Moyenne' },
+                low: { icon: '🟢', label: 'Basse' },
+            };
+
+            if (feedback.feedback_type && typeConfig[feedback.feedback_type]) {
+                const type = typeConfig[feedback.feedback_type];
+                html += `<span class="wpvfh-pin-label wpvfh-pin-label-type" data-type="${feedback.feedback_type}">${type.icon} ${type.label}</span>`;
+            }
+
+            if (feedback.priority && feedback.priority !== 'none' && priorityConfig[feedback.priority]) {
+                const priority = priorityConfig[feedback.priority];
+                html += `<span class="wpvfh-pin-label wpvfh-pin-label-priority" data-priority="${feedback.priority}">${priority.icon} ${priority.label}</span>`;
+            }
+
+            if (feedback.tags && feedback.tags.trim()) {
+                const tagList = feedback.tags.split(',').map(t => t.trim()).filter(t => t).slice(0, 3); // Max 3 tags visibles
+                tagList.forEach(tag => {
+                    html += `<span class="wpvfh-pin-label wpvfh-pin-label-tag">#${this.escapeHtml(tag)}</span>`;
+                });
+            }
+
+            return html ? `<div class="wpvfh-pin-item-labels">${html}</div>` : '';
         },
 
         // ===========================================
@@ -2917,6 +3101,38 @@
                 console.error('[Blazing Feedback] Erreur mise à jour priorité:', error);
                 this.showNotification('Erreur lors de la mise à jour', 'error');
                 // Re-charger les feedbacks en cas d'erreur pour revenir à l'état serveur
+                this.loadExistingFeedbacks();
+            }
+        },
+
+        /**
+         * Mettre à jour un champ meta d'un feedback (type, tags)
+         * @param {number} feedbackId - ID du feedback
+         * @param {string} field - Nom du champ (feedback_type, tags)
+         * @param {string} value - Nouvelle valeur
+         */
+        updateFeedbackMeta: async function(feedbackId, field, value) {
+            try {
+                // Mettre à jour localement d'abord
+                const feedback = this.state.currentFeedbacks.find(f => f.id == feedbackId);
+                if (feedback) {
+                    feedback[field] = value;
+                    // Mettre à jour les labels dans la vue détails
+                    this.updateDetailLabels(feedback);
+                }
+
+                // Sauvegarder sur le serveur
+                const data = {};
+                data[field] = value;
+                await this.apiRequest('POST', `feedbacks/${feedbackId}`, data);
+
+                // Re-rendre la liste
+                this.renderPinsList();
+
+                this.showNotification('Modification enregistrée', 'success');
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur mise à jour meta:', error);
+                this.showNotification('Erreur lors de la mise à jour', 'error');
                 this.loadExistingFeedbacks();
             }
         },
