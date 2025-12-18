@@ -234,6 +234,28 @@ class WPVFH_Admin_UI {
             )
         );
 
+        // Type d'icône pour mode clair (emoji ou image)
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_light_icon_type',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_key',
+                'default'           => 'emoji',
+            )
+        );
+
+        // Emoji pour mode clair
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_light_icon_emoji',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_text_field',
+                'default'           => '💬',
+            )
+        );
+
         // Icône mode clair (par défaut ou personnalisée)
         register_setting(
             'wpvfh_general_settings',
@@ -242,6 +264,28 @@ class WPVFH_Admin_UI {
                 'type'              => 'string',
                 'sanitize_callback' => 'esc_url_raw',
                 'default'           => '',
+            )
+        );
+
+        // Type d'icône pour mode sombre (emoji ou image)
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_dark_icon_type',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_key',
+                'default'           => 'emoji',
+            )
+        );
+
+        // Emoji pour mode sombre
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_dark_icon_emoji',
+            array(
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_text_field',
+                'default'           => '💬',
             )
         );
 
@@ -996,7 +1040,11 @@ class WPVFH_Admin_UI {
     public static function render_tab_design() {
         // Récupération des options
         $theme_mode = get_option( 'wpvfh_theme_mode', 'system' );
+        $light_icon_type = get_option( 'wpvfh_light_icon_type', 'emoji' );
+        $light_icon_emoji = get_option( 'wpvfh_light_icon_emoji', '💬' );
         $light_icon_url = get_option( 'wpvfh_light_icon_url', '' );
+        $dark_icon_type = get_option( 'wpvfh_dark_icon_type', 'emoji' );
+        $dark_icon_emoji = get_option( 'wpvfh_dark_icon_emoji', '💬' );
         $dark_icon_url = get_option( 'wpvfh_dark_icon_url', '' );
         $button_color = get_option( 'wpvfh_button_color', '#FE5100' );
         $button_color_hover = get_option( 'wpvfh_color_primary_hover', '#E04800' );
@@ -1022,78 +1070,116 @@ class WPVFH_Admin_UI {
         $corner_positions = array( 'bottom-right', 'bottom-left', 'top-right', 'top-left' );
         $is_corner = in_array( $button_position, $corner_positions, true );
         ?>
-        <div class="wpvfh-preview-container">
-            <div class="wpvfh-preview-settings">
-                <!-- Mode du thème -->
-                <div class="wpvfh-settings-section">
-                    <h2><?php esc_html_e( 'Mode d\'affichage', 'blazing-feedback' ); ?></h2>
-                    <p class="description"><?php esc_html_e( 'Choisissez le mode d\'affichage du widget. Le mode Système s\'adapte automatiquement aux préférences de l\'utilisateur.', 'blazing-feedback' ); ?></p>
 
-                    <div class="wpvfh-theme-mode-selector" style="display: flex; gap: 15px; margin: 20px 0;">
-                        <label class="wpvfh-mode-option <?php echo 'system' === $theme_mode ? 'active' : ''; ?>" style="flex: 1; padding: 15px; border: 2px solid <?php echo 'system' === $theme_mode ? '#FE5100' : '#ddd'; ?>; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s;">
-                            <input type="radio" name="wpvfh_theme_mode" value="system" <?php checked( $theme_mode, 'system' ); ?> style="display: none;">
-                            <span style="font-size: 24px; display: block; margin-bottom: 5px;">🔄</span>
-                            <strong><?php esc_html_e( 'Système', 'blazing-feedback' ); ?></strong>
-                            <small style="display: block; color: #666; margin-top: 5px;"><?php esc_html_e( 'Auto dark/light', 'blazing-feedback' ); ?></small>
-                        </label>
-                        <label class="wpvfh-mode-option <?php echo 'light' === $theme_mode ? 'active' : ''; ?>" style="flex: 1; padding: 15px; border: 2px solid <?php echo 'light' === $theme_mode ? '#FE5100' : '#ddd'; ?>; border-radius: 8px; cursor: pointer; text-align: center; background: #fff; transition: all 0.2s;">
-                            <input type="radio" name="wpvfh_theme_mode" value="light" <?php checked( $theme_mode, 'light' ); ?> style="display: none;">
-                            <span style="font-size: 24px; display: block; margin-bottom: 5px;">☀️</span>
-                            <strong><?php esc_html_e( 'Clair', 'blazing-feedback' ); ?></strong>
-                            <small style="display: block; color: #666; margin-top: 5px;"><?php esc_html_e( 'Mode clair', 'blazing-feedback' ); ?></small>
-                        </label>
-                        <label class="wpvfh-mode-option <?php echo 'dark' === $theme_mode ? 'active' : ''; ?>" style="flex: 1; padding: 15px; border: 2px solid <?php echo 'dark' === $theme_mode ? '#FE5100' : '#ddd'; ?>; border-radius: 8px; cursor: pointer; text-align: center; background: #263e4b; color: #fff; transition: all 0.2s;">
-                            <input type="radio" name="wpvfh_theme_mode" value="dark" <?php checked( $theme_mode, 'dark' ); ?> style="display: none;">
-                            <span style="font-size: 24px; display: block; margin-bottom: 5px;">🌙</span>
-                            <strong><?php esc_html_e( 'Sombre', 'blazing-feedback' ); ?></strong>
-                            <small style="display: block; color: #b0bcc4; margin-top: 5px;"><?php esc_html_e( 'Mode sombre', 'blazing-feedback' ); ?></small>
-                        </label>
+        <!-- Mode du thème (pleine largeur) -->
+        <div class="wpvfh-settings-section" style="margin-bottom: 30px;">
+            <h2><?php esc_html_e( 'Mode d\'affichage', 'blazing-feedback' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Choisissez le mode d\'affichage du widget. Le mode Système s\'adapte automatiquement aux préférences de l\'utilisateur.', 'blazing-feedback' ); ?></p>
+
+            <div class="wpvfh-theme-mode-selector" style="display: flex; gap: 15px; margin: 20px 0;">
+                <label class="wpvfh-mode-option <?php echo 'system' === $theme_mode ? 'active' : ''; ?>" style="flex: 1; padding: 15px; border: 2px solid <?php echo 'system' === $theme_mode ? '#FE5100' : '#ddd'; ?>; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s;">
+                    <input type="radio" name="wpvfh_theme_mode" value="system" <?php checked( $theme_mode, 'system' ); ?> style="display: none;">
+                    <span style="font-size: 24px; display: block; margin-bottom: 5px;">🔄</span>
+                    <strong><?php esc_html_e( 'Système', 'blazing-feedback' ); ?></strong>
+                    <small style="display: block; color: #666; margin-top: 5px;"><?php esc_html_e( 'Auto dark/light', 'blazing-feedback' ); ?></small>
+                </label>
+                <label class="wpvfh-mode-option <?php echo 'light' === $theme_mode ? 'active' : ''; ?>" style="flex: 1; padding: 15px; border: 2px solid <?php echo 'light' === $theme_mode ? '#FE5100' : '#ddd'; ?>; border-radius: 8px; cursor: pointer; text-align: center; background: #fff; transition: all 0.2s;">
+                    <input type="radio" name="wpvfh_theme_mode" value="light" <?php checked( $theme_mode, 'light' ); ?> style="display: none;">
+                    <span style="font-size: 24px; display: block; margin-bottom: 5px;">☀️</span>
+                    <strong><?php esc_html_e( 'Clair', 'blazing-feedback' ); ?></strong>
+                    <small style="display: block; color: #666; margin-top: 5px;"><?php esc_html_e( 'Mode clair', 'blazing-feedback' ); ?></small>
+                </label>
+                <label class="wpvfh-mode-option <?php echo 'dark' === $theme_mode ? 'active' : ''; ?>" style="flex: 1; padding: 15px; border: 2px solid <?php echo 'dark' === $theme_mode ? '#FE5100' : '#ddd'; ?>; border-radius: 8px; cursor: pointer; text-align: center; background: #263e4b; color: #fff; transition: all 0.2s;">
+                    <input type="radio" name="wpvfh_theme_mode" value="dark" <?php checked( $theme_mode, 'dark' ); ?> style="display: none;">
+                    <span style="font-size: 24px; display: block; margin-bottom: 5px;">🌙</span>
+                    <strong><?php esc_html_e( 'Sombre', 'blazing-feedback' ); ?></strong>
+                    <small style="display: block; color: #b0bcc4; margin-top: 5px;"><?php esc_html_e( 'Mode sombre', 'blazing-feedback' ); ?></small>
+                </label>
+            </div>
+
+            <!-- Icônes par mode -->
+            <div class="wpvfh-icon-settings" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
+                <h4 style="margin-top: 0;"><?php esc_html_e( 'Icônes du bouton', 'blazing-feedback' ); ?></h4>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <!-- Icône mode clair -->
+                    <div style="padding: 15px; background: #fff; border-radius: 6px; border: 1px solid #e0e4e8;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span style="font-size: 18px;">☀️</span>
+                            <strong><?php esc_html_e( 'Mode clair', 'blazing-feedback' ); ?></strong>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <div id="wpvfh-light-preview-box" style="width: 44px; height: 44px; background: #FE5100; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff;">
+                                <?php if ( 'emoji' === $light_icon_type ) : ?>
+                                    <span id="wpvfh-light-preview-content"><?php echo esc_html( $light_icon_emoji ); ?></span>
+                                <?php else : ?>
+                                    <img src="<?php echo esc_url( $light_icon_url ? $light_icon_url : $default_light_icon ); ?>" alt="" style="max-width: 26px; max-height: 26px; filter: brightness(0) invert(1);" id="wpvfh-light-preview-content">
+                                <?php endif; ?>
+                            </div>
+                            <span class="description"><?php esc_html_e( 'Aperçu', 'blazing-feedback' ); ?></span>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label style="display: inline-flex; align-items: center; gap: 5px; margin-right: 15px; cursor: pointer;">
+                                <input type="radio" name="wpvfh_light_icon_type" value="emoji" <?php checked( $light_icon_type, 'emoji' ); ?>>
+                                <?php esc_html_e( 'Emoji', 'blazing-feedback' ); ?>
+                            </label>
+                            <label style="display: inline-flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="radio" name="wpvfh_light_icon_type" value="image" <?php checked( $light_icon_type, 'image' ); ?>>
+                                <?php esc_html_e( 'Image', 'blazing-feedback' ); ?>
+                            </label>
+                        </div>
+                        <div id="wpvfh-light-emoji-input" style="<?php echo 'image' === $light_icon_type ? 'display: none;' : ''; ?>">
+                            <input type="text" name="wpvfh_light_icon_emoji" id="wpvfh_light_icon_emoji" value="<?php echo esc_attr( $light_icon_emoji ); ?>" style="width: 60px; font-size: 20px; text-align: center;" maxlength="4">
+                            <span class="description"><?php esc_html_e( 'Entrez un emoji', 'blazing-feedback' ); ?></span>
+                        </div>
+                        <div id="wpvfh-light-image-input" style="<?php echo 'emoji' === $light_icon_type ? 'display: none;' : ''; ?> display: flex; gap: 8px;">
+                            <input type="text" name="wpvfh_light_icon_url" id="wpvfh_light_icon_url" value="<?php echo esc_attr( $light_icon_url ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'URL ou vide pour défaut', 'blazing-feedback' ); ?>" style="flex: 1;">
+                            <button type="button" class="button wpvfh-select-icon" data-target="wpvfh_light_icon_url" data-mode="light"><?php esc_html_e( 'Bibliothèque', 'blazing-feedback' ); ?></button>
+                        </div>
                     </div>
 
-                    <!-- Icônes par mode -->
-                    <div class="wpvfh-icon-settings" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
-                        <h4 style="margin-top: 0;"><?php esc_html_e( 'Icônes du bouton', 'blazing-feedback' ); ?></h4>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <!-- Icône mode clair -->
-                            <div style="padding: 15px; background: #fff; border-radius: 6px; border: 1px solid #e0e4e8;">
-                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                    <span style="font-size: 18px;">☀️</span>
-                                    <strong><?php esc_html_e( 'Mode clair', 'blazing-feedback' ); ?></strong>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                    <div style="width: 40px; height: 40px; background: #FE5100; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                        <img src="<?php echo esc_url( $light_icon_url ? $light_icon_url : $default_light_icon ); ?>" alt="" style="max-width: 24px; max-height: 24px; filter: brightness(0) invert(1);" id="wpvfh-light-icon-preview">
-                                    </div>
-                                    <span class="description"><?php esc_html_e( 'Aperçu', 'blazing-feedback' ); ?></span>
-                                </div>
-                                <div style="display: flex; gap: 8px;">
-                                    <input type="text" name="wpvfh_light_icon_url" id="wpvfh_light_icon_url" value="<?php echo esc_attr( $light_icon_url ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'URL ou vide pour défaut', 'blazing-feedback' ); ?>" style="flex: 1;">
-                                    <button type="button" class="button wpvfh-select-icon" data-target="wpvfh_light_icon_url" data-preview="wpvfh-light-icon-preview"><?php esc_html_e( 'Bibliothèque', 'blazing-feedback' ); ?></button>
-                                </div>
+                    <!-- Icône mode sombre -->
+                    <div style="padding: 15px; background: #263e4b; border-radius: 6px; color: #fff;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span style="font-size: 18px;">🌙</span>
+                            <strong><?php esc_html_e( 'Mode sombre', 'blazing-feedback' ); ?></strong>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <div id="wpvfh-dark-preview-box" style="width: 44px; height: 44px; background: #FE5100; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff;">
+                                <?php if ( 'emoji' === $dark_icon_type ) : ?>
+                                    <span id="wpvfh-dark-preview-content"><?php echo esc_html( $dark_icon_emoji ); ?></span>
+                                <?php else : ?>
+                                    <img src="<?php echo esc_url( $dark_icon_url ? $dark_icon_url : $default_dark_icon ); ?>" alt="" style="max-width: 26px; max-height: 26px; filter: brightness(0) invert(1);" id="wpvfh-dark-preview-content">
+                                <?php endif; ?>
                             </div>
-
-                            <!-- Icône mode sombre -->
-                            <div style="padding: 15px; background: #263e4b; border-radius: 6px; color: #fff;">
-                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                    <span style="font-size: 18px;">🌙</span>
-                                    <strong><?php esc_html_e( 'Mode sombre', 'blazing-feedback' ); ?></strong>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                                    <div style="width: 40px; height: 40px; background: #FE5100; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                        <img src="<?php echo esc_url( $dark_icon_url ? $dark_icon_url : $default_dark_icon ); ?>" alt="" style="max-width: 24px; max-height: 24px; filter: brightness(0) invert(1);" id="wpvfh-dark-icon-preview">
-                                    </div>
-                                    <span style="color: #b0bcc4;"><?php esc_html_e( 'Aperçu', 'blazing-feedback' ); ?></span>
-                                </div>
-                                <div style="display: flex; gap: 8px;">
-                                    <input type="text" name="wpvfh_dark_icon_url" id="wpvfh_dark_icon_url" value="<?php echo esc_attr( $dark_icon_url ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'URL ou vide pour défaut', 'blazing-feedback' ); ?>" style="flex: 1; background: #334a5a; border-color: #3d5564; color: #fff;">
-                                    <button type="button" class="button wpvfh-select-icon" data-target="wpvfh_dark_icon_url" data-preview="wpvfh-dark-icon-preview"><?php esc_html_e( 'Bibliothèque', 'blazing-feedback' ); ?></button>
-                                </div>
-                            </div>
+                            <span style="color: #b0bcc4;"><?php esc_html_e( 'Aperçu', 'blazing-feedback' ); ?></span>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <label style="display: inline-flex; align-items: center; gap: 5px; margin-right: 15px; cursor: pointer; color: #fff;">
+                                <input type="radio" name="wpvfh_dark_icon_type" value="emoji" <?php checked( $dark_icon_type, 'emoji' ); ?>>
+                                <?php esc_html_e( 'Emoji', 'blazing-feedback' ); ?>
+                            </label>
+                            <label style="display: inline-flex; align-items: center; gap: 5px; cursor: pointer; color: #fff;">
+                                <input type="radio" name="wpvfh_dark_icon_type" value="image" <?php checked( $dark_icon_type, 'image' ); ?>>
+                                <?php esc_html_e( 'Image', 'blazing-feedback' ); ?>
+                            </label>
+                        </div>
+                        <div id="wpvfh-dark-emoji-input" style="<?php echo 'image' === $dark_icon_type ? 'display: none;' : ''; ?>">
+                            <input type="text" name="wpvfh_dark_icon_emoji" id="wpvfh_dark_icon_emoji" value="<?php echo esc_attr( $dark_icon_emoji ); ?>" style="width: 60px; font-size: 20px; text-align: center;" maxlength="4">
+                            <span style="color: #b0bcc4;"><?php esc_html_e( 'Entrez un emoji', 'blazing-feedback' ); ?></span>
+                        </div>
+                        <div id="wpvfh-dark-image-input" style="<?php echo 'emoji' === $dark_icon_type ? 'display: none;' : ''; ?> display: flex; gap: 8px;">
+                            <input type="text" name="wpvfh_dark_icon_url" id="wpvfh_dark_icon_url" value="<?php echo esc_attr( $dark_icon_url ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'URL ou vide pour défaut', 'blazing-feedback' ); ?>" style="flex: 1; background: #334a5a; border-color: #3d5564; color: #fff;">
+                            <button type="button" class="button wpvfh-select-icon" data-target="wpvfh_dark_icon_url" data-mode="dark"><?php esc_html_e( 'Bibliothèque', 'blazing-feedback' ); ?></button>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
 
+        <!-- Container avec prévisualisation à droite -->
+        <div class="wpvfh-preview-container">
+            <div class="wpvfh-preview-settings">
                 <!-- Position -->
                 <div class="wpvfh-settings-section">
                     <h2><?php esc_html_e( 'Position', 'blazing-feedback' ); ?></h2>
@@ -1330,7 +1416,11 @@ class WPVFH_Admin_UI {
                     <div id="wpvfh-preview-button-wrapper">
                         <div id="wpvfh-preview-button" class="wpvfh-preview-btn">
                             <span id="wpvfh-preview-icon">
-                                <img src="<?php echo esc_url( $light_icon_url ? $light_icon_url : $default_light_icon ); ?>" alt="" id="wpvfh-preview-icon-img">
+                                <?php if ( 'emoji' === $light_icon_type ) : ?>
+                                    <span id="wpvfh-preview-icon-emoji"><?php echo esc_html( $light_icon_emoji ); ?></span>
+                                <?php else : ?>
+                                    <img src="<?php echo esc_url( $light_icon_url ? $light_icon_url : $default_light_icon ); ?>" alt="" id="wpvfh-preview-icon-img">
+                                <?php endif; ?>
                             </span>
                         </div>
                         <!-- Compteur preview -->
@@ -1618,7 +1708,7 @@ class WPVFH_Admin_UI {
             $('input[name="wpvfh_theme_mode"]').on('change', function() {
                 $('.wpvfh-mode-option').css('border-color', '#ddd');
                 $(this).closest('.wpvfh-mode-option').css('border-color', '#FE5100');
-                updateIconPreview();
+                updateMainIconPreview();
             });
 
             // Changement de position (input caché mis à jour par le sélecteur de grille)
@@ -1715,31 +1805,109 @@ class WPVFH_Admin_UI {
                 updateButtonPreview();
             });
 
-            // Mise à jour icône en fonction du mode thème
-            function updateIconPreview() {
-                var themeMode = $('input[name="wpvfh_theme_mode"]:checked').val() || 'system';
-                var lightIconUrl = $('#wpvfh_light_icon_url').val() || defaultLightIcon;
-                var darkIconUrl = $('#wpvfh_dark_icon_url').val() || defaultDarkIcon;
-
-                // Utiliser l'icône appropriée selon le mode
-                var iconUrl = lightIconUrl; // Par défaut
-                if (themeMode === 'dark') {
-                    iconUrl = darkIconUrl;
-                } else if (themeMode === 'system') {
-                    // Pour le preview, utiliser le mode clair par défaut
-                    iconUrl = lightIconUrl;
+            // Toggle emoji/image pour mode clair
+            $('input[name="wpvfh_light_icon_type"]').on('change', function() {
+                var type = $(this).val();
+                if (type === 'emoji') {
+                    $('#wpvfh-light-emoji-input').show();
+                    $('#wpvfh-light-image-input').hide();
+                } else {
+                    $('#wpvfh-light-emoji-input').hide();
+                    $('#wpvfh-light-image-input').show();
                 }
+                updateLightIconPreview();
+                updateMainIconPreview();
+            });
 
-                $('#wpvfh-preview-icon-img').attr('src', iconUrl);
+            // Toggle emoji/image pour mode sombre
+            $('input[name="wpvfh_dark_icon_type"]').on('change', function() {
+                var type = $(this).val();
+                if (type === 'emoji') {
+                    $('#wpvfh-dark-emoji-input').show();
+                    $('#wpvfh-dark-image-input').hide();
+                } else {
+                    $('#wpvfh-dark-emoji-input').hide();
+                    $('#wpvfh-dark-image-input').show();
+                }
+                updateDarkIconPreview();
+                updateMainIconPreview();
+            });
+
+            // Mise à jour aperçu icône mode clair
+            function updateLightIconPreview() {
+                var type = $('input[name="wpvfh_light_icon_type"]:checked').val() || 'emoji';
+                var $previewBox = $('#wpvfh-light-preview-box');
+
+                if (type === 'emoji') {
+                    var emoji = $('#wpvfh_light_icon_emoji').val() || '💬';
+                    $previewBox.html('<span id="wpvfh-light-preview-content">' + emoji + '</span>');
+                } else {
+                    var url = $('#wpvfh_light_icon_url').val() || defaultLightIcon;
+                    $previewBox.html('<img src="' + url + '" style="max-width: 26px; max-height: 26px; filter: brightness(0) invert(1);" id="wpvfh-light-preview-content">');
+                }
             }
 
-            // Changement d'icône URL
-            $('#wpvfh_light_icon_url, #wpvfh_dark_icon_url').on('input change', function() {
-                updateIconPreview();
-                // Mettre à jour l'aperçu dans la section icônes
-                var targetPreview = $(this).attr('id') === 'wpvfh_light_icon_url' ? '#wpvfh-light-icon-preview' : '#wpvfh-dark-icon-preview';
-                var url = $(this).val() || ($(this).attr('id') === 'wpvfh_light_icon_url' ? defaultLightIcon : defaultDarkIcon);
-                $(targetPreview).attr('src', url);
+            // Mise à jour aperçu icône mode sombre
+            function updateDarkIconPreview() {
+                var type = $('input[name="wpvfh_dark_icon_type"]:checked').val() || 'emoji';
+                var $previewBox = $('#wpvfh-dark-preview-box');
+
+                if (type === 'emoji') {
+                    var emoji = $('#wpvfh_dark_icon_emoji').val() || '💬';
+                    $previewBox.html('<span id="wpvfh-dark-preview-content">' + emoji + '</span>');
+                } else {
+                    var url = $('#wpvfh_dark_icon_url').val() || defaultDarkIcon;
+                    $previewBox.html('<img src="' + url + '" style="max-width: 26px; max-height: 26px; filter: brightness(0) invert(1);" id="wpvfh-dark-preview-content">');
+                }
+            }
+
+            // Mise à jour icône principale (preview du bouton)
+            function updateMainIconPreview() {
+                var themeMode = $('input[name="wpvfh_theme_mode"]:checked').val() || 'system';
+                var $iconContainer = $('#wpvfh-preview-icon');
+
+                // Déterminer quel mode utiliser pour l'aperçu
+                var useLight = (themeMode === 'light' || themeMode === 'system');
+
+                if (useLight) {
+                    var type = $('input[name="wpvfh_light_icon_type"]:checked').val() || 'emoji';
+                    if (type === 'emoji') {
+                        var emoji = $('#wpvfh_light_icon_emoji').val() || '💬';
+                        $iconContainer.html('<span id="wpvfh-preview-icon-emoji">' + emoji + '</span>');
+                    } else {
+                        var url = $('#wpvfh_light_icon_url').val() || defaultLightIcon;
+                        $iconContainer.html('<img src="' + url + '" id="wpvfh-preview-icon-img">');
+                    }
+                } else {
+                    var type = $('input[name="wpvfh_dark_icon_type"]:checked').val() || 'emoji';
+                    if (type === 'emoji') {
+                        var emoji = $('#wpvfh_dark_icon_emoji').val() || '💬';
+                        $iconContainer.html('<span id="wpvfh-preview-icon-emoji">' + emoji + '</span>');
+                    } else {
+                        var url = $('#wpvfh_dark_icon_url').val() || defaultDarkIcon;
+                        $iconContainer.html('<img src="' + url + '" id="wpvfh-preview-icon-img">');
+                    }
+                }
+            }
+
+            // Changement d'emoji
+            $('#wpvfh_light_icon_emoji').on('input', function() {
+                updateLightIconPreview();
+                updateMainIconPreview();
+            });
+            $('#wpvfh_dark_icon_emoji').on('input', function() {
+                updateDarkIconPreview();
+                updateMainIconPreview();
+            });
+
+            // Changement d'URL d'image
+            $('#wpvfh_light_icon_url').on('input change', function() {
+                updateLightIconPreview();
+                updateMainIconPreview();
+            });
+            $('#wpvfh_dark_icon_url').on('input change', function() {
+                updateDarkIconPreview();
+                updateMainIconPreview();
             });
 
             // Sélection d'icône via la bibliothèque de médias
@@ -1747,7 +1915,7 @@ class WPVFH_Admin_UI {
                 e.preventDefault();
                 var $button = $(this);
                 var targetId = $button.data('target');
-                var previewId = $button.data('preview');
+                var mode = $button.data('mode');
 
                 var frame = wp.media({
                     title: '<?php echo esc_js( __( 'Sélectionner une icône', 'blazing-feedback' ) ); ?>',
@@ -1759,8 +1927,12 @@ class WPVFH_Admin_UI {
                 frame.on('select', function() {
                     var attachment = frame.state().get('selection').first().toJSON();
                     $('#' + targetId).val(attachment.url).trigger('change');
-                    $('#' + previewId).attr('src', attachment.url);
-                    updateIconPreview();
+                    if (mode === 'light') {
+                        updateLightIconPreview();
+                    } else {
+                        updateDarkIconPreview();
+                    }
+                    updateMainIconPreview();
                 });
 
                 frame.open();
@@ -1775,7 +1947,9 @@ class WPVFH_Admin_UI {
             // Initialisation
             updateAttachedStyleInfo();
             updateButtonPreview();
-            updateIconPreview();
+            updateLightIconPreview();
+            updateDarkIconPreview();
+            updateMainIconPreview();
         });
         </script>
         <?php
