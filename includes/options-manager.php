@@ -568,6 +568,7 @@ class WPVFH_Options_Manager {
 
         $defaults = array(
             'enabled'       => true,
+            'required'      => false,
             'allowed_roles' => array(),
             'allowed_users' => array(),
             'ai_prompt'     => '',
@@ -1199,6 +1200,7 @@ class WPVFH_Options_Manager {
 
         // Récupérer et nettoyer les paramètres
         $enabled = isset( $_POST['enabled'] ) && $_POST['enabled'] === 'true';
+        $required = isset( $_POST['required'] ) && $_POST['required'] === 'true';
         $ai_prompt = isset( $_POST['ai_prompt'] ) ? sanitize_textarea_field( $_POST['ai_prompt'] ) : '';
 
         $allowed_roles = array();
@@ -1215,6 +1217,7 @@ class WPVFH_Options_Manager {
 
         $settings = array(
             'enabled'       => $enabled,
+            'required'      => $required,
             'allowed_roles' => $allowed_roles,
             'allowed_users' => $allowed_users,
             'ai_prompt'     => $ai_prompt,
@@ -1532,6 +1535,12 @@ class WPVFH_Options_Manager {
                         <span class="wpvfh-toggle-slider"></span>
                     </label>
                     <span class="wpvfh-toggle-label"><?php esc_html_e( 'Activé', 'blazing-feedback' ); ?></span>
+                    <span class="wpvfh-toggle-separator">|</span>
+                    <label class="wpvfh-toggle">
+                        <input type="checkbox" class="wpvfh-group-required" <?php checked( $group_settings['required'] ); ?>>
+                        <span class="wpvfh-toggle-slider"></span>
+                    </label>
+                    <span class="wpvfh-toggle-label"><?php esc_html_e( 'Obligatoire', 'blazing-feedback' ); ?></span>
                     <button type="button" class="button wpvfh-group-settings-btn" title="<?php esc_attr_e( 'Paramètres du groupe', 'blazing-feedback' ); ?>">
                         <span class="dashicons dashicons-admin-generic"></span>
                     </button>

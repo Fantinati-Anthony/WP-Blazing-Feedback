@@ -232,6 +232,13 @@
                 self.saveGroupSettings($panel);
             });
 
+            // Group required toggle
+            $(document).on('change', '.wpvfh-group-required', function() {
+                var $panel = $(this).closest('.wpvfh-group-settings-panel');
+                // Auto-save on toggle
+                self.saveGroupSettings($panel);
+            });
+
             // Rename group button
             $(document).on('click', '.wpvfh-rename-group-btn', function(e) {
                 e.preventDefault();
@@ -941,6 +948,7 @@
             var self = this;
             var slug = $panel.data('group');
             var enabled = $panel.find('.wpvfh-group-enabled').is(':checked');
+            var required = $panel.find('.wpvfh-group-required').is(':checked');
             var aiPrompt = $panel.find('.wpvfh-group-ai-prompt').val();
             var allowedRoles = $panel.find('.wpvfh-group-allowed-roles').val();
             var allowedUsers = $panel.find('.wpvfh-group-allowed-users').val();
@@ -954,6 +962,7 @@
                 nonce: wpvfhOptionsAdmin.nonce,
                 slug: slug,
                 enabled: enabled ? 'true' : 'false',
+                required: required ? 'true' : 'false',
                 ai_prompt: aiPrompt,
                 allowed_roles: allowedRoles,
                 allowed_users: allowedUsers
