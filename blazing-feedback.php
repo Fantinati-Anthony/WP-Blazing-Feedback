@@ -727,26 +727,117 @@ final class WP_Visual_Feedback_Hub {
             if ( 'attached' === $button_style ) {
                 // Bouton collé au bord
                 if ( 'quarter' === $button_shape ) {
+                    // Quart de cercle pour les angles
                     $btn_styles[] = 'width: ' . $button_size . 'px';
                     $btn_styles[] = 'height: ' . $button_size . 'px';
-                    $btn_styles[] = 'border-radius: 100% 0 0 0';
+
+                    switch ( $button_position ) {
+                        case 'bottom-right':
+                            $btn_styles[] = 'border-radius: ' . $button_size . 'px 0 0 0';
+                            $btn_styles[] = 'bottom: 0';
+                            $btn_styles[] = 'right: 0';
+                            break;
+                        case 'bottom-left':
+                            $btn_styles[] = 'border-radius: 0 ' . $button_size . 'px 0 0';
+                            $btn_styles[] = 'bottom: 0';
+                            $btn_styles[] = 'left: 0';
+                            break;
+                        case 'top-right':
+                            $btn_styles[] = 'border-radius: 0 0 0 ' . $button_size . 'px';
+                            $btn_styles[] = 'top: 0';
+                            $btn_styles[] = 'right: 0';
+                            break;
+                        case 'top-left':
+                            $btn_styles[] = 'border-radius: 0 0 ' . $button_size . 'px 0';
+                            $btn_styles[] = 'top: 0';
+                            $btn_styles[] = 'left: 0';
+                            break;
+                    }
                 } else {
-                    // Demi-cercle
-                    $btn_styles[] = 'width: ' . ( $button_size / 2 ) . 'px';
-                    $btn_styles[] = 'height: ' . $button_size . 'px';
-                    $btn_styles[] = 'border-radius: ' . $button_size . 'px 0 0 ' . $button_size . 'px';
+                    // Demi-cercle pour les positions centrales
+                    $half_size = $button_size / 2;
+
+                    switch ( $button_position ) {
+                        case 'bottom-center':
+                            $btn_styles[] = 'width: ' . $button_size . 'px';
+                            $btn_styles[] = 'height: ' . $half_size . 'px';
+                            $btn_styles[] = 'border-radius: ' . $button_size . 'px ' . $button_size . 'px 0 0';
+                            $btn_styles[] = 'bottom: 0';
+                            $btn_styles[] = 'left: 50%';
+                            $btn_styles[] = 'transform: translateX(-50%)';
+                            break;
+                        case 'top-center':
+                            $btn_styles[] = 'width: ' . $button_size . 'px';
+                            $btn_styles[] = 'height: ' . $half_size . 'px';
+                            $btn_styles[] = 'border-radius: 0 0 ' . $button_size . 'px ' . $button_size . 'px';
+                            $btn_styles[] = 'top: 0';
+                            $btn_styles[] = 'left: 50%';
+                            $btn_styles[] = 'transform: translateX(-50%)';
+                            break;
+                        case 'middle-left':
+                            $btn_styles[] = 'width: ' . $half_size . 'px';
+                            $btn_styles[] = 'height: ' . $button_size . 'px';
+                            $btn_styles[] = 'border-radius: 0 ' . $button_size . 'px ' . $button_size . 'px 0';
+                            $btn_styles[] = 'top: 50%';
+                            $btn_styles[] = 'left: 0';
+                            $btn_styles[] = 'transform: translateY(-50%)';
+                            break;
+                        case 'middle-right':
+                            $btn_styles[] = 'width: ' . $half_size . 'px';
+                            $btn_styles[] = 'height: ' . $button_size . 'px';
+                            $btn_styles[] = 'border-radius: ' . $button_size . 'px 0 0 ' . $button_size . 'px';
+                            $btn_styles[] = 'top: 50%';
+                            $btn_styles[] = 'right: 0';
+                            $btn_styles[] = 'transform: translateY(-50%)';
+                            break;
+                    }
                 }
-                $btn_styles[] = 'bottom: 0';
-                $btn_styles[] = 'right: 0';
             } else {
                 // Bouton séparé
                 $radius_unit = ( 'percent' === $button_border_radius_unit ) ? '%' : 'px';
                 $btn_styles[] = 'width: ' . $button_size . 'px';
                 $btn_styles[] = 'height: ' . $button_size . 'px';
                 $btn_styles[] = 'border-radius: ' . $button_border_radius . $radius_unit;
-                $btn_styles[] = 'bottom: ' . $button_margin . 'px';
-                $btn_styles[] = 'right: ' . $button_margin . 'px';
                 $btn_styles[] = 'box-shadow: 0 4px 12px rgba(0,0,0,0.15)';
+
+                switch ( $button_position ) {
+                    case 'bottom-right':
+                        $btn_styles[] = 'bottom: ' . $button_margin . 'px';
+                        $btn_styles[] = 'right: ' . $button_margin . 'px';
+                        break;
+                    case 'bottom-left':
+                        $btn_styles[] = 'bottom: ' . $button_margin . 'px';
+                        $btn_styles[] = 'left: ' . $button_margin . 'px';
+                        break;
+                    case 'top-right':
+                        $btn_styles[] = 'top: ' . $button_margin . 'px';
+                        $btn_styles[] = 'right: ' . $button_margin . 'px';
+                        break;
+                    case 'top-left':
+                        $btn_styles[] = 'top: ' . $button_margin . 'px';
+                        $btn_styles[] = 'left: ' . $button_margin . 'px';
+                        break;
+                    case 'bottom-center':
+                        $btn_styles[] = 'bottom: ' . $button_margin . 'px';
+                        $btn_styles[] = 'left: 50%';
+                        $btn_styles[] = 'transform: translateX(-50%)';
+                        break;
+                    case 'top-center':
+                        $btn_styles[] = 'top: ' . $button_margin . 'px';
+                        $btn_styles[] = 'left: 50%';
+                        $btn_styles[] = 'transform: translateX(-50%)';
+                        break;
+                    case 'middle-left':
+                        $btn_styles[] = 'top: 50%';
+                        $btn_styles[] = 'left: ' . $button_margin . 'px';
+                        $btn_styles[] = 'transform: translateY(-50%)';
+                        break;
+                    case 'middle-right':
+                        $btn_styles[] = 'top: 50%';
+                        $btn_styles[] = 'right: ' . $button_margin . 'px';
+                        $btn_styles[] = 'transform: translateY(-50%)';
+                        break;
+                }
             }
 
             $btn_class = 'wpvfh-corner-btn';
