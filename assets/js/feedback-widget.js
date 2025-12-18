@@ -2783,6 +2783,7 @@
             dropzones.forEach(zone => {
                 zone.addEventListener('dragover', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     e.dataTransfer.dropEffect = 'move';
                     zone.classList.add('drag-over');
                 });
@@ -2793,10 +2794,13 @@
 
                 zone.addEventListener('drop', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     zone.classList.remove('drag-over');
                     const priority = zone.dataset.priority;
                     if (draggedFeedbackId && priority) {
                         this.updateFeedbackPriority(draggedFeedbackId, priority);
+                        // Re-rendre les listes après le changement
+                        setTimeout(() => this.renderPriorityLists(), 300);
                     }
                 });
             });
@@ -2832,7 +2836,8 @@
                     list.classList.remove('drag-over');
                     if (draggedFeedbackId) {
                         this.updateFeedbackPriority(draggedFeedbackId, priority);
-                        this.savePriorityOrder(priority, list);
+                        // Re-rendre les listes après le changement
+                        setTimeout(() => this.renderPriorityLists(), 300);
                     }
                 });
             });
