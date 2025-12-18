@@ -682,10 +682,6 @@ final class WP_Visual_Feedback_Hub {
                         <span class="wpvfh-tab-icon" aria-hidden="true">📄</span>
                         <?php esc_html_e( 'Pages', 'blazing-feedback' ); ?>
                     </button>
-                    <button type="button" class="wpvfh-tab" data-tab="priority">
-                        <span class="wpvfh-tab-icon" aria-hidden="true">⚡</span>
-                        <?php esc_html_e( 'Priorité', 'blazing-feedback' ); ?>
-                    </button>
                     <button type="button" class="wpvfh-tab" data-tab="metadata">
                         <span class="wpvfh-tab-icon" aria-hidden="true">🏷️</span>
                         <?php esc_html_e( 'Métadatas', 'blazing-feedback' ); ?>
@@ -1015,41 +1011,6 @@ final class WP_Visual_Feedback_Hub {
                         </div>
                     </div><!-- /wpvfh-tab-pages -->
 
-                    <!-- Onglet: Priorité -->
-                    <div id="wpvfh-tab-priority" class="wpvfh-tab-content">
-                        <!-- Zones de dépôt sticky -->
-                        <div class="wpvfh-priority-dropzones">
-                            <div class="wpvfh-dropzone wpvfh-dropzone-high" data-priority="high">
-                                <span class="wpvfh-dropzone-label">🔴 <?php esc_html_e( 'Haute', 'blazing-feedback' ); ?></span>
-                            </div>
-                            <div class="wpvfh-dropzone wpvfh-dropzone-medium" data-priority="medium">
-                                <span class="wpvfh-dropzone-label">🟠 <?php esc_html_e( 'Moyenne', 'blazing-feedback' ); ?></span>
-                            </div>
-                            <div class="wpvfh-dropzone wpvfh-dropzone-low" data-priority="low">
-                                <span class="wpvfh-dropzone-label">🟢 <?php esc_html_e( 'Basse', 'blazing-feedback' ); ?></span>
-                            </div>
-                        </div>
-
-                        <!-- Listes par priorité -->
-                        <div class="wpvfh-priority-sections">
-                            <div class="wpvfh-priority-section" data-priority="none">
-                                <h4 class="wpvfh-priority-title wpvfh-priority-none">⚪ <?php esc_html_e( 'Aucun niveau de priorité', 'blazing-feedback' ); ?></h4>
-                                <div class="wpvfh-priority-list" id="wpvfh-priority-none-list"></div>
-                            </div>
-                            <div class="wpvfh-priority-section" data-priority="high">
-                                <h4 class="wpvfh-priority-title wpvfh-priority-high">🔴 <?php esc_html_e( 'Priorité haute', 'blazing-feedback' ); ?></h4>
-                                <div class="wpvfh-priority-list" id="wpvfh-priority-high-list"></div>
-                            </div>
-                            <div class="wpvfh-priority-section" data-priority="medium">
-                                <h4 class="wpvfh-priority-title wpvfh-priority-medium">🟠 <?php esc_html_e( 'Priorité moyenne', 'blazing-feedback' ); ?></h4>
-                                <div class="wpvfh-priority-list" id="wpvfh-priority-medium-list"></div>
-                            </div>
-                            <div class="wpvfh-priority-section" data-priority="low">
-                                <h4 class="wpvfh-priority-title wpvfh-priority-low">🟢 <?php esc_html_e( 'Priorité basse', 'blazing-feedback' ); ?></h4>
-                                <div class="wpvfh-priority-list" id="wpvfh-priority-low-list"></div>
-                            </div>
-                        </div>
-                    </div><!-- /wpvfh-tab-priority -->
 
                     <!-- Onglet: Métadatas -->
                     <div id="wpvfh-tab-metadata" class="wpvfh-tab-content">

@@ -414,6 +414,7 @@
                 color: $card.find('.wpvfh-color-input').val() || '#666666',
                 display_mode: $card.find('.wpvfh-display-mode-selector input:checked').val() || 'emoji',
                 enabled: $card.find('.wpvfh-enabled-toggle').is(':checked') ? 'true' : 'false',
+                is_treated: $card.find('.wpvfh-is-treated-toggle').is(':checked') ? 'true' : 'false',
                 ai_prompt: $card.find('.wpvfh-ai-prompt').val() || '',
                 is_new: isNew ? 'true' : 'false'
             };

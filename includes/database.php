@@ -21,7 +21,7 @@ class WPVFH_Database {
     /**
      * Database version
      */
-    const DB_VERSION = '1.0.0';
+    const DB_VERSION = '1.1.0';
 
     /**
      * Option name for database version
@@ -59,6 +59,7 @@ class WPVFH_Database {
         global $wpdb;
 
         $charset_collate = $wpdb->get_charset_collate();
+        $current_version = get_option( self::DB_VERSION_OPTION, '0.0.0' );
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
@@ -69,6 +70,11 @@ class WPVFH_Database {
         self::create_metadata_items_table( $charset_collate );
         self::create_custom_groups_table( $charset_collate );
         self::create_group_settings_table( $charset_collate );
+
+        // Run migrations if updating from a previous version
+        if ( $current_version !== '0.0.0' && version_compare( $current_version, self::DB_VERSION, '<' ) ) {
+            self::run_db_migrations( $current_version );
+        }
 
         // Update database version
         update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
@@ -187,6 +193,7 @@ class WPVFH_Database {
             display_mode varchar(50) DEFAULT 'emoji',
             sort_order int(11) NOT NULL DEFAULT 0,
             enabled tinyint(1) NOT NULL DEFAULT 1,
+            is_treated tinyint(1) NOT NULL DEFAULT 0,
             ai_prompt text DEFAULT NULL,
             allowed_roles text DEFAULT NULL,
             allowed_users text DEFAULT NULL,
@@ -291,6 +298,51 @@ class WPVFH_Database {
     public static function needs_update() {
         $current_version = get_option( self::DB_VERSION_OPTION, '0.0.0' );
         return version_compare( $current_version, self::DB_VERSION, '<' );
+    }
+
+    /**
+     * Run database migrations
+     *
+     * @param string $from_version Version to migrate from.
+     */
+    public static function run_db_migrations( $from_version ) {
+        // Migration 1.1.0: Add is_treated column to metadata_types and set default values
+        if ( version_compare( $from_version, '1.1.0', '<' ) ) {
+            self::migrate_110_is_treated();
+        }
+    }
+
+    /**
+     * Migration 1.1.0: Add is_treated field to statuses
+     *
+     * Sets is_treated = 1 for resolved and rejected statuses
+     */
+    private static function migrate_110_is_treated() {
+        global $wpdb;
+
+        $table_name = self::get_table_name( self::TABLE_METADATA_TYPES );
+
+        // Check if column exists, if not add it
+        $column_exists = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = %s AND COLUMN_NAME = 'is_treated'",
+                $table_name
+            )
+        );
+
+        if ( ! $column_exists ) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $wpdb->query( "ALTER TABLE $table_name ADD COLUMN is_treated tinyint(1) NOT NULL DEFAULT 0 AFTER enabled" );
+        }
+
+        // Set is_treated = 1 for resolved and rejected statuses
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE $table_name SET is_treated = 1 WHERE type_group = %s AND slug IN ('resolved', 'rejected')",
+                'statuses'
+            )
+        );
     }
 
     /**

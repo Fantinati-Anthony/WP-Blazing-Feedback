@@ -141,6 +141,7 @@ class WPVFH_Options_Manager {
             'color'         => '#666666',
             'display_mode'  => 'emoji', // 'emoji' ou 'color_dot'
             'enabled'       => true,
+            'is_treated'    => false, // Considéré comme traité (pour les statuts)
             'ai_prompt'     => '',
             'allowed_roles' => array(), // vide = tous autorisés
             'allowed_users' => array(), // vide = tous autorisés
@@ -289,16 +290,18 @@ class WPVFH_Options_Manager {
                 'color' => '#f39c12',
             ) ),
             self::create_default_item( array(
-                'id'    => 'resolved',
-                'label' => __( 'Résolu', 'blazing-feedback' ),
-                'emoji' => '✅',
-                'color' => '#27ae60',
+                'id'         => 'resolved',
+                'label'      => __( 'Résolu', 'blazing-feedback' ),
+                'emoji'      => '✅',
+                'color'      => '#27ae60',
+                'is_treated' => true,
             ) ),
             self::create_default_item( array(
-                'id'    => 'rejected',
-                'label' => __( 'Rejeté', 'blazing-feedback' ),
-                'emoji' => '❌',
-                'color' => '#e74c3c',
+                'id'         => 'rejected',
+                'label'      => __( 'Rejeté', 'blazing-feedback' ),
+                'emoji'      => '❌',
+                'color'      => '#e74c3c',
+                'is_treated' => true,
             ) ),
         );
     }
@@ -318,6 +321,7 @@ class WPVFH_Options_Manager {
             'color'         => '#666666',
             'display_mode'  => 'emoji',
             'enabled'       => true,
+            'is_treated'    => false,
             'ai_prompt'     => '',
             'allowed_roles' => array(),
             'allowed_users' => array(),
@@ -340,6 +344,7 @@ class WPVFH_Options_Manager {
             'color'         => $db_item->color ?: '#666666',
             'display_mode'  => $db_item->display_mode ?: 'emoji',
             'enabled'       => (bool) $db_item->enabled,
+            'is_treated'    => isset( $db_item->is_treated ) ? (bool) $db_item->is_treated : false,
             'ai_prompt'     => $db_item->ai_prompt ?: '',
             'allowed_roles' => is_array( $db_item->allowed_roles ) ? $db_item->allowed_roles : array(),
             'allowed_users' => is_array( $db_item->allowed_users ) ? $db_item->allowed_users : array(),
@@ -367,6 +372,7 @@ class WPVFH_Options_Manager {
             'display_mode'  => isset( $item['display_mode'] ) ? $item['display_mode'] : 'emoji',
             'sort_order'    => $sort_order,
             'enabled'       => isset( $item['enabled'] ) ? (int) $item['enabled'] : 1,
+            'is_treated'    => isset( $item['is_treated'] ) ? (int) $item['is_treated'] : 0,
             'ai_prompt'     => isset( $item['ai_prompt'] ) ? $item['ai_prompt'] : '',
             'allowed_roles' => isset( $item['allowed_roles'] ) ? $item['allowed_roles'] : array(),
             'allowed_users' => isset( $item['allowed_users'] ) ? $item['allowed_users'] : array(),
@@ -1148,6 +1154,7 @@ class WPVFH_Options_Manager {
         $color         = isset( $_POST['color'] ) ? sanitize_hex_color( $_POST['color'] ) : '#666666';
         $display_mode  = isset( $_POST['display_mode'] ) ? sanitize_key( $_POST['display_mode'] ) : 'emoji';
         $enabled       = isset( $_POST['enabled'] ) ? ( $_POST['enabled'] === 'true' || $_POST['enabled'] === '1' ) : true;
+        $is_treated    = isset( $_POST['is_treated'] ) ? ( $_POST['is_treated'] === 'true' || $_POST['is_treated'] === '1' ) : false;
         $ai_prompt     = isset( $_POST['ai_prompt'] ) ? sanitize_textarea_field( $_POST['ai_prompt'] ) : '';
         $allowed_roles = isset( $_POST['allowed_roles'] ) ? array_map( 'sanitize_key', (array) $_POST['allowed_roles'] ) : array();
         $allowed_users = isset( $_POST['allowed_users'] ) ? array_map( 'absint', (array) $_POST['allowed_users'] ) : array();
@@ -1174,6 +1181,7 @@ class WPVFH_Options_Manager {
             'color'         => $color,
             'display_mode'  => $display_mode,
             'enabled'       => $enabled,
+            'is_treated'    => $is_treated,
             'ai_prompt'     => $ai_prompt,
             'allowed_roles' => array_filter( $allowed_roles ),
             'allowed_users' => array_filter( $allowed_users ),
@@ -1798,6 +1806,7 @@ class WPVFH_Options_Manager {
         $color        = $item['color'];
         $display_mode = $item['display_mode'];
         $enabled      = $item['enabled'];
+        $is_treated   = isset( $item['is_treated'] ) ? $item['is_treated'] : false;
         $ai_prompt    = $item['ai_prompt'];
         $allowed_roles = $item['allowed_roles'];
         $allowed_users = $item['allowed_users'];
@@ -1918,6 +1927,18 @@ class WPVFH_Options_Manager {
                         <p class="description"><?php esc_html_e( 'Ce prompt sera utilisé par l\'IA pour traiter les feedbacks de ce type.', 'blazing-feedback' ); ?></p>
                     </div>
                 </div>
+
+                <?php if ( 'statuses' === $type ) : ?>
+                <div class="wpvfh-form-row">
+                    <div class="wpvfh-form-group">
+                        <label class="wpvfh-checkbox-label">
+                            <input type="checkbox" class="wpvfh-is-treated-toggle" <?php checked( $is_treated ); ?>>
+                            <span><?php esc_html_e( 'Considéré comme traité', 'blazing-feedback' ); ?></span>
+                        </label>
+                        <p class="description"><?php esc_html_e( 'Les feedbacks avec ce statut seront considérés comme traités et masqués par défaut dans le widget.', 'blazing-feedback' ); ?></p>
+                    </div>
+                </div>
+                <?php endif; ?>
 
                 <div class="wpvfh-form-actions">
                     <button type="button" class="button button-primary wpvfh-save-item-btn">

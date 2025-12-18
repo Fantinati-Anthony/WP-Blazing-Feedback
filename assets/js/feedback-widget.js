@@ -3522,6 +3522,18 @@
         },
 
         /**
+         * Vérifier si un statut est considéré comme traité
+         */
+        isStatusTreated: function(statusSlug) {
+            // Chercher dans les metadataGroups
+            const statusGroup = this.config.metadataGroups?.statuses;
+            if (!statusGroup || !statusGroup.items) return false;
+
+            const status = statusGroup.items.find(s => s.id === statusSlug);
+            return status && status.is_treated;
+        },
+
+        /**
          * Rendre les listes de métadatas pour un groupe spécifique
          */
         renderMetadataListsForGroup: function(groupSlug) {
@@ -3546,8 +3558,14 @@
                 if (list) list.innerHTML = '';
             });
 
+            // Filtrer les feedbacks traités (statuts avec is_treated = true)
+            const visibleFeedbacks = feedbacks.filter(feedback => {
+                const status = feedback.status || 'new';
+                return !this.isStatusTreated(status);
+            });
+
             // Grouper les feedbacks par valeur de métadata
-            feedbacks.forEach(feedback => {
+            visibleFeedbacks.forEach(feedback => {
                 let value = feedback[field];
 
                 // Gestion spéciale pour les tags (multiple)
@@ -3568,6 +3586,20 @@
                     } else {
                         this.addFeedbackToMetadataList(groupSlug, value, feedback);
                     }
+                }
+            });
+
+            // Masquer les sections vides
+            sections.forEach(section => {
+                const list = section.querySelector('.wpvfh-metadata-list');
+                const count = list ? list.children.length : 0;
+
+                if (count === 0) {
+                    section.classList.add('wpvfh-section-empty');
+                    section.style.display = 'none';
+                } else {
+                    section.classList.remove('wpvfh-section-empty');
+                    section.style.display = '';
                 }
             });
 
