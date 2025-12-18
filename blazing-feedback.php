@@ -746,23 +746,23 @@ final class WP_Visual_Feedback_Hub {
                         <div class="wpvfh-legend" id="wpvfh-filters">
                             <button type="button" class="wpvfh-filter-btn active" data-status="all">
                                 <?php esc_html_e( 'Tous', 'blazing-feedback' ); ?>
-                                <span class="wpvfh-filter-count" id="wpvfh-filter-all-count">0</span>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-all-count"><span>0</span></span>
                             </button>
                             <button type="button" class="wpvfh-filter-btn" data-status="new">
                                 <?php esc_html_e( 'Nouveau', 'blazing-feedback' ); ?>
-                                <span class="wpvfh-filter-count" id="wpvfh-filter-new-count">0</span>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-new-count"><span>0</span></span>
                             </button>
                             <button type="button" class="wpvfh-filter-btn" data-status="in_progress">
                                 <?php esc_html_e( 'En cours', 'blazing-feedback' ); ?>
-                                <span class="wpvfh-filter-count" id="wpvfh-filter-progress-count">0</span>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-progress-count"><span>0</span></span>
                             </button>
                             <button type="button" class="wpvfh-filter-btn" data-status="resolved">
                                 <?php esc_html_e( 'Résolu', 'blazing-feedback' ); ?>
-                                <span class="wpvfh-filter-count" id="wpvfh-filter-resolved-count">0</span>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-resolved-count"><span>0</span></span>
                             </button>
                             <button type="button" class="wpvfh-filter-btn" data-status="rejected">
                                 <?php esc_html_e( 'Rejeté', 'blazing-feedback' ); ?>
-                                <span class="wpvfh-filter-count" id="wpvfh-filter-rejected-count">0</span>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-rejected-count"><span>0</span></span>
                             </button>
                         </div>
 

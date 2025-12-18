@@ -2682,12 +2682,29 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     color: #ffffff !important;
 }
 
+/* Quand actif: fond blanc avec texte de la couleur du statut */
 .wpvfh-filter-btn.active .wpvfh-filter-count {
     background: #ffffff !important;
 }
 
-.wpvfh-filter-btn.active .wpvfh-filter-count span {
-    color: inherit !important;
+.wpvfh-filter-btn[data-status="all"].active .wpvfh-filter-count span {
+    color: var(--wpvfh-primary) !important;
+}
+
+.wpvfh-filter-btn[data-status="new"].active .wpvfh-filter-count span {
+    color: #3498db !important;
+}
+
+.wpvfh-filter-btn[data-status="in_progress"].active .wpvfh-filter-count span {
+    color: #f39c12 !important;
+}
+
+.wpvfh-filter-btn[data-status="resolved"].active .wpvfh-filter-count span {
+    color: #27ae60 !important;
+}
+
+.wpvfh-filter-btn[data-status="rejected"].active .wpvfh-filter-count span {
+    color: #95a5a6 !important;
 }
 
 /* ==========================================================================

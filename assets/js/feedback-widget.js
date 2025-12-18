@@ -2041,12 +2041,12 @@
                 rejected: feedbacks.filter(f => f.status === 'rejected').length,
             };
 
-            // Mettre à jour les badges
-            const allCount = document.getElementById('wpvfh-filter-all-count');
-            const newCount = document.getElementById('wpvfh-filter-new-count');
-            const progressCount = document.getElementById('wpvfh-filter-progress-count');
-            const resolvedCount = document.getElementById('wpvfh-filter-resolved-count');
-            const rejectedCount = document.getElementById('wpvfh-filter-rejected-count');
+            // Mettre à jour les badges (inner span)
+            const allCount = document.querySelector('#wpvfh-filter-all-count span');
+            const newCount = document.querySelector('#wpvfh-filter-new-count span');
+            const progressCount = document.querySelector('#wpvfh-filter-progress-count span');
+            const resolvedCount = document.querySelector('#wpvfh-filter-resolved-count span');
+            const rejectedCount = document.querySelector('#wpvfh-filter-rejected-count span');
 
             if (allCount) allCount.textContent = counts.all;
             if (newCount) newCount.textContent = counts.new;
