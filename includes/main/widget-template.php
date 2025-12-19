@@ -1,7 +1,19 @@
-    private function render_default_widget() {
-        $button_position = get_option( 'wpvfh_button_position', 'bottom-right' );
-        $panel_position = get_option( 'wpvfh_panel_position', 'right' );
-        ?>
+<?php
+/**
+ * Template du widget de feedback
+ *
+ * @package Blazing_Feedback
+ * @since 1.7.0
+ */
+
+// Empêcher l'accès direct
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+$button_position = get_option( 'wpvfh_button_position', 'bottom-right' );
+$panel_position = get_option( 'wpvfh_panel_position', 'right' );
+?>
         <div id="wpvfh-container" class="wpvfh-container" data-position="<?php echo esc_attr( $button_position ); ?>" data-panel-position="<?php echo esc_attr( $panel_position ); ?>" role="complementary" aria-label="<?php esc_attr_e( 'Feedback visuel', 'blazing-feedback' ); ?>">
             <!-- Overlay pour la sidebar -->
             <div id="wpvfh-sidebar-overlay" class="wpvfh-sidebar-overlay"></div>
@@ -1018,5 +1030,4 @@
                 </div>
             </div>
         </div>
-        <?php
-    }
+<?php

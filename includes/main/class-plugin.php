@@ -93,6 +93,9 @@ final class WP_Visual_Feedback_Hub {
 			require_once WPVFH_PLUGIN_DIR . 'includes/admin-ui.php';
 			require_once WPVFH_PLUGIN_DIR . 'includes/github-updater.php';
 
+			// Initialiser l'interface admin
+			WPVFH_Admin_UI::init();
+
 			// Initialiser le système de mise à jour GitHub
 			new WPVFH_GitHub_Updater( WPVFH_PLUGIN_DIR . 'blazing-feedback.php' );
 
