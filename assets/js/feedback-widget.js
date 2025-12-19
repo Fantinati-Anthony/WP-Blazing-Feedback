@@ -1320,6 +1320,7 @@
                 const status = feedback.status || 'new';
                 const statusLabel = this.getStatusLabel(status);
                 const statusColor = this.getStatusColor(status);
+                const statusEmoji = this.getStatusEmoji(status);
                 const date = feedback.date ? new Date(feedback.date).toLocaleDateString() : '';
                 const pinNumber = index + 1;
 
@@ -3914,17 +3915,21 @@
          * Ouvrir la recherche (remplace le panel-body)
          */
         openSearchModal: function() {
-            // Masquer le panel-body
+            // Masquer le panel-body et le footer
             const panelBody = document.querySelector('.wpvfh-panel-body');
+            const panelFooter = document.querySelector('.wpvfh-panel-footer');
             if (panelBody) {
                 panelBody.style.display = 'none';
             }
+            if (panelFooter) {
+                panelFooter.style.display = 'none';
+            }
 
-            // Déplacer le modal de recherche dans le panel
+            // Déplacer le modal de recherche dans le panel (après les tabs)
             if (this.elements.searchModal && this.elements.panel) {
-                const panelContent = this.elements.panel.querySelector('.wpvfh-panel-content');
-                if (panelContent && this.elements.searchModal.parentNode !== panelContent) {
-                    panelContent.appendChild(this.elements.searchModal);
+                const tabs = this.elements.panel.querySelector('.wpvfh-tabs');
+                if (tabs && this.elements.searchModal.parentNode !== this.elements.panel) {
+                    tabs.after(this.elements.searchModal);
                 }
             }
 
@@ -3952,10 +3957,14 @@
                 this.elements.searchModal.classList.remove('wpvfh-search-inline');
             }
 
-            // Restaurer le panel-body
+            // Restaurer le panel-body et le footer
             const panelBody = document.querySelector('.wpvfh-panel-body');
+            const panelFooter = document.querySelector('.wpvfh-panel-footer');
             if (panelBody) {
                 panelBody.style.display = '';
+            }
+            if (panelFooter) {
+                panelFooter.style.display = '';
             }
         },
 
