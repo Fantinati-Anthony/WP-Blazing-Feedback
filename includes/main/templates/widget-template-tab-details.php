@@ -186,6 +186,15 @@ $priority_settings = WPVFH_Options_Manager::get_group_settings( 'priorities' );
 				</button>
 			</div>
 
+			<!-- Bouton repositionner (visible si le feedback a une position) -->
+			<div class="wpvfh-reposition-section" id="wpvfh-reposition-section" hidden>
+				<hr class="wpvfh-separator">
+				<button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-reposition-feedback-btn">
+					<span class="wpvfh-btn-emoji">📍</span>
+					<?php esc_html_e( 'Repositionner le marqueur', 'blazing-feedback' ); ?>
+				</button>
+			</div>
+
 			<!-- Bouton supprimer (visible pour créateur/admin) -->
 			<div class="wpvfh-delete-section" id="wpvfh-delete-section" hidden>
 				<hr class="wpvfh-separator">

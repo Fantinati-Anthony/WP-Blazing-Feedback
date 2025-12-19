@@ -29,6 +29,8 @@
             clickPosition: null,       // Position du dernier clic
             clickHandler: null,        // Référence au gestionnaire de clics global
             repositionTimeout: null,   // Timeout pour le repositionnement debounced
+            isRepositionMode: false,   // Mode repositionnement (vs nouveau pin)
+            repositionFeedbackId: null, // ID du feedback en cours de repositionnement
             // Nouveau: Mode inspecteur d'éléments
             inspectorMode: false,      // Mode inspecteur actif
             hoveredElement: null,      // Élément actuellement survolé
@@ -233,17 +235,32 @@
 
         /**
          * Activer le mode annotation
+         * @param {Object} options - Options d'activation
+         * @param {boolean} options.reposition - Mode repositionnement
+         * @param {number} options.feedbackId - ID du feedback à repositionner
          * @returns {void}
          */
-        activate: function() {
+        activate: function(options = {}) {
             if (this.state.isActive) return;
 
             this.state.isActive = true;
+            this.state.isRepositionMode = !!options.reposition;
+            this.state.repositionFeedbackId = options.feedbackId || null;
 
             // Afficher l'overlay
             if (this.elements.overlay) {
                 this.elements.overlay.hidden = false;
                 this.elements.overlay.setAttribute('aria-hidden', 'false');
+
+                // Mettre à jour le texte du hint selon le mode
+                const hintText = this.elements.overlay.querySelector('.wpvfh-hint-text');
+                if (hintText) {
+                    if (this.state.isRepositionMode) {
+                        hintText.textContent = 'Cliquez pour repositionner le marqueur';
+                    } else {
+                        hintText.textContent = 'Cliquez pour placer un marqueur';
+                    }
+                }
             }
 
             // Ajouter la classe au body
@@ -260,9 +277,12 @@
             document.addEventListener('touchend', this.preventInteraction, true);
 
             // Émettre l'événement
-            this.emitEvent('annotation-activated');
+            this.emitEvent('annotation-activated', {
+                reposition: this.state.isRepositionMode,
+                feedbackId: this.state.repositionFeedbackId,
+            });
 
-            console.log('[Blazing Feedback] Mode annotation activé');
+            console.log('[Blazing Feedback] Mode annotation activé' + (this.state.isRepositionMode ? ' (repositionnement)' : ''));
         },
 
         /**
@@ -274,6 +294,8 @@
 
             this.state.isActive = false;
             this.state.currentPin = null;
+            this.state.isRepositionMode = false;
+            this.state.repositionFeedbackId = null;
 
             // Masquer l'overlay
             if (this.elements.overlay) {
