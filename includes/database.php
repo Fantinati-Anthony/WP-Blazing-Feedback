@@ -682,6 +682,62 @@ class WPVFH_Database {
     }
 
     /**
+     * Get feedbacks by page path (more flexible matching)
+     *
+     * @param string $page_path The page path to filter by (without query string).
+     * @param array  $args      Optional arguments (include_resolved, user_id).
+     * @return array Array of feedback objects.
+     */
+    public static function get_feedbacks_by_page_path( $page_path, $args = array() ) {
+        global $wpdb;
+
+        $table_name = self::get_table_name( self::TABLE_FEEDBACKS );
+
+        $where = array( '1=1' );
+        $values = array();
+
+        // Correspondance par page_path (avec ou sans trailing slash)
+        $path_clean = rtrim( $page_path, '/' );
+        if ( empty( $path_clean ) ) {
+            $path_clean = '/';
+        }
+
+        // Chercher le path exact ou avec trailing slash
+        if ( '/' === $path_clean ) {
+            $where[] = 'page_path = %s';
+            $values[] = '/';
+        } else {
+            $where[] = '(page_path = %s OR page_path = %s)';
+            $values[] = $path_clean;
+            $values[] = $path_clean . '/';
+        }
+
+        // Exclure les feedbacks résolus/rejetés si demandé
+        if ( empty( $args['include_resolved'] ) ) {
+            $where[] = "status NOT IN ('resolved', 'rejected')";
+        }
+
+        // Filtrer par utilisateur si spécifié
+        if ( ! empty( $args['user_id'] ) ) {
+            $where[] = 'user_id = %d';
+            $values[] = absint( $args['user_id'] );
+        }
+
+        $where_clause = implode( ' AND ', $where );
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $sql = "SELECT * FROM $table_name WHERE $where_clause ORDER BY created_at DESC";
+
+        if ( ! empty( $values ) ) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $sql = $wpdb->prepare( $sql, $values );
+        }
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        return $wpdb->get_results( $sql );
+    }
+
+    /**
      * Count feedbacks with filters
      *
      * @param array $args Query arguments.

@@ -130,6 +130,9 @@
             // Observer les changements du DOM
             this.observeDOMChanges();
 
+            // Observer les changements de classe du body (pour la sidebar)
+            this.observeBodyClassChanges();
+
             // Créer le gestionnaire de clics global
             this.state.clickHandler = this.handleGlobalClick.bind(this);
 
@@ -165,6 +168,52 @@
                 subtree: true,
                 attributes: true,
                 attributeFilter: ['style', 'class'],
+            });
+        },
+
+        /**
+         * Observer les changements de classe du body pour la sidebar
+         * Repositionne le highlight quand la sidebar s'ouvre/ferme
+         * @returns {void}
+         */
+        observeBodyClassChanges: function() {
+            if (typeof MutationObserver === 'undefined') return;
+
+            const self = this;
+            let lastPanelActive = document.body.classList.contains('wpvfh-panel-active');
+
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach(mutation => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const currentPanelActive = document.body.classList.contains('wpvfh-panel-active');
+
+                        // Si l'état de la sidebar a changé
+                        if (currentPanelActive !== lastPanelActive) {
+                            lastPanelActive = currentPanelActive;
+
+                            // Attendre que la transition se termine
+                            setTimeout(() => {
+                                // Repositionner le highlight de l'inspecteur si actif
+                                if (self.state.inspectorMode && self.state.hoveredElement) {
+                                    self.updateHighlight(self.state.hoveredElement);
+                                }
+
+                                // Repositionner l'outline de sélection si présent
+                                if (self._updateOutlinePosition) {
+                                    self._updateOutlinePosition();
+                                }
+
+                                // Repositionner tous les pins
+                                self.repositionAllPins();
+                            }, 350); // Après la transition de 0.3s
+                        }
+                    }
+                });
+            });
+
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['class'],
             });
         },
 
@@ -845,6 +894,41 @@
 
             // Sélectionner le pin après le scroll
             setTimeout(() => this.selectPin(feedbackId), 500);
+        },
+
+        /**
+         * Scroller vers un pin avec highlight jaune
+         * @param {number} feedbackId - ID du feedback
+         * @returns {void}
+         */
+        scrollToPinWithHighlight: function(feedbackId) {
+            const pin = this.state.pins.find(p => p.data.id === feedbackId);
+
+            if (!pin) return;
+
+            const rect = pin.element.getBoundingClientRect();
+            const scrollY = window.scrollY || window.pageYOffset;
+
+            window.scrollTo({
+                top: scrollY + rect.top - (window.innerHeight / 2),
+                behavior: 'smooth',
+            });
+
+            // Ajouter le highlight jaune après le scroll
+            setTimeout(() => {
+                // Retirer le highlight des autres pins
+                this.state.pins.forEach(p => {
+                    p.element.classList.remove('wpvfh-pin-highlighted');
+                });
+
+                // Ajouter le highlight au pin actuel
+                pin.element.classList.add('wpvfh-pin-highlighted');
+
+                // Retirer le highlight après 3 secondes
+                setTimeout(() => {
+                    pin.element.classList.remove('wpvfh-pin-highlighted');
+                }, 3000);
+            }, 500);
         },
 
         /**

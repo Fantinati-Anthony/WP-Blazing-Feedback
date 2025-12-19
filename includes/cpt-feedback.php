@@ -744,6 +744,11 @@ class WPVFH_CPT_Feedback {
         // Préparer les données pour la table SQL
         $url = isset( $data['url'] ) ? $data['url'] : '';
         $page_path = $url ? ( wp_parse_url( $url, PHP_URL_PATH ) ?: '/' ) : '/';
+        // Normaliser le path (enlever trailing slash sauf pour la racine)
+        $page_path = rtrim( $page_path, '/' );
+        if ( empty( $page_path ) ) {
+            $page_path = '/';
+        }
 
         $feedback_data = array(
             'user_id'             => get_current_user_id() ?: null,
