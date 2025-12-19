@@ -34,6 +34,8 @@ trait WPVFH_Admin_Settings_Design_Colors {
 			self::render_common_colors();
 			self::render_light_mode_colors();
 			self::render_dark_mode_colors();
+			self::render_pin_item_light_colors();
+			self::render_pin_item_dark_colors();
 			self::render_footer_light_colors();
 			self::render_footer_dark_colors();
 			?>
@@ -165,6 +167,102 @@ trait WPVFH_Admin_Settings_Design_Colors {
 				<input type="text" value="<?php echo esc_attr( $value ); ?>" class="wpvfh-color-hex-input" data-color-input="<?php echo esc_attr( $option_name ); ?>" style="width: 70px; font-family: monospace; font-size: 12px; background: #263e4b; color: #fff; border-color: #3d5564;" maxlength="7">
 				<span style="flex: 1; font-size: 13px; color: #fff;"><?php echo esc_html( $label ); ?></span>
 				<button type="button" class="button button-small wpvfh-reset-color" data-option="<?php echo esc_attr( $option_name ); ?>" data-default="<?php echo esc_attr( $dark_defaults[ $option_name ] ); ?>" title="<?php esc_attr_e( 'Réinitialiser', 'blazing-feedback' ); ?>" style="background: #4a6572; border-color: #5a7282; color: #fff;">
+					<span class="dashicons dashicons-image-rotate" style="vertical-align: middle; margin-top: -2px; font-size: 14px; width: 14px; height: 14px;"></span>
+				</button>
+			</div>
+			<?php endforeach; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Rendre les couleurs des éléments de liste (pin-item) mode clair
+	 *
+	 * @since 1.9.0
+	 * @return void
+	 */
+	private static function render_pin_item_light_colors() {
+		$pin_item_light_colors = array(
+			'wpvfh_color_pin_item_bg'           => __( 'Fond', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_bg_hover'     => __( 'Fond (survol)', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_bg_selected'  => __( 'Fond (sélectionné)', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_border'       => __( 'Bordure', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_border_hover' => __( 'Bordure (survol)', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_text'         => __( 'Texte', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_text_light'   => __( 'Texte secondaire', 'blazing-feedback' ),
+		);
+		$pin_item_light_defaults = array(
+			'wpvfh_color_pin_item_bg'           => '#f8f9fa',
+			'wpvfh_color_pin_item_bg_hover'     => '#ffffff',
+			'wpvfh_color_pin_item_bg_selected'  => '#fff5f3',
+			'wpvfh_color_pin_item_border'       => '#e0e4e8',
+			'wpvfh_color_pin_item_border_hover' => '#FE5100',
+			'wpvfh_color_pin_item_text'         => '#263e4b',
+			'wpvfh_color_pin_item_text_light'   => '#5a7282',
+		);
+		?>
+		<h4 style="margin: 20px 0 10px 0; padding-bottom: 5px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px;">
+			<span style="font-size: 16px;">📝</span>
+			<?php esc_html_e( 'Éléments de liste - Mode Clair', 'blazing-feedback' ); ?>
+			<small style="color: #666; font-weight: normal;">(cartes feedback)</small>
+		</h4>
+		<div class="wpvfh-color-grid">
+			<?php foreach ( $pin_item_light_colors as $option_name => $label ) :
+				$value = get_option( $option_name, $pin_item_light_defaults[ $option_name ] );
+			?>
+			<div class="wpvfh-color-item" style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #f5f5f5; border-radius: 4px;">
+				<input type="color" name="<?php echo esc_attr( $option_name ); ?>" id="<?php echo esc_attr( $option_name ); ?>" value="<?php echo esc_attr( $value ); ?>">
+				<input type="text" value="<?php echo esc_attr( $value ); ?>" class="wpvfh-color-hex-input" data-color-input="<?php echo esc_attr( $option_name ); ?>" style="width: 70px; font-family: monospace; font-size: 12px;" maxlength="7">
+				<span style="flex: 1; font-size: 13px;"><?php echo esc_html( $label ); ?></span>
+				<button type="button" class="button button-small wpvfh-reset-color" data-option="<?php echo esc_attr( $option_name ); ?>" data-default="<?php echo esc_attr( $pin_item_light_defaults[ $option_name ] ); ?>" title="<?php esc_attr_e( 'Réinitialiser', 'blazing-feedback' ); ?>">
+					<span class="dashicons dashicons-image-rotate" style="vertical-align: middle; margin-top: -2px; font-size: 14px; width: 14px; height: 14px;"></span>
+				</button>
+			</div>
+			<?php endforeach; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Rendre les couleurs des éléments de liste (pin-item) mode sombre
+	 *
+	 * @since 1.9.0
+	 * @return void
+	 */
+	private static function render_pin_item_dark_colors() {
+		$pin_item_dark_colors = array(
+			'wpvfh_color_pin_item_bg_dark'           => __( 'Fond', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_bg_hover_dark'     => __( 'Fond (survol)', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_bg_selected_dark'  => __( 'Fond (sélectionné)', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_border_dark'       => __( 'Bordure', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_border_hover_dark' => __( 'Bordure (survol)', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_text_dark'         => __( 'Texte', 'blazing-feedback' ),
+			'wpvfh_color_pin_item_text_light_dark'   => __( 'Texte secondaire', 'blazing-feedback' ),
+		);
+		$pin_item_dark_defaults = array(
+			'wpvfh_color_pin_item_bg_dark'           => '#334a5a',
+			'wpvfh_color_pin_item_bg_hover_dark'     => '#3d5564',
+			'wpvfh_color_pin_item_bg_selected_dark'  => '#4a3530',
+			'wpvfh_color_pin_item_border_dark'       => '#3d5564',
+			'wpvfh_color_pin_item_border_hover_dark' => '#FE5100',
+			'wpvfh_color_pin_item_text_dark'         => '#ffffff',
+			'wpvfh_color_pin_item_text_light_dark'   => '#b0bcc4',
+		);
+		?>
+		<h4 style="margin: 20px 0 10px 0; padding-bottom: 5px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px;">
+			<span style="font-size: 16px;">📝</span>
+			<?php esc_html_e( 'Éléments de liste - Mode Sombre', 'blazing-feedback' ); ?>
+			<small style="color: #666; font-weight: normal;">(cartes feedback)</small>
+		</h4>
+		<div class="wpvfh-color-grid" style="background: #263e4b; padding: 10px; border-radius: 6px;">
+			<?php foreach ( $pin_item_dark_colors as $option_name => $label ) :
+				$value = get_option( $option_name, $pin_item_dark_defaults[ $option_name ] );
+			?>
+			<div class="wpvfh-color-item" style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #334a5a; border-radius: 4px;">
+				<input type="color" name="<?php echo esc_attr( $option_name ); ?>" id="<?php echo esc_attr( $option_name ); ?>" value="<?php echo esc_attr( $value ); ?>">
+				<input type="text" value="<?php echo esc_attr( $value ); ?>" class="wpvfh-color-hex-input" data-color-input="<?php echo esc_attr( $option_name ); ?>" style="width: 70px; font-family: monospace; font-size: 12px; background: #263e4b; color: #fff; border-color: #3d5564;" maxlength="7">
+				<span style="flex: 1; font-size: 13px; color: #fff;"><?php echo esc_html( $label ); ?></span>
+				<button type="button" class="button button-small wpvfh-reset-color" data-option="<?php echo esc_attr( $option_name ); ?>" data-default="<?php echo esc_attr( $pin_item_dark_defaults[ $option_name ] ); ?>" title="<?php esc_attr_e( 'Réinitialiser', 'blazing-feedback' ); ?>" style="background: #4a6572; border-color: #5a7282; color: #fff;">
 					<span class="dashicons dashicons-image-rotate" style="vertical-align: middle; margin-top: -2px; font-size: 14px; width: 14px; height: 14px;"></span>
 				</button>
 			</div>

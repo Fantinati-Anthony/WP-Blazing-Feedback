@@ -79,6 +79,14 @@ function wpvfh_get_frontend_data() {
 			'bg'          => get_option( 'wpvfh_color_bg', '#ffffff' ),
 			'bgLight'     => get_option( 'wpvfh_color_bg_light', '#f8f9fa' ),
 			'border'      => get_option( 'wpvfh_color_border', '#e0e4e8' ),
+			// Couleurs pin-item (cartes feedback)
+			'pinItemBg'           => get_option( 'wpvfh_color_pin_item_bg', '#f8f9fa' ),
+			'pinItemBgHover'      => get_option( 'wpvfh_color_pin_item_bg_hover', '#ffffff' ),
+			'pinItemBgSelected'   => get_option( 'wpvfh_color_pin_item_bg_selected', '#fff5f3' ),
+			'pinItemBorder'       => get_option( 'wpvfh_color_pin_item_border', '#e0e4e8' ),
+			'pinItemBorderHover'  => get_option( 'wpvfh_color_pin_item_border_hover', '#FE5100' ),
+			'pinItemText'         => get_option( 'wpvfh_color_pin_item_text', '#263e4b' ),
+			'pinItemTextLight'    => get_option( 'wpvfh_color_pin_item_text_light', '#5a7282' ),
 			// Couleurs footer
 			'footerBg'                => get_option( 'wpvfh_color_footer_bg', '#f8f9fa' ),
 			'footerBorder'            => get_option( 'wpvfh_color_footer_border', '#e9ecef' ),
@@ -102,6 +110,14 @@ function wpvfh_get_frontend_data() {
 			'bg'          => get_option( 'wpvfh_color_bg_dark', '#263e4b' ),
 			'bgLight'     => get_option( 'wpvfh_color_bg_light_dark', '#334a5a' ),
 			'border'      => get_option( 'wpvfh_color_border_dark', '#3d5564' ),
+			// Couleurs pin-item (cartes feedback)
+			'pinItemBg'           => get_option( 'wpvfh_color_pin_item_bg_dark', '#334a5a' ),
+			'pinItemBgHover'      => get_option( 'wpvfh_color_pin_item_bg_hover_dark', '#3d5564' ),
+			'pinItemBgSelected'   => get_option( 'wpvfh_color_pin_item_bg_selected_dark', '#4a3530' ),
+			'pinItemBorder'       => get_option( 'wpvfh_color_pin_item_border_dark', '#3d5564' ),
+			'pinItemBorderHover'  => get_option( 'wpvfh_color_pin_item_border_hover_dark', '#FE5100' ),
+			'pinItemText'         => get_option( 'wpvfh_color_pin_item_text_dark', '#ffffff' ),
+			'pinItemTextLight'    => get_option( 'wpvfh_color_pin_item_text_light_dark', '#b0bcc4' ),
 			// Couleurs footer
 			'footerBg'                => get_option( 'wpvfh_color_footer_bg_dark', '#1a2e38' ),
 			'footerBorder'            => get_option( 'wpvfh_color_footer_border_dark', '#3d5564' ),

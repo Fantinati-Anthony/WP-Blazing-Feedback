@@ -76,11 +76,16 @@
                 addAttachmentBtn: document.getElementById('wpvfh-add-attachment-btn'),
                 attachmentsPreview: document.getElementById('wpvfh-attachments-preview'),
                 backToListBtn: document.getElementById('wpvfh-back-to-list'),
+                editFeedbackBtn: document.getElementById('wpvfh-edit-feedback-btn'),
                 detailId: document.getElementById('wpvfh-detail-id'),
                 detailStatus: document.getElementById('wpvfh-detail-status'),
                 detailAuthor: document.getElementById('wpvfh-detail-author'),
                 detailDate: document.getElementById('wpvfh-detail-date'),
                 detailComment: document.getElementById('wpvfh-detail-comment'),
+                detailPinInfo: document.getElementById('wpvfh-detail-pin-info'),
+                pinSelectorValue: document.getElementById('wpvfh-pin-selector-value'),
+                pinPositionValue: document.getElementById('wpvfh-pin-position-value'),
+                pinPageValue: document.getElementById('wpvfh-pin-page-value'),
                 detailScreenshot: document.getElementById('wpvfh-detail-screenshot'),
                 detailReplies: document.getElementById('wpvfh-detail-replies'),
                 repliesList: document.getElementById('wpvfh-replies-list'),
@@ -182,6 +187,14 @@
             root.style.setProperty('--wpvfh-footer-btn-visibility-bg', colors.footerBtnVisibilityBg || '#3498db');
             root.style.setProperty('--wpvfh-footer-btn-visibility-text', colors.footerBtnVisibilityText || '#ffffff');
             root.style.setProperty('--wpvfh-footer-btn-visibility-hover', colors.footerBtnVisibilityHover || '#2980b9');
+            // Couleurs pin-item (cartes feedback)
+            root.style.setProperty('--wpvfh-pin-item-bg', colors.pinItemBg || colors.bgLight || '#f8f9fa');
+            root.style.setProperty('--wpvfh-pin-item-bg-hover', colors.pinItemBgHover || colors.bg || '#ffffff');
+            root.style.setProperty('--wpvfh-pin-item-bg-selected', colors.pinItemBgSelected || '#fff5f3');
+            root.style.setProperty('--wpvfh-pin-item-border', colors.pinItemBorder || colors.border || '#e0e4e8');
+            root.style.setProperty('--wpvfh-pin-item-border-hover', colors.pinItemBorderHover || colors.primary || '#FE5100');
+            root.style.setProperty('--wpvfh-pin-item-text', colors.pinItemText || colors.text || '#263e4b');
+            root.style.setProperty('--wpvfh-pin-item-text-light', colors.pinItemTextLight || colors.textLight || '#5a7282');
 
             if (logo && this.widget.elements.panel) {
                 const panelLogo = this.widget.elements.panel.querySelector('.wpvfh-panel-logo');

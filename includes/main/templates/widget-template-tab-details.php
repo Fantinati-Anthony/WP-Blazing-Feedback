@@ -26,6 +26,9 @@ $priority_settings = WPVFH_Options_Manager::get_group_settings( 'priorities' );
 			<?php esc_html_e( 'Retour', 'blazing-feedback' ); ?>
 		</button>
 		<span class="wpvfh-feedback-id" id="wpvfh-detail-id"></span>
+		<button type="button" class="wpvfh-edit-btn" id="wpvfh-edit-feedback-btn" title="<?php esc_attr_e( 'Modifier ce feedback', 'blazing-feedback' ); ?>">
+			<span aria-hidden="true">✏️</span>
+		</button>
 	</div>
 
 	<div class="wpvfh-detail-content" id="wpvfh-detail-content">
@@ -47,6 +50,28 @@ $priority_settings = WPVFH_Options_Manager::get_group_settings( 'priorities' );
 			<div class="wpvfh-label-item wpvfh-label-priority" id="wpvfh-detail-priority-label" hidden>
 				<span class="wpvfh-label-icon"></span>
 				<span class="wpvfh-label-text"></span>
+			</div>
+		</div>
+
+		<!-- Information de ciblage/position -->
+		<div class="wpvfh-detail-pin-info" id="wpvfh-detail-pin-info" hidden>
+			<h4>
+				<span class="wpvfh-dropdown-icon">📍</span>
+				<?php esc_html_e( 'Ciblage', 'blazing-feedback' ); ?>
+			</h4>
+			<div class="wpvfh-pin-info-content">
+				<div class="wpvfh-pin-info-item" id="wpvfh-pin-info-selector">
+					<span class="wpvfh-pin-info-label"><?php esc_html_e( 'Élément:', 'blazing-feedback' ); ?></span>
+					<code class="wpvfh-pin-info-value" id="wpvfh-pin-selector-value"></code>
+				</div>
+				<div class="wpvfh-pin-info-item" id="wpvfh-pin-info-position">
+					<span class="wpvfh-pin-info-label"><?php esc_html_e( 'Position:', 'blazing-feedback' ); ?></span>
+					<span class="wpvfh-pin-info-value" id="wpvfh-pin-position-value"></span>
+				</div>
+				<div class="wpvfh-pin-info-item" id="wpvfh-pin-info-page">
+					<span class="wpvfh-pin-info-label"><?php esc_html_e( 'Page:', 'blazing-feedback' ); ?></span>
+					<span class="wpvfh-pin-info-value" id="wpvfh-pin-page-value"></span>
+				</div>
 			</div>
 		</div>
 
