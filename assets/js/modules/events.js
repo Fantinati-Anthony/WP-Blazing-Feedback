@@ -421,6 +421,20 @@
                     w.modules.panel.openPanel('new');
                 }
             });
+
+            // =======================
+            // SOUS-ONGLETS METADATA
+            // =======================
+
+            if (el.metadataSubtabs) {
+                el.metadataSubtabs.forEach(subtab => {
+                    subtab.addEventListener('click', () => {
+                        if (w.modules.panel) {
+                            w.modules.panel.switchMetadataSubtab(subtab.dataset.subtab);
+                        }
+                    });
+                });
+            }
         }
     };
 

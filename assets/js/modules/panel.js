@@ -138,6 +138,32 @@
                 }
                 this.widget.state.currentFeedbackId = null;
             }
+
+            if (tabName === 'pages' && this.widget.modules.pages) {
+                this.widget.modules.pages.loadAllPages();
+            }
+        },
+
+        /**
+         * Changer de sous-onglet métadatas
+         * @param {string} subtabName - Nom du sous-onglet
+         */
+        switchMetadataSubtab: function(subtabName) {
+            const el = this.widget.elements;
+
+            // Mettre à jour les boutons de sous-onglet
+            if (el.metadataSubtabs) {
+                el.metadataSubtabs.forEach(subtab => {
+                    subtab.classList.toggle('active', subtab.dataset.subtab === subtabName);
+                });
+            }
+
+            // Mettre à jour les contenus
+            if (el.metadataSubtabContents) {
+                el.metadataSubtabContents.forEach(content => {
+                    content.classList.toggle('active', content.dataset.group === subtabName);
+                });
+            }
         }
     };
 
