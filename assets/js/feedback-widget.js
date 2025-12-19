@@ -77,10 +77,10 @@
 
             // Initialiser tous les modules dans le bon ordre
             const moduleOrder = [
-                'tools', 'notifications', 'core', 'api', 
-                'labels', 'tags', 'filters', 'screenshot', 
+                'tools', 'notifications', 'core', 'api',
+                'labels', 'tags', 'filters', 'screenshot',
                 'media', 'attachments', 'mentions', 'validation',
-                'form', 'list', 'details', 'panel', 'search',
+                'form', 'list', 'pages', 'details', 'panel', 'search',
                 'events', 'participants'
             ];
 
