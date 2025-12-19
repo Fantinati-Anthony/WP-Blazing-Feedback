@@ -724,6 +724,24 @@ button#wpvfh-validate-page-btn {
     color: var(--wpvfh-primary, #FE5100) !important;
 }
 
+/* Titre du groupe de métadonnées */
+.wpvfh-metadata-group-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--wpvfh-text);
+    background: var(--wpvfh-bg-light);
+    border-bottom: 1px solid var(--wpvfh-border);
+}
+
+.wpvfh-metadata-group-icon {
+    font-size: 18px;
+}
+
 /* Contenu des sous-onglets */
 .wpvfh-metadata-content {
     flex: 1;
