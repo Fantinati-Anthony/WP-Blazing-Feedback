@@ -278,6 +278,7 @@ class WPVFH_Database {
             group_slug varchar(100) NOT NULL,
             enabled tinyint(1) NOT NULL DEFAULT 1,
             required tinyint(1) NOT NULL DEFAULT 0,
+            show_in_sidebar tinyint(1) NOT NULL DEFAULT 1,
             allowed_roles text DEFAULT NULL,
             allowed_users text DEFAULT NULL,
             ai_prompt text DEFAULT NULL,
@@ -1318,11 +1319,12 @@ class WPVFH_Database {
         $table_name = self::get_table_name( self::TABLE_GROUP_SETTINGS );
 
         $defaults = array(
-            'enabled'       => true,
-            'required'      => false,
-            'allowed_roles' => array(),
-            'allowed_users' => array(),
-            'ai_prompt'     => '',
+            'enabled'         => true,
+            'required'        => false,
+            'show_in_sidebar' => true,
+            'allowed_roles'   => array(),
+            'allowed_users'   => array(),
+            'ai_prompt'       => '',
         );
 
         // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -1338,11 +1340,12 @@ class WPVFH_Database {
         }
 
         return array(
-            'enabled'       => (bool) $row->enabled,
-            'required'      => (bool) $row->required,
-            'allowed_roles' => ! empty( $row->allowed_roles ) ? json_decode( $row->allowed_roles, true ) : array(),
-            'allowed_users' => ! empty( $row->allowed_users ) ? json_decode( $row->allowed_users, true ) : array(),
-            'ai_prompt'     => $row->ai_prompt ?: '',
+            'enabled'         => (bool) $row->enabled,
+            'required'        => (bool) $row->required,
+            'show_in_sidebar' => isset( $row->show_in_sidebar ) ? (bool) $row->show_in_sidebar : true,
+            'allowed_roles'   => ! empty( $row->allowed_roles ) ? json_decode( $row->allowed_roles, true ) : array(),
+            'allowed_users'   => ! empty( $row->allowed_users ) ? json_decode( $row->allowed_users, true ) : array(),
+            'ai_prompt'       => $row->ai_prompt ?: '',
         );
     }
 
@@ -1359,12 +1362,13 @@ class WPVFH_Database {
         $table_name = self::get_table_name( self::TABLE_GROUP_SETTINGS );
 
         $data = array(
-            'group_slug'    => $group_slug,
-            'enabled'       => isset( $settings['enabled'] ) ? (int) $settings['enabled'] : 1,
-            'required'      => isset( $settings['required'] ) ? (int) $settings['required'] : 0,
-            'allowed_roles' => isset( $settings['allowed_roles'] ) ? wp_json_encode( $settings['allowed_roles'] ) : '[]',
-            'allowed_users' => isset( $settings['allowed_users'] ) ? wp_json_encode( $settings['allowed_users'] ) : '[]',
-            'ai_prompt'     => isset( $settings['ai_prompt'] ) ? $settings['ai_prompt'] : '',
+            'group_slug'      => $group_slug,
+            'enabled'         => isset( $settings['enabled'] ) ? (int) $settings['enabled'] : 1,
+            'required'        => isset( $settings['required'] ) ? (int) $settings['required'] : 0,
+            'show_in_sidebar' => isset( $settings['show_in_sidebar'] ) ? (int) $settings['show_in_sidebar'] : 1,
+            'allowed_roles'   => isset( $settings['allowed_roles'] ) ? wp_json_encode( $settings['allowed_roles'] ) : '[]',
+            'allowed_users'   => isset( $settings['allowed_users'] ) ? wp_json_encode( $settings['allowed_users'] ) : '[]',
+            'ai_prompt'       => isset( $settings['ai_prompt'] ) ? $settings['ai_prompt'] : '',
         );
 
         // Check if exists

@@ -645,8 +645,9 @@ final class WP_Visual_Feedback_Hub {
                 'name'     => $this->get_group_label( $slug ),
                 'type'     => 'standard',
                 'settings' => array(
-                    'enabled'  => $settings['enabled'],
-                    'required' => $settings['required'],
+                    'enabled'         => $settings['enabled'],
+                    'required'        => $settings['required'],
+                    'show_in_sidebar' => $settings['show_in_sidebar'],
                 ),
                 'items'    => WPVFH_Options_Manager::get_items_by_type( $slug ),
             );
@@ -668,8 +669,9 @@ final class WP_Visual_Feedback_Hub {
                 'name'     => $group['name'],
                 'type'     => 'custom',
                 'settings' => array(
-                    'enabled'  => $settings['enabled'],
-                    'required' => $settings['required'],
+                    'enabled'         => $settings['enabled'],
+                    'required'        => $settings['required'],
+                    'show_in_sidebar' => $settings['show_in_sidebar'],
                 ),
                 'items'    => WPVFH_Options_Manager::get_custom_group_items( $slug ),
             );
@@ -1304,7 +1306,7 @@ final class WP_Visual_Feedback_Hub {
 
                             // Groupes standards
                             $statuses_settings = WPVFH_Options_Manager::get_group_settings( 'statuses' );
-                            if ( $statuses_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'statuses' ) ) {
+                            if ( $statuses_settings['enabled'] && $statuses_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'statuses' ) ) {
                                 $metadata_groups['statuses'] = array(
                                     'slug' => 'statuses',
                                     'name' => __( 'Statuts', 'blazing-feedback' ),
@@ -1314,7 +1316,7 @@ final class WP_Visual_Feedback_Hub {
                             }
 
                             $types_settings = WPVFH_Options_Manager::get_group_settings( 'types' );
-                            if ( $types_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'types' ) ) {
+                            if ( $types_settings['enabled'] && $types_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'types' ) ) {
                                 $metadata_groups['types'] = array(
                                     'slug' => 'types',
                                     'name' => __( 'Types', 'blazing-feedback' ),
@@ -1324,7 +1326,7 @@ final class WP_Visual_Feedback_Hub {
                             }
 
                             $priorities_settings = WPVFH_Options_Manager::get_group_settings( 'priorities' );
-                            if ( $priorities_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'priorities' ) ) {
+                            if ( $priorities_settings['enabled'] && $priorities_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'priorities' ) ) {
                                 $metadata_groups['priorities'] = array(
                                     'slug' => 'priorities',
                                     'name' => __( 'Priorités', 'blazing-feedback' ),
@@ -1334,7 +1336,7 @@ final class WP_Visual_Feedback_Hub {
                             }
 
                             $tags_settings = WPVFH_Options_Manager::get_group_settings( 'tags' );
-                            if ( $tags_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'tags' ) ) {
+                            if ( $tags_settings['enabled'] && $tags_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'tags' ) ) {
                                 $metadata_groups['tags'] = array(
                                     'slug' => 'tags',
                                     'name' => __( 'Tags', 'blazing-feedback' ),
@@ -1347,7 +1349,7 @@ final class WP_Visual_Feedback_Hub {
                             $custom_groups = WPVFH_Options_Manager::get_custom_groups();
                             foreach ( $custom_groups as $slug => $group ) {
                                 $group_settings = WPVFH_Options_Manager::get_group_settings( $slug );
-                                if ( $group_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
+                                if ( $group_settings['enabled'] && $group_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
                                     $metadata_groups[ $slug ] = array(
                                         'slug' => $slug,
                                         'name' => $group['name'],
@@ -1650,15 +1652,17 @@ final class WP_Visual_Feedback_Hub {
             <div id="wpvfh-confirm-modal" class="wpvfh-modal" hidden>
                 <div class="wpvfh-modal-overlay"></div>
                 <div class="wpvfh-modal-content">
-                    <h3 class="wpvfh-modal-title"><?php esc_html_e( 'Confirmer la suppression', 'blazing-feedback' ); ?></h3>
-                    <p class="wpvfh-modal-text"><?php esc_html_e( 'Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible.', 'blazing-feedback' ); ?></p>
-                    <div class="wpvfh-modal-actions">
-                        <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-cancel-delete">
-                            <?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
-                        </button>
-                        <button type="button" class="wpvfh-btn wpvfh-btn-danger" id="wpvfh-confirm-delete">
-                            <?php esc_html_e( 'Supprimer', 'blazing-feedback' ); ?>
-                        </button>
+                    <div class="wpvfh-modal-body">
+                        <h3 class="wpvfh-modal-title"><?php esc_html_e( 'Confirmer la suppression', 'blazing-feedback' ); ?></h3>
+                        <p class="wpvfh-modal-text"><?php esc_html_e( 'Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible.', 'blazing-feedback' ); ?></p>
+                        <div class="wpvfh-modal-actions">
+                            <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-cancel-delete">
+                                <?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
+                            </button>
+                            <button type="button" class="wpvfh-btn wpvfh-btn-danger" id="wpvfh-confirm-delete">
+                                <?php esc_html_e( 'Supprimer', 'blazing-feedback' ); ?>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1667,16 +1671,18 @@ final class WP_Visual_Feedback_Hub {
             <div id="wpvfh-validate-modal" class="wpvfh-modal" hidden>
                 <div class="wpvfh-modal-overlay"></div>
                 <div class="wpvfh-modal-content">
-                    <div class="wpvfh-modal-icon">✅</div>
-                    <h3 class="wpvfh-modal-title"><?php esc_html_e( 'Valider cette page', 'blazing-feedback' ); ?></h3>
-                    <p class="wpvfh-modal-text"><?php esc_html_e( 'En validant cette page, vous confirmez que tous les feedbacks ont été traités. Cette page sera marquée comme terminée.', 'blazing-feedback' ); ?></p>
-                    <div class="wpvfh-modal-actions">
-                        <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-cancel-validate">
-                            <?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
-                        </button>
-                        <button type="button" class="wpvfh-btn wpvfh-btn-success" id="wpvfh-confirm-validate">
-                            <?php esc_html_e( 'Valider', 'blazing-feedback' ); ?>
-                        </button>
+                    <div class="wpvfh-modal-body">
+                        <div class="wpvfh-modal-icon">✅</div>
+                        <h3 class="wpvfh-modal-title"><?php esc_html_e( 'Valider cette page', 'blazing-feedback' ); ?></h3>
+                        <p class="wpvfh-modal-text"><?php esc_html_e( 'En validant cette page, vous confirmez que tous les feedbacks ont été traités. Cette page sera marquée comme terminée.', 'blazing-feedback' ); ?></p>
+                        <div class="wpvfh-modal-actions">
+                            <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-cancel-validate">
+                                <?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
+                            </button>
+                            <button type="button" class="wpvfh-btn wpvfh-btn-success" id="wpvfh-confirm-validate">
+                                <?php esc_html_e( 'Valider', 'blazing-feedback' ); ?>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

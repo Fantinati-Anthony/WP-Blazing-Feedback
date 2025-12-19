@@ -3998,7 +3998,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     position: relative;
     background: #fff;
     border-radius: 16px;
-    padding: 24px;
+    padding: 0px;
     max-width: 400px;
     width: 100%;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -4014,6 +4014,10 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
         opacity: 1;
         transform: scale(1) translateY(0);
     }
+}
+
+.wpvfh-modal-body {
+    padding: 24px;
 }
 
 .wpvfh-modal-icon {

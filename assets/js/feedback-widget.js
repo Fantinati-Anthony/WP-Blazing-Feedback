@@ -305,7 +305,7 @@
                 searchReset: document.getElementById('wpvfh-search-reset'),
                 searchResults: document.getElementById('wpvfh-search-results'),
                 searchResultsList: document.getElementById('wpvfh-search-results-list'),
-                searchCount: document.getElementById('wpvfh-search-count'),
+                searchCount: document.getElementById('wpvfh-search-results-count'),
                 // Champs Type, Priorité, Tags (formulaire création)
                 feedbackType: document.getElementById('wpvfh-feedback-type'),
                 feedbackPriority: document.getElementById('wpvfh-feedback-priority'),
@@ -3915,21 +3915,25 @@
          * Ouvrir la recherche (remplace le panel-body)
          */
         openSearchModal: function() {
-            // Masquer le panel-body et le footer
+            // Masquer le panel-body, le footer et les tabs
             const panelBody = document.querySelector('.wpvfh-panel-body');
             const panelFooter = document.querySelector('.wpvfh-panel-footer');
+            const panelTabs = document.querySelector('.wpvfh-tabs');
             if (panelBody) {
                 panelBody.style.display = 'none';
             }
             if (panelFooter) {
                 panelFooter.style.display = 'none';
             }
+            if (panelTabs) {
+                panelTabs.style.display = 'none';
+            }
 
-            // Déplacer le modal de recherche dans le panel (après les tabs)
+            // Déplacer le modal de recherche dans le panel (après le header)
             if (this.elements.searchModal && this.elements.panel) {
-                const tabs = this.elements.panel.querySelector('.wpvfh-tabs');
-                if (tabs && this.elements.searchModal.parentNode !== this.elements.panel) {
-                    tabs.after(this.elements.searchModal);
+                const panelHeader = this.elements.panel.querySelector('.wpvfh-panel-header');
+                if (panelHeader && this.elements.searchModal.parentNode !== this.elements.panel) {
+                    panelHeader.after(this.elements.searchModal);
                 }
             }
 
@@ -3957,14 +3961,18 @@
                 this.elements.searchModal.classList.remove('wpvfh-search-inline');
             }
 
-            // Restaurer le panel-body et le footer
+            // Restaurer le panel-body, le footer et les tabs
             const panelBody = document.querySelector('.wpvfh-panel-body');
             const panelFooter = document.querySelector('.wpvfh-panel-footer');
+            const panelTabs = document.querySelector('.wpvfh-tabs');
             if (panelBody) {
                 panelBody.style.display = '';
             }
             if (panelFooter) {
                 panelFooter.style.display = '';
+            }
+            if (panelTabs) {
+                panelTabs.style.display = '';
             }
         },
 
@@ -3981,6 +3989,7 @@
             if (this.elements.searchDateTo) this.elements.searchDateTo.value = '';
 
             if (this.elements.searchResults) {
+                this.elements.searchResults.hidden = true;
                 this.elements.searchResults.classList.remove('active');
             }
             if (this.elements.searchResultsList) {
@@ -4021,7 +4030,7 @@
          * Filtrer les feedbacks localement
          */
         filterFeedbacksLocally: function(criteria) {
-            let results = [...this.state.feedbacks];
+            let results = [...(this.state.currentFeedbacks || [])];
 
             // Filtrer par ID
             if (criteria.id) {
@@ -4076,10 +4085,12 @@
         displaySearchResults: function(results) {
             if (!this.elements.searchResults || !this.elements.searchResultsList) return;
 
+            // Afficher la section résultats
+            this.elements.searchResults.hidden = false;
             this.elements.searchResults.classList.add('active');
 
             if (this.elements.searchCount) {
-                this.elements.searchCount.textContent = results.length;
+                this.elements.searchCount.textContent = `${results.length} résultat${results.length > 1 ? 's' : ''}`;
             }
 
             if (results.length === 0) {
