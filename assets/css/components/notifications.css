@@ -1,21 +1,12 @@
 /**
- * Notifications, toasts
- * 
- * Reference file for feedback.css lines 2691-2750
- * See main file: assets/css/feedback.css
- * 
+ * Blazing Feedback - Notifications
+ *
+ * Système de notifications toast
+ *
  * @package Blazing_Feedback
+ * @since 1.0.0
  */
 
-/* 
- * This section includes:
- * - Start: Notifications
- * - End: Responsive
- * - Lines: 2691 to 2750 (~60 lines)
- * 
- * To view this section, read feedback.css with:
- * offset=2691, limit=60
- */
 /* ==========================================================================
    Notifications
    ========================================================================== */
@@ -72,7 +63,3 @@
     color: #ef6c00;
     border-left: 4px solid var(--wpvfh-warning);
 }
-
-/* ==========================================================================
-   Responsive - Tablet
-   ========================================================================== */

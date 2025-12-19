@@ -1,26 +1,7 @@
 /**
- * Variables CSS et reset WordPress/Elementor
- * 
- * Reference file for feedback.css lines 1-360
- * See main file: assets/css/feedback.css
- * 
- * @package Blazing_Feedback
- */
-
-/* 
- * This section includes:
- * - Start: Variables CSS
- * - End: Conteneur principal
- * - Lines: 1 to 360 (~360 lines)
- * 
- * To view this section, read feedback.css with:
- * offset=1, limit=360
- */
-/**
- * Blazing Feedback - Styles
+ * Blazing Feedback - Variables & Reset
  *
- * Styles pour le widget de feedback visuel
- * Compatible desktop, tablet et mobile
+ * Variables CSS et reset des styles WordPress/Elementor
  *
  * @package Blazing_Feedback
  * @since 1.0.0
@@ -123,236 +104,6 @@ html body.elementor-kit-* .wpvfh-panel button {
     user-select: auto !important;
 }
 
-/* Bouton Cibler élément - Style spécifique */
-.wpvfh-container .wpvfh-select-element-btn,
-.wpvfh-container button.wpvfh-select-element-btn,
-.wpvfh-panel .wpvfh-select-element-btn,
-html body .wpvfh-select-element-btn,
-html body.elementor-page .wpvfh-select-element-btn,
-html body.elementor-default .wpvfh-select-element-btn,
-.elementor .wpvfh-select-element-btn,
-.elementor-widget-container .wpvfh-select-element-btn {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    width: 100% !important;
-    padding: 14px 20px !important;
-    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
-    background-color: #f39c12 !important;
-    border: none !important;
-    border-radius: 12px !important;
-    color: #fff !important;
-    font-size: 15px !important;
-    font-weight: 600 !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    line-height: 1.4 !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3) !important;
-    text-align: center !important;
-    text-decoration: none !important;
-    text-transform: none !important;
-    letter-spacing: normal !important;
-    white-space: nowrap !important;
-}
-
-.wpvfh-container .wpvfh-select-element-btn:hover,
-.wpvfh-panel .wpvfh-select-element-btn:hover,
-html body .wpvfh-select-element-btn:hover,
-html body.elementor-page .wpvfh-select-element-btn:hover,
-html body.elementor-default .wpvfh-select-element-btn:hover,
-.elementor .wpvfh-select-element-btn:hover {
-    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%) !important;
-    background-color: #e67e22 !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 16px rgba(243, 156, 18, 0.4) !important;
-    color: #fff !important;
-    text-decoration: none !important;
-    border: none !important;
-}
-
-.wpvfh-container .wpvfh-select-element-btn:active,
-.wpvfh-panel .wpvfh-select-element-btn:active,
-html body .wpvfh-select-element-btn:active,
-.elementor .wpvfh-select-element-btn:active {
-    transform: translateY(0) !important;
-    box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3) !important;
-}
-
-/* Bouton Ajouter fichiers - Style outline */
-.wpvfh-container .wpvfh-add-attachment-btn,
-.wpvfh-container button.wpvfh-add-attachment-btn,
-.wpvfh-panel .wpvfh-add-attachment-btn,
-html body .wpvfh-add-attachment-btn,
-html body.elementor-page .wpvfh-add-attachment-btn,
-html body.elementor-default .wpvfh-add-attachment-btn,
-.elementor .wpvfh-add-attachment-btn,
-.elementor-widget-container .wpvfh-add-attachment-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    padding: 10px 16px !important;
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    border: 2px dashed #e74c3c !important;
-    border-radius: 8px !important;
-    color: #e74c3c !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    line-height: 1.4 !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    text-decoration: none !important;
-    text-transform: none !important;
-}
-
-.wpvfh-container .wpvfh-add-attachment-btn:hover,
-.wpvfh-panel .wpvfh-add-attachment-btn:hover,
-html body .wpvfh-add-attachment-btn:hover,
-.elementor .wpvfh-add-attachment-btn:hover {
-    background: rgba(231, 76, 60, 0.1) !important;
-    background-color: rgba(231, 76, 60, 0.1) !important;
-    border-color: #c0392b !important;
-    color: #c0392b !important;
-    transform: translateY(-1px) !important;
-    text-decoration: none !important;
-}
-
-.wpvfh-container .wpvfh-add-attachment-btn:active,
-.wpvfh-panel .wpvfh-add-attachment-btn:active,
-html body .wpvfh-add-attachment-btn:active,
-.elementor .wpvfh-add-attachment-btn:active {
-    transform: translateY(0) !important;
-}
-
-/* Bouton Annuler - Style secondaire */
-.wpvfh-container .wpvfh-cancel-btn,
-.wpvfh-container button.wpvfh-cancel-btn,
-.wpvfh-panel .wpvfh-cancel-btn,
-html body .wpvfh-cancel-btn,
-html body.elementor-page .wpvfh-cancel-btn,
-html body.elementor-default .wpvfh-cancel-btn,
-.elementor .wpvfh-cancel-btn,
-.elementor-widget-container .wpvfh-cancel-btn {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    padding: 12px 24px !important;
-    background: #f8f9fa !important;
-    background-color: #f8f9fa !important;
-    background-image: none !important;
-    border: 1px solid #dee2e6 !important;
-    border-radius: 8px !important;
-    color: #495057 !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    line-height: 1.4 !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    text-decoration: none !important;
-    text-transform: none !important;
-}
-
-.wpvfh-container .wpvfh-cancel-btn:hover,
-.wpvfh-panel .wpvfh-cancel-btn:hover,
-html body .wpvfh-cancel-btn:hover,
-.elementor .wpvfh-cancel-btn:hover {
-    background: #e9ecef !important;
-    background-color: #e9ecef !important;
-    border-color: #ced4da !important;
-    color: #495057 !important;
-    transform: translateY(-1px) !important;
-    text-decoration: none !important;
-}
-
-.wpvfh-container .wpvfh-cancel-btn:active,
-.wpvfh-panel .wpvfh-cancel-btn:active,
-html body .wpvfh-cancel-btn:active,
-.elementor .wpvfh-cancel-btn:active {
-    transform: translateY(0) !important;
-}
-
-/* Bouton Submit/Envoyer - Style primaire rouge - NUCLEAR */
-.wpvfh-container .wpvfh-submit-btn,
-.wpvfh-container button.wpvfh-submit-btn,
-.wpvfh-container [type=submit].wpvfh-submit-btn,
-.wpvfh-container .wpvfh-btn.wpvfh-btn-primary.wpvfh-submit-btn,
-.wpvfh-container button.wpvfh-btn.wpvfh-btn-primary.wpvfh-submit-btn,
-.wpvfh-panel .wpvfh-submit-btn,
-.wpvfh-panel button.wpvfh-submit-btn,
-.wpvfh-panel [type=submit].wpvfh-submit-btn,
-html body .wpvfh-submit-btn,
-html body [type=submit].wpvfh-submit-btn,
-html body button.wpvfh-submit-btn,
-html body.elementor-page .wpvfh-submit-btn,
-html body.elementor-page [type=submit].wpvfh-submit-btn,
-html body.elementor-page button.wpvfh-submit-btn,
-html body.elementor-default .wpvfh-submit-btn,
-html body.elementor-default [type=submit].wpvfh-submit-btn,
-.elementor .wpvfh-submit-btn,
-.elementor [type=submit].wpvfh-submit-btn,
-.elementor-widget-container .wpvfh-submit-btn {
-    all: revert !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    flex: 1 !important;
-    padding: 12px 24px !important;
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
-    background-color: #e74c3c !important;
-    background-image: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
-    border: none !important;
-    border-radius: 8px !important;
-    color: #fff !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    line-height: 1.4 !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-    text-decoration: none !important;
-    text-transform: none !important;
-    letter-spacing: normal !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    box-sizing: border-box !important;
-}
-
-.wpvfh-container .wpvfh-submit-btn:hover,
-.wpvfh-container button.wpvfh-submit-btn:hover,
-.wpvfh-container [type=submit].wpvfh-submit-btn:hover,
-.wpvfh-panel .wpvfh-submit-btn:hover,
-html body .wpvfh-submit-btn:hover,
-html body [type=submit].wpvfh-submit-btn:hover,
-html body.elementor-page .wpvfh-submit-btn:hover,
-html body.elementor-default .wpvfh-submit-btn:hover,
-.elementor .wpvfh-submit-btn:hover {
-    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
-    background-color: #c0392b !important;
-    background-image: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4) !important;
-    color: #fff !important;
-    text-decoration: none !important;
-    border: none !important;
-}
-
-.wpvfh-container .wpvfh-submit-btn:active,
-.wpvfh-panel .wpvfh-submit-btn:active,
-html body .wpvfh-submit-btn:active,
-html body [type=submit].wpvfh-submit-btn:active,
-.elementor .wpvfh-submit-btn:active {
-    transform: translateY(0) !important;
-}
-
 /* Force l'attribut hidden à fonctionner */
 .wpvfh-container [hidden],
 .wpvfh-panel [hidden],
@@ -376,3 +127,12 @@ html body.elementor-default .wpvfh-hidden {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
     font-size: 14px;
     line-height: 1.5;
+    color: var(--wpvfh-text);
+    box-sizing: border-box;
+}
+
+.wpvfh-container *,
+.wpvfh-container *::before,
+.wpvfh-container *::after {
+    box-sizing: border-box;
+}

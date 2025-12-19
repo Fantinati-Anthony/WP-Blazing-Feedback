@@ -1,95 +1,11 @@
 /**
- * Mode sombre, accessibilité
- * 
- * Reference file for feedback.css lines 2751-2900
- * See main file: assets/css/feedback.css
- * 
+ * Blazing Feedback - Themes
+ *
+ * Thèmes (dark/light), responsive et accessibilité
+ *
  * @package Blazing_Feedback
+ * @since 1.0.0
  */
-
-/* 
- * This section includes:
- * - Start: Responsive
- * - End: Mode inspecteur
- * - Lines: 2751 to 2900 (~150 lines)
- * 
- * To view this section, read feedback.css with:
- * offset=2751, limit=150
- */
-
-@media (max-width: 768px) {
-    .wpvfh-toggle-btn {
-        bottom: 16px;
-        right: 16px;
-        padding: 10px 16px;
-        font-size: 13px;
-    }
-
-    .wpvfh-panel {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .wpvfh-btn-text {
-        display: none;
-    }
-
-    .wpvfh-toggle-btn {
-        padding: 12px;
-        border-radius: 50%;
-    }
-
-    .wpvfh-btn-icon {
-        font-size: 22px;
-    }
-
-    .wpvfh-tabs {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-    }
-
-    .wpvfh-tab {
-        padding: 10px 12px;
-        white-space: nowrap;
-    }
-}
-
-/* ==========================================================================
-   Responsive - Mobile
-   ========================================================================== */
-
-@media (max-width: 480px) {
-    .wpvfh-panel {
-        width: 100%;
-    }
-
-    .wpvfh-toggle-btn {
-        bottom: 12px;
-        right: 12px;
-    }
-
-    .wpvfh-panel-body {
-        padding: 16px;
-    }
-
-    .wpvfh-form-actions {
-        flex-direction: column;
-    }
-
-    .wpvfh-btn {
-        width: 100%;
-    }
-
-    .wpvfh-pin-item {
-        flex-wrap: wrap;
-    }
-
-    .wpvfh-pin-actions {
-        width: 100%;
-        justify-content: flex-end;
-        margin-top: 8px;
-    }
-}
 
 /* ==========================================================================
    Mode sombre (si préféré par l'utilisateur)
@@ -166,3 +82,38 @@ body.wpvfh-theme-light .wpvfh-panel {
 .wpvfh-container :focus-visible {
     outline: 2px solid var(--wpvfh-secondary);
     outline-offset: 2px;
+}
+
+/* Réduire les animations si l'utilisateur le préfère */
+@media (prefers-reduced-motion: reduce) {
+    .wpvfh-container *,
+    .wpvfh-container *::before,
+    .wpvfh-container *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ==========================================================================
+   Utilitaires
+   ========================================================================== */
+
+/* Masquer visuellement mais garder accessible */
+.wpvfh-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Empêcher l'impact SEO */
+.wpvfh-container {
+    contain: layout style;
+}
+

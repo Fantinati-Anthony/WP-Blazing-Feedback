@@ -1,298 +1,670 @@
 /**
- * Boutons d'action, styles isolés
- * 
- * Reference file for feedback.css lines 1881-2160
- * See main file: assets/css/feedback.css
- * 
+ * Blazing Feedback - Buttons & Actions
+ *
+ * Styles pour tous les boutons et actions du plugin
+ *
  * @package Blazing_Feedback
- */
-
-/* 
- * This section includes:
- * - Start: Boutons - Styles propres
- * - End: Overlay d'annotation
- * - Lines: 1881 to 2160 (~280 lines)
- * 
- * To view this section, read feedback.css with:
- * offset=1881, limit=280
+ * @since 1.0.0
  */
 
 /* ==========================================================================
-   Barre d'outils média
+   Boutons spécifiques - Reset Elementor
    ========================================================================== */
 
-.wpvfh-media-toolbar {
+/* Bouton Cibler élément - Style spécifique */
+.wpvfh-container .wpvfh-select-element-btn,
+.wpvfh-container button.wpvfh-select-element-btn,
+.wpvfh-panel .wpvfh-select-element-btn,
+html body .wpvfh-select-element-btn,
+html body.elementor-page .wpvfh-select-element-btn,
+html body.elementor-default .wpvfh-select-element-btn,
+.elementor .wpvfh-select-element-btn,
+.elementor-widget-container .wpvfh-select-element-btn {
     display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     gap: 8px !important;
-    padding: 12px 0 !important;
-    border-bottom: 1px solid var(--wpvfh-border) !important;
-    margin-bottom: 16px !important;
-    flex-wrap: wrap !important;
-    justify-content: space-evenly !important;
+    width: 100% !important;
+    padding: 14px 20px !important;
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
+    background-color: #f39c12 !important;
+    border: none !important;
+    border-radius: 12px !important;
+    color: #fff !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.4 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3) !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    white-space: nowrap !important;
 }
 
-.wpvfh-container .wpvfh-tool-btn,
-.wpvfh-container button.wpvfh-tool-btn,
-.wpvfh-panel .wpvfh-tool-btn,
-.wpvfh-panel button.wpvfh-tool-btn,
-html body .wpvfh-container .wpvfh-tool-btn,
-html body .wpvfh-panel .wpvfh-tool-btn,
-html body.elementor-page .wpvfh-container .wpvfh-tool-btn,
-html body.elementor-page .wpvfh-panel .wpvfh-tool-btn,
-html body.elementor-default .wpvfh-container .wpvfh-tool-btn,
-html body.elementor-default .wpvfh-panel .wpvfh-tool-btn,
-.elementor .wpvfh-tool-btn,
-.elementor-widget-container .wpvfh-tool-btn {
+.wpvfh-container .wpvfh-select-element-btn:hover,
+.wpvfh-panel .wpvfh-select-element-btn:hover,
+html body .wpvfh-select-element-btn:hover,
+html body.elementor-page .wpvfh-select-element-btn:hover,
+html body.elementor-default .wpvfh-select-element-btn:hover,
+.elementor .wpvfh-select-element-btn:hover {
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%) !important;
+    background-color: #e67e22 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(243, 156, 18, 0.4) !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    border: none !important;
+}
+
+.wpvfh-container .wpvfh-select-element-btn:active,
+.wpvfh-panel .wpvfh-select-element-btn:active,
+html body .wpvfh-select-element-btn:active,
+.elementor .wpvfh-select-element-btn:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3) !important;
+}
+
+/* Bouton Ajouter fichiers - Style outline */
+.wpvfh-container .wpvfh-add-attachment-btn,
+.wpvfh-container button.wpvfh-add-attachment-btn,
+.wpvfh-panel .wpvfh-add-attachment-btn,
+html body .wpvfh-add-attachment-btn,
+html body.elementor-page .wpvfh-add-attachment-btn,
+html body.elementor-default .wpvfh-add-attachment-btn,
+.elementor .wpvfh-add-attachment-btn,
+.elementor-widget-container .wpvfh-add-attachment-btn {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 6px !important;
-    padding: 10px 14px !important;
-    background: #fff !important;
+    padding: 10px 16px !important;
+    background: transparent !important;
+    background-color: transparent !important;
     background-image: none !important;
-    border: 2px solid #e9ecef !important;
-    border-radius: 10px !important;
-    font-size: 13px !important;
+    border: 2px dashed #e74c3c !important;
+    border-radius: 8px !important;
+    color: #e74c3c !important;
+    font-size: 14px !important;
     font-weight: 500 !important;
-    color: #495057 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.4 !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+}
+
+.wpvfh-container .wpvfh-add-attachment-btn:hover,
+.wpvfh-panel .wpvfh-add-attachment-btn:hover,
+html body .wpvfh-add-attachment-btn:hover,
+.elementor .wpvfh-add-attachment-btn:hover {
+    background: rgba(231, 76, 60, 0.1) !important;
+    background-color: rgba(231, 76, 60, 0.1) !important;
+    border-color: #c0392b !important;
+    color: #c0392b !important;
+    transform: translateY(-1px) !important;
+    text-decoration: none !important;
+}
+
+.wpvfh-container .wpvfh-add-attachment-btn:active,
+.wpvfh-panel .wpvfh-add-attachment-btn:active,
+html body .wpvfh-add-attachment-btn:active,
+.elementor .wpvfh-add-attachment-btn:active {
+    transform: translateY(0) !important;
+}
+
+/* Bouton Annuler - Style secondaire */
+.wpvfh-container .wpvfh-cancel-btn,
+.wpvfh-container button.wpvfh-cancel-btn,
+.wpvfh-panel .wpvfh-cancel-btn,
+html body .wpvfh-cancel-btn,
+html body.elementor-page .wpvfh-cancel-btn,
+html body.elementor-default .wpvfh-cancel-btn,
+.elementor .wpvfh-cancel-btn,
+.elementor-widget-container .wpvfh-cancel-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 12px 24px !important;
+    background: #f8f9fa !important;
+    background-color: #f8f9fa !important;
+    background-image: none !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 8px !important;
+    color: #495057 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.4 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+}
+
+.wpvfh-container .wpvfh-cancel-btn:hover,
+.wpvfh-panel .wpvfh-cancel-btn:hover,
+html body .wpvfh-cancel-btn:hover,
+.elementor .wpvfh-cancel-btn:hover {
+    background: #e9ecef !important;
+    background-color: #e9ecef !important;
+    border-color: #ced4da !important;
+    color: #495057 !important;
+    transform: translateY(-1px) !important;
+    text-decoration: none !important;
+}
+
+.wpvfh-container .wpvfh-cancel-btn:active,
+.wpvfh-panel .wpvfh-cancel-btn:active,
+html body .wpvfh-cancel-btn:active,
+.elementor .wpvfh-cancel-btn:active {
+    transform: translateY(0) !important;
+}
+
+/* Bouton Submit/Envoyer - Style primaire rouge - NUCLEAR */
+.wpvfh-container .wpvfh-submit-btn,
+.wpvfh-container button.wpvfh-submit-btn,
+.wpvfh-container [type=submit].wpvfh-submit-btn,
+.wpvfh-container .wpvfh-btn.wpvfh-btn-primary.wpvfh-submit-btn,
+.wpvfh-container button.wpvfh-btn.wpvfh-btn-primary.wpvfh-submit-btn,
+.wpvfh-panel .wpvfh-submit-btn,
+.wpvfh-panel button.wpvfh-submit-btn,
+.wpvfh-panel [type=submit].wpvfh-submit-btn,
+html body .wpvfh-submit-btn,
+html body [type=submit].wpvfh-submit-btn,
+html body button.wpvfh-submit-btn,
+html body.elementor-page .wpvfh-submit-btn,
+html body.elementor-page [type=submit].wpvfh-submit-btn,
+html body.elementor-page button.wpvfh-submit-btn,
+html body.elementor-default .wpvfh-submit-btn,
+html body.elementor-default [type=submit].wpvfh-submit-btn,
+.elementor .wpvfh-submit-btn,
+.elementor [type=submit].wpvfh-submit-btn,
+.elementor-widget-container .wpvfh-submit-btn {
+    all: revert !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    flex: 1 !important;
+    padding: 12px 24px !important;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+    background-color: #e74c3c !important;
+    background-image: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: #fff !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.4 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     text-decoration: none !important;
     text-transform: none !important;
     letter-spacing: normal !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    box-sizing: border-box !important;
+}
+
+.wpvfh-container .wpvfh-submit-btn:hover,
+.wpvfh-container button.wpvfh-submit-btn:hover,
+.wpvfh-container [type=submit].wpvfh-submit-btn:hover,
+.wpvfh-panel .wpvfh-submit-btn:hover,
+html body .wpvfh-submit-btn:hover,
+html body [type=submit].wpvfh-submit-btn:hover,
+html body.elementor-page .wpvfh-submit-btn:hover,
+html body.elementor-default .wpvfh-submit-btn:hover,
+.elementor .wpvfh-submit-btn:hover {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
+    background-color: #c0392b !important;
+    background-image: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4) !important;
+    color: #fff !important;
+    text-decoration: none !important;
+    border: none !important;
+}
+
+.wpvfh-container .wpvfh-submit-btn:active,
+.wpvfh-panel .wpvfh-submit-btn:active,
+html body .wpvfh-submit-btn:active,
+html body [type=submit].wpvfh-submit-btn:active,
+.elementor .wpvfh-submit-btn:active {
+    transform: translateY(0) !important;
+}
+
+/* ==========================================================================
+   Boutons génériques - Styles propres isolés de WordPress et Elementor
+   ========================================================================== */
+
+.wpvfh-container .wpvfh-btn,
+.wpvfh-container button.wpvfh-btn,
+.wpvfh-panel .wpvfh-btn,
+.wpvfh-panel button.wpvfh-btn,
+html body .wpvfh-container .wpvfh-btn,
+html body .wpvfh-panel .wpvfh-btn,
+html body.elementor-page .wpvfh-container .wpvfh-btn,
+html body.elementor-page .wpvfh-panel .wpvfh-btn,
+html body.elementor-default .wpvfh-container .wpvfh-btn,
+html body.elementor-default .wpvfh-panel .wpvfh-btn,
+.elementor .wpvfh-btn,
+.elementor-widget-container .wpvfh-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 24px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
     line-height: 1.4 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-image: none !important;
     height: auto !important;
     width: auto !important;
 }
 
-.wpvfh-container .wpvfh-tool-btn:hover,
-.wpvfh-container button.wpvfh-tool-btn:hover,
-.wpvfh-panel .wpvfh-tool-btn:hover,
-html body .wpvfh-container .wpvfh-tool-btn:hover,
-html body .wpvfh-panel .wpvfh-tool-btn:hover,
-html body.elementor-page .wpvfh-tool-btn:hover,
-html body.elementor-default .wpvfh-tool-btn:hover,
-.elementor .wpvfh-tool-btn:hover {
-    background: #fff !important;
-    background-image: none !important;
-    border-color: var(--wpvfh-primary) !important;
-    color: var(--wpvfh-primary) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-    text-decoration: none !important;
+.wpvfh-container .wpvfh-btn:focus,
+.wpvfh-container button.wpvfh-btn:focus {
+    outline: 3px solid rgba(52, 152, 219, 0.4) !important;
+    outline-offset: 2px !important;
 }
 
-.wpvfh-container .wpvfh-tool-btn.active,
-.wpvfh-container button.wpvfh-tool-btn.active,
-.wpvfh-panel .wpvfh-tool-btn.active,
-html body .wpvfh-container .wpvfh-tool-btn.active,
-html body .wpvfh-panel .wpvfh-tool-btn.active,
-html body.elementor-page .wpvfh-tool-btn.active,
-html body.elementor-default .wpvfh-tool-btn.active,
-.elementor .wpvfh-tool-btn.active {
+.wpvfh-container .wpvfh-btn:disabled,
+.wpvfh-container button.wpvfh-btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* Bouton primaire - Rouge avec gradient */
+.wpvfh-container .wpvfh-btn-primary,
+.wpvfh-container button.wpvfh-btn-primary,
+.wpvfh-panel .wpvfh-btn-primary,
+.wpvfh-panel button.wpvfh-btn-primary,
+html body .wpvfh-container .wpvfh-btn-primary,
+html body .wpvfh-panel .wpvfh-btn-primary,
+html body.elementor-page .wpvfh-btn-primary,
+html body.elementor-default .wpvfh-btn-primary,
+.elementor .wpvfh-btn-primary,
+.elementor-widget-container .wpvfh-btn-primary {
     background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
     background-image: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
-    border-color: transparent !important;
     color: #fff !important;
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3) !important;
+    flex: 1 !important;
+    border: none !important;
 }
 
-.wpvfh-tool-btn .wpvfh-tool-emoji {
-    font-size: 18px !important;
+/* Texte blanc dans les boutons primaires - spécificité maximale */
+.wpvfh-container .wpvfh-btn-primary,
+.wpvfh-container .wpvfh-btn-primary *,
+.wpvfh-container .wpvfh-btn-primary span,
+.wpvfh-panel .wpvfh-btn-primary,
+.wpvfh-panel .wpvfh-btn-primary *,
+.wpvfh-panel .wpvfh-btn-primary span,
+html body .wpvfh-btn-primary,
+html body .wpvfh-btn-primary *,
+html body .wpvfh-add-feedback-btn,
+html body .wpvfh-add-feedback-btn *,
+.elementor .wpvfh-btn-primary,
+.elementor .wpvfh-btn-primary * {
+    color: #fff !important;
+}
+
+.wpvfh-container .wpvfh-btn-primary:hover:not(:disabled),
+.wpvfh-container button.wpvfh-btn-primary:hover:not(:disabled),
+.wpvfh-panel .wpvfh-btn-primary:hover:not(:disabled),
+html body .wpvfh-container .wpvfh-btn-primary:hover:not(:disabled),
+html body .wpvfh-panel .wpvfh-btn-primary:hover:not(:disabled),
+html body.elementor-page .wpvfh-btn-primary:hover:not(:disabled),
+html body.elementor-default .wpvfh-btn-primary:hover:not(:disabled),
+.elementor .wpvfh-btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
+    background-image: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4) !important;
+    color: #fff !important;
+}
+
+.wpvfh-container .wpvfh-btn-primary:active:not(:disabled),
+.wpvfh-container button.wpvfh-btn-primary:active:not(:disabled),
+.wpvfh-panel .wpvfh-btn-primary:active:not(:disabled),
+html body .wpvfh-btn-primary:active:not(:disabled),
+.elementor .wpvfh-btn-primary:active:not(:disabled) {
+    transform: translateY(0) !important;
+}
+
+/* Bouton secondaire - Gris élégant */
+.wpvfh-container .wpvfh-btn-secondary,
+.wpvfh-container button.wpvfh-btn-secondary,
+.wpvfh-panel .wpvfh-btn-secondary,
+.wpvfh-panel button.wpvfh-btn-secondary,
+html body .wpvfh-container .wpvfh-btn-secondary,
+html body .wpvfh-panel .wpvfh-btn-secondary,
+html body.elementor-page .wpvfh-btn-secondary,
+html body.elementor-default .wpvfh-btn-secondary,
+.elementor .wpvfh-btn-secondary,
+.elementor-widget-container .wpvfh-btn-secondary {
+    background: #f8f9fa !important;
+    background-image: none !important;
+    color: #495057 !important;
+    border: 1px solid #dee2e6 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+.wpvfh-container .wpvfh-btn-secondary:hover:not(:disabled),
+.wpvfh-container button.wpvfh-btn-secondary:hover:not(:disabled),
+.wpvfh-panel .wpvfh-btn-secondary:hover:not(:disabled),
+html body .wpvfh-container .wpvfh-btn-secondary:hover:not(:disabled),
+html body .wpvfh-panel .wpvfh-btn-secondary:hover:not(:disabled),
+html body.elementor-page .wpvfh-btn-secondary:hover:not(:disabled),
+html body.elementor-default .wpvfh-btn-secondary:hover:not(:disabled),
+.elementor .wpvfh-btn-secondary:hover:not(:disabled) {
+    background: #e9ecef !important;
+    background-image: none !important;
+    border-color: #ced4da !important;
+    transform: translateY(-1px) !important;
+    color: #495057 !important;
+}
+
+/* Emoji dans les boutons */
+.wpvfh-container .wpvfh-btn .wpvfh-btn-emoji,
+.wpvfh-container .wpvfh-btn-emoji {
+    font-size: 16px !important;
     line-height: 1 !important;
 }
 
-.wpvfh-tool-btn svg {
-    flex-shrink: 0 !important;
-    width: 18px !important;
-    height: 18px !important;
-}
-
-/* ==========================================================================
-   Sections médias (voice/video)
-   ========================================================================== */
-
-.wpvfh-media-section {
-    padding: 12px;
-    background: var(--wpvfh-bg-light);
-    border-radius: var(--wpvfh-radius-sm);
-    margin-bottom: 12px;
-}
-
-.wpvfh-recorder-controls {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-}
-
-.wpvfh-container .wpvfh-record-btn,
-.wpvfh-container button.wpvfh-record-btn {
+/* Bouton succès - Vert - NUCLEAR */
+.wpvfh-container .wpvfh-btn-success,
+.wpvfh-container button.wpvfh-btn-success,
+.wpvfh-panel .wpvfh-btn-success,
+.wpvfh-modal .wpvfh-btn-success,
+html body .wpvfh-btn-success,
+html body.elementor-page .wpvfh-btn-success,
+html body.elementor-default .wpvfh-btn-success,
+.elementor .wpvfh-btn-success,
+.elementor-widget-container .wpvfh-btn-success {
+    all: revert !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 10px !important;
-    padding: 12px 20px !important;
-    background: #fff !important;
-    border: 2px solid #e9ecef !important;
-    border-radius: 25px !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 24px !important;
+    background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
+    background-color: #27ae60 !important;
+    background-image: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: #fff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    color: #495057 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.4 !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
     -webkit-appearance: none !important;
     appearance: none !important;
 }
 
-.wpvfh-container .wpvfh-record-btn:hover,
-.wpvfh-container button.wpvfh-record-btn:hover {
-    border-color: #e74c3c !important;
-    color: #e74c3c !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2) !important;
-}
-
-.wpvfh-container .wpvfh-record-btn.recording,
-.wpvfh-container button.wpvfh-record-btn.recording {
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
-    border-color: transparent !important;
+.wpvfh-container .wpvfh-btn-success:hover:not(:disabled),
+.wpvfh-panel .wpvfh-btn-success:hover:not(:disabled),
+.wpvfh-modal .wpvfh-btn-success:hover:not(:disabled),
+html body .wpvfh-btn-success:hover:not(:disabled),
+html body.elementor-page .wpvfh-btn-success:hover:not(:disabled),
+.elementor .wpvfh-btn-success:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1e8449 0%, #196f3d 100%) !important;
+    background-color: #1e8449 !important;
+    background-image: linear-gradient(135deg, #1e8449 0%, #196f3d 100%) !important;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4) !important;
     color: #fff !important;
-    box-shadow: 0 4px 16px rgba(231, 76, 60, 0.4) !important;
+    transform: translateY(-1px) !important;
+    text-decoration: none !important;
+    border: none !important;
 }
 
-.wpvfh-record-icon {
-    width: 14px !important;
-    height: 14px !important;
-    background: #e74c3c !important;
-    border-radius: 50% !important;
-    transition: all 0.2s ease !important;
-    flex-shrink: 0 !important;
+/* Bouton danger */
+.wpvfh-btn-danger {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+    color: #fff !important;
 }
 
-.wpvfh-record-btn.recording .wpvfh-record-icon {
-    background: #fff !important;
-    animation: wpvfh-pulse 1s ease-in-out infinite !important;
+.wpvfh-btn-danger:hover:not(:disabled) {
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4) !important;
 }
 
-@keyframes wpvfh-pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.7; }
-}
-
-.wpvfh-recorder-status {
-    font-size: 14px;
-    color: var(--wpvfh-text-light);
-}
-
-.wpvfh-recorder-time {
-    font-weight: 600;
-    color: var(--wpvfh-text);
-    font-variant-numeric: tabular-nums;
-}
-
-/* Aperçu audio */
-.wpvfh-audio-preview {
-    position: relative;
-    margin-top: 12px;
-    padding: 12px;
-    background: var(--wpvfh-bg);
-    border-radius: var(--wpvfh-radius-sm);
-}
-
-.wpvfh-audio-preview audio {
-    width: 100%;
-    height: 40px;
-}
-
-/* Aperçu vidéo */
-.wpvfh-video-preview {
-    position: relative;
-    margin-top: 12px;
-    border-radius: var(--wpvfh-radius-sm);
-    overflow: hidden;
-}
-
-.wpvfh-video-preview video {
-    width: 100%;
-    max-height: 200px;
-    background: #000;
-}
-
-/* Transcription */
-.wpvfh-transcript-preview {
-    margin-top: 12px;
-    padding: 12px;
-    background: var(--wpvfh-bg);
-    border-radius: var(--wpvfh-radius-sm);
-    border-left: 3px solid var(--wpvfh-primary);
-}
-
-.wpvfh-transcript-preview label {
-    display: block;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--wpvfh-text-light);
-    margin-bottom: 4px;
-}
-
-.wpvfh-transcript-text {
-    margin: 0;
-    font-size: 14px;
-    color: var(--wpvfh-text);
-    line-height: 1.5;
-}
-
-/* Bouton supprimer média */
-.wpvfh-remove-media {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    background: rgba(0, 0, 0, 0.6);
-    border: none;
+/* Spinner de chargement */
+.wpvfh-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fff;
+    border-right-color: transparent;
     border-radius: 50%;
-    color: #fff;
-    font-size: 18px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background var(--wpvfh-transition);
+    animation: wpvfh-spin 0.8s linear infinite;
 }
 
-.wpvfh-remove-media:hover {
-    background: rgba(0, 0, 0, 0.8);
+@keyframes wpvfh-spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-/* Info du pin */
-.wpvfh-pin-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* Bouton Valider la page - NUCLEAR */
+.wpvfh-btn-validate,
+.wpvfh-container .wpvfh-btn-validate,
+.wpvfh-panel .wpvfh-btn-validate,
+html body .wpvfh-btn-validate,
+html body.elementor-page .wpvfh-btn-validate,
+html body.elementor-default .wpvfh-btn-validate,
+.elementor .wpvfh-btn-validate,
+button.wpvfh-btn-validate {
+    all: revert !important;
+    width: 100% !important;
+    padding: 14px 20px !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.4 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    text-decoration: none !important;
+    text-transform: none !important;
 }
 
-.wpvfh-help-text {
-    margin: 0;
-    padding: 10px 12px;
-    background: #e8f5e9;
-    border-radius: var(--wpvfh-radius-sm);
-    font-size: 13px;
-    color: #2e7d32;
+.wpvfh-btn-validate:not(:disabled),
+.wpvfh-container .wpvfh-btn-validate:not(:disabled),
+.wpvfh-panel .wpvfh-btn-validate:not(:disabled),
+html body .wpvfh-btn-validate:not(:disabled),
+html body.elementor-page .wpvfh-btn-validate:not(:disabled),
+html body.elementor-default .wpvfh-btn-validate:not(:disabled),
+.elementor .wpvfh-btn-validate:not(:disabled),
+button.wpvfh-btn-validate:not(:disabled) {
+    background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
+    background-color: #27ae60 !important;
+    background-image: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3) !important;
 }
 
-.wpvfh-pin-icon {
-    font-size: 16px;
+.wpvfh-btn-validate:not(:disabled):hover,
+.wpvfh-container .wpvfh-btn-validate:not(:disabled):hover,
+html body .wpvfh-btn-validate:not(:disabled):hover,
+.elementor .wpvfh-btn-validate:not(:disabled):hover,
+button.wpvfh-btn-validate:not(:disabled):hover {
+    background: linear-gradient(135deg, #1e8449 0%, #196f3d 100%) !important;
+    background-color: #1e8449 !important;
+    background-image: linear-gradient(135deg, #1e8449 0%, #196f3d 100%) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4) !important;
 }
 
-/* Actions du formulaire */
-.wpvfh-form-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 8px;
+button#wpvfh-validate-page-btn {
+    width: 100% !important;
+}
+
+.wpvfh-btn-small {
+    padding: 10px 14px !important;
+    font-size: 13px !important;
 }
 
 /* ==========================================================================
+   Boutons Back & Close
+   ========================================================================== */
+
+.wpvfh-container .wpvfh-back-btn,
+.wpvfh-container button.wpvfh-back-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 8px 12px !important;
+    background: #fff !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 6px !important;
+    font-size: 13px !important;
+    color: #495057 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.wpvfh-container .wpvfh-back-btn:hover {
+    background: #e9ecef !important;
+    border-color: #ced4da !important;
+}
+
+.wpvfh-close-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    font-size: 24px !important;
+    color: var(--wpvfh-text-light) !important;
+    transition: all var(--wpvfh-transition) !important;
+    min-height: auto !important;
+    line-height: 1 !important;
+}
+
+.wpvfh-close-btn:hover {
+    background: var(--wpvfh-border) !important;
+    color: var(--wpvfh-text) !important;
+}
+
+/* ==========================================================================
+   Actions dans pin-items
+   ========================================================================== */
+
+.wpvfh-pin-actions,
+.wpvfh-container .wpvfh-pin-actions,
+.wpvfh-panel .wpvfh-pin-actions,
+html body .wpvfh-pin-actions,
+.elementor .wpvfh-pin-actions {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    border: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+}
+
+.wpvfh-pin-action,
+.wpvfh-container .wpvfh-pin-action,
+.wpvfh-panel .wpvfh-pin-action,
+html body .wpvfh-pin-action,
+html body.elementor-page .wpvfh-pin-action,
+html body.elementor-default .wpvfh-pin-action,
+.elementor .wpvfh-pin-action,
+button.wpvfh-pin-action,
+button.wpvfh-pin-action.wpvfh-pin-goto,
+button.wpvfh-pin-action.wpvfh-pin-delete {
+    all: revert !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-radius: var(--wpvfh-radius-sm) !important;
+    cursor: pointer !important;
+    color: var(--wpvfh-text-light) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all var(--wpvfh-transition) !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    box-shadow: none !important;
+}
+
+.wpvfh-pin-action:hover,
+.wpvfh-container .wpvfh-pin-action:hover,
+html body .wpvfh-pin-action:hover,
+.elementor .wpvfh-pin-action:hover,
+button.wpvfh-pin-action:hover {
+    background: var(--wpvfh-border) !important;
+    background-color: var(--wpvfh-border) !important;
+    color: var(--wpvfh-text) !important;
+    border: none !important;
+}
+
+/* Bouton supprimer dans la liste */
+.wpvfh-pin-action.wpvfh-pin-delete,
+button.wpvfh-pin-action.wpvfh-pin-delete,
+html body .wpvfh-pin-action.wpvfh-pin-delete,
+.elementor .wpvfh-pin-action.wpvfh-pin-delete {
+    color: #bdc3c7 !important;
+    border: none !important;
+}
+
+.wpvfh-pin-action.wpvfh-pin-delete:hover,
+button.wpvfh-pin-action.wpvfh-pin-delete:hover,
+html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
+.elementor .wpvfh-pin-action.wpvfh-pin-delete:hover {
+    background: #ffebee !important;
+    background-color: #ffebee !important;
+    color: #e74c3c !important;
+    border: none !important;
+}
+
+.wpvfh-pin-action.wpvfh-delete-btn:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}

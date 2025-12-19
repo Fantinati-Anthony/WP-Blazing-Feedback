@@ -1,0 +1,32 @@
+/**
+ * Blazing Feedback - Loader
+ *
+ * Importe tous les modules CSS du plugin dans le bon ordre
+ *
+ * @package Blazing_Feedback
+ * @since 1.0.0
+ */
+
+/* Variables et reset (doit être chargé en premier) */
+@import url('components/variables-reset.css');
+
+/* Composants principaux */
+@import url('components/buttons-actions.css');
+@import url('components/floating-button.css');
+@import url('components/panel.css');
+@import url('components/form.css');
+@import url('components/list.css');
+@import url('components/details.css');
+
+/* Fonctionnalités visuelles */
+@import url('components/pins-overlay.css');
+@import url('components/inspector.css');
+@import url('components/filters-search.css');
+
+/* UI/UX */
+@import url('components/notifications.css');
+@import url('components/validation-modals.css');
+@import url('components/metadata-tabs.css');
+
+/* Thèmes et responsive (doit être chargé en dernier) */
+@import url('components/themes.css');

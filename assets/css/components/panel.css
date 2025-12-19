@@ -1,21 +1,12 @@
 /**
- * Sidebar panel, header, onglets, body
- * 
- * Reference file for feedback.css lines 671-1100
- * See main file: assets/css/feedback.css
- * 
+ * Blazing Feedback - Panel
+ *
+ * Panneau latéral (sidebar) principal du widget
+ *
  * @package Blazing_Feedback
+ * @since 1.0.0
  */
 
-/* 
- * This section includes:
- * - Start: Footer de la sidebar
- * - End: Liste des pins
- * - Lines: 671 to 1100 (~430 lines)
- * 
- * To view this section, read feedback.css with:
- * offset=671, limit=430
- */
 /* ==========================================================================
    Footer de la sidebar (boutons + et visibilité)
    ========================================================================== */
@@ -122,7 +113,6 @@ body.wpvfh-panel-active .wpvfh-sidebar-overlay {
 }
 
 /* ===== PANEL POSITION GAUCHE ===== */
-/* Cibler directement le panel car il est déplacé vers body */
 .wpvfh-panel[data-panel-position="left"] {
     right: auto !important;
     left: 0 !important;
@@ -142,53 +132,6 @@ body.wpvfh-panel-active.wpvfh-panel-left {
     margin-right: 0 !important;
     margin-left: 400px !important;
     transition: margin 0.3s ease !important;
-}
-
-/* Responsive: sur mobile, pas de push mais overlay */
-@media screen and (max-width: 600px) {
-    body.wpvfh-panel-active {
-        margin-right: 0 !important;
-        margin-left: 0 !important;
-    }
-    body.wpvfh-panel-active.wpvfh-panel-left {
-        margin-left: 0 !important;
-    }
-    body.wpvfh-panel-active .wpvfh-sidebar-overlay {
-        display: block !important;
-    }
-
-    /* Bouton coin plus petit sur mobile */
-    .wpvfh-corner-btn {
-        width: 60px !important;
-        height: 60px !important;
-    }
-
-    .wpvfh-corner-btn:hover {
-        width: 65px !important;
-        height: 65px !important;
-    }
-
-    .wpvfh-corner-icon-wrapper {
-        margin-top: 8px !important;
-        margin-left: 8px !important;
-    }
-
-    .wpvfh-corner-icon {
-        font-size: 20px !important;
-    }
-
-    .wpvfh-corner-icon img {
-        width: 22px !important;
-        height: 22px !important;
-    }
-
-    .wpvfh-corner-count {
-        min-width: 16px !important;
-        height: 16px !important;
-        font-size: 9px !important;
-        top: -6px !important;
-        right: -8px !important;
-    }
 }
 
 .wpvfh-panel.wpvfh-panel-open {
@@ -280,161 +223,6 @@ body .wpvfh-panel-logo {
     padding: 0 !important;
 }
 
-.wpvfh-close-btn {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 32px !important;
-    height: 32px !important;
-    padding: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    border-radius: 50% !important;
-    cursor: pointer !important;
-    font-size: 24px !important;
-    color: var(--wpvfh-text-light) !important;
-    transition: all var(--wpvfh-transition) !important;
-    min-height: auto !important;
-    line-height: 1 !important;
-}
-
-.wpvfh-close-btn:hover {
-    background: var(--wpvfh-border) !important;
-    color: var(--wpvfh-text) !important;
-}
-
-/* Onglets de navigation - Style agressif contre Elementor */
-.wpvfh-tabs,
-.wpvfh-container .wpvfh-tabs,
-.wpvfh-panel .wpvfh-tabs,
-html body .wpvfh-tabs,
-html body.elementor-page .wpvfh-tabs,
-html body.elementor-default .wpvfh-tabs,
-.elementor .wpvfh-tabs {
-    display: flex !important;
-    border-bottom: 2px solid var(--wpvfh-border) !important;
-    background: var(--wpvfh-bg-light) !important;
-    flex-shrink: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-.wpvfh-container .wpvfh-tab,
-.wpvfh-container button.wpvfh-tab,
-.wpvfh-panel .wpvfh-tab,
-.wpvfh-panel button.wpvfh-tab,
-html body .wpvfh-tab,
-html body .wpvfh-tabs .wpvfh-tab,
-html body.elementor-page .wpvfh-tab,
-html body.elementor-page .wpvfh-tabs .wpvfh-tab,
-html body.elementor-default .wpvfh-tab,
-html body.elementor-default .wpvfh-tabs .wpvfh-tab,
-.elementor .wpvfh-tab,
-.elementor .wpvfh-tabs .wpvfh-tab,
-.elementor-widget-container .wpvfh-tab {
-    all: revert !important;
-    flex: 1 !important;
-    padding: 14px 16px !important;
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    border: none !important;
-    border-bottom: 3px solid transparent !important;
-    border-radius: 0 !important;
-    margin-bottom: -2px !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    color: var(--wpvfh-text-light) !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
-    text-decoration: none !important;
-    text-transform: none !important;
-    letter-spacing: normal !important;
-    line-height: 1.4 !important;
-    box-shadow: none !important;
-}
-
-.wpvfh-container .wpvfh-tab:hover,
-.wpvfh-container button.wpvfh-tab:hover,
-.wpvfh-panel .wpvfh-tab:hover,
-html body .wpvfh-tab:hover,
-html body .wpvfh-tabs .wpvfh-tab:hover,
-html body.elementor-page .wpvfh-tab:hover,
-html body.elementor-default .wpvfh-tab:hover,
-.elementor .wpvfh-tab:hover {
-    color: var(--wpvfh-text) !important;
-    background: var(--wpvfh-bg-light) !important;
-    background-color: var(--wpvfh-bg-light) !important;
-    border: none !important;
-    border-bottom: 3px solid transparent !important;
-    text-decoration: none !important;
-}
-
-.wpvfh-container .wpvfh-tab.active,
-.wpvfh-container button.wpvfh-tab.active,
-.wpvfh-panel .wpvfh-tab.active,
-html body .wpvfh-tab.active,
-html body .wpvfh-tabs .wpvfh-tab.active,
-html body.elementor-page .wpvfh-tab.active,
-html body.elementor-default .wpvfh-tab.active,
-.elementor .wpvfh-tab.active {
-    color: var(--wpvfh-primary) !important;
-    border: none !important;
-    border-bottom: 3px solid var(--wpvfh-primary) !important;
-    background: var(--wpvfh-bg) !important;
-    background-color: var(--wpvfh-bg) !important;
-}
-
-/* Onglets cachés - APRÈS les autres règles pour garantir la priorité */
-.wpvfh-tab[hidden],
-.wpvfh-tabs .wpvfh-tab[hidden],
-.wpvfh-tabs button.wpvfh-tab[hidden],
-.wpvfh-container .wpvfh-tab[hidden],
-.wpvfh-container .wpvfh-tabs .wpvfh-tab[hidden],
-.wpvfh-container button.wpvfh-tab[hidden],
-.wpvfh-panel .wpvfh-tab[hidden],
-.wpvfh-panel .wpvfh-tabs .wpvfh-tab[hidden],
-html body .wpvfh-tab[hidden],
-html body .wpvfh-tabs .wpvfh-tab[hidden],
-html body.elementor-page .wpvfh-tab[hidden],
-html body.elementor-page .wpvfh-tabs .wpvfh-tab[hidden],
-html body.elementor-default .wpvfh-tab[hidden],
-html body.elementor-default .wpvfh-tabs .wpvfh-tab[hidden],
-.elementor .wpvfh-tab[hidden],
-.elementor .wpvfh-tabs .wpvfh-tab[hidden],
-button.wpvfh-tab[hidden] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    width: 0 !important;
-    height: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-    flex: 0 !important;
-}
-
-.wpvfh-tab-icon {
-    font-size: 16px !important;
-    line-height: 1 !important;
-}
-
-.wpvfh-tab-count {
-    font-size: 12px !important;
-    background: var(--wpvfh-primary) !important;
-    color: #fff !important;
-    padding: 2px 8px !important;
-    border-radius: 10px !important;
-    margin-left: 4px !important;
-}
-
 /* Body du panel */
 .wpvfh-panel-body {
     padding: 20px;
@@ -445,4 +233,30 @@ button.wpvfh-tab[hidden] {
 /* Section des onglets */
 .wpvfh-tab-content {
     display: none;
+}
+
+.wpvfh-tab-content.active {
+    display: block;
+}
+
+/* Header Actions & Search Button */
+.wpvfh-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wpvfh-search-btn {
+    background: transparent !important;
+    border: none !important;
+    padding: 4px 8px !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    opacity: 0.7;
+    transition: opacity 0.2s ease !important;
+}
+
+.wpvfh-search-btn:hover {
+    opacity: 1;
 }
