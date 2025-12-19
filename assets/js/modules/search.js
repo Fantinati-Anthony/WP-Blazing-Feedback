@@ -1,319 +1,150 @@
 /**
- * Recherche, modal recherche
- * 
- * Reference file for feedback-widget.js lines 3050-3350
- * See main file: assets/js/feedback-widget.js
- * 
- * Methods included:
- * - 
-openSearchModal * - closeSearchModal * - performSearch * - renderSearchResults * - goToFeedback
- * 
+ * Module Search - Blazing Feedback
+ * Recherche de feedbacks
  * @package Blazing_Feedback
  */
+(function(window) {
+    'use strict';
 
-/* 
- * To view this section, read feedback-widget.js with:
- * offset=3050, limit=301
- */
-
-            try {
-                const urlObj = new URL(url);
-                let path = urlObj.pathname;
-
-                // Retirer les slashes de début/fin
-                path = path.replace(/^\/|\/$/g, '');
-
-                if (!path || path === '') return 'Accueil';
-
-                // Prendre le dernier segment et nettoyer
-                const segments = path.split('/');
-                let title = segments[segments.length - 1];
-
-                // Retirer les extensions
-                title = title.replace(/\.(html?|php|aspx?)$/i, '');
-
-                // Remplacer les tirets/underscores par des espaces
-                title = title.replace(/[-_]/g, ' ');
-
-                // Capitaliser la première lettre
-                return title.charAt(0).toUpperCase() + title.slice(1);
-            } catch (e) {
-                return url;
-            }
+    const Search = {
+        init: function(widget) {
+            this.widget = widget;
         },
 
-        /**
-         * Raccourcir une URL
-         * @param {string} url - URL complète
-         * @returns {string} URL raccourcie
-         */
-        shortenUrl: function(url) {
-            try {
-                const urlObj = new URL(url);
-                return urlObj.pathname || '/';
-            } catch (e) {
-                return url;
-            }
-        },
+        openSearchModal: function() {
+            const panelBody = document.querySelector('.wpvfh-panel-body');
+            const panelFooter = document.querySelector('.wpvfh-panel-footer');
+            const panelTabs = document.querySelector('.wpvfh-tabs');
+            
+            if (panelBody) panelBody.style.display = 'none';
+            if (panelFooter) panelFooter.style.display = 'none';
+            if (panelTabs) panelTabs.style.display = 'none';
 
-        // ===========================================
-        // PIÈCES JOINTES
-        // ===========================================
-
-        /**
-         * Gérer la sélection de fichiers
-         * @param {FileList} files - Fichiers sélectionnés
-         */
-        handleAttachmentSelect: function(files) {
-            const maxFiles = 5;
-            const maxSize = 10 * 1024 * 1024; // 10 Mo
-
-            for (const file of files) {
-                // Vérifier le nombre maximum
-                if (this.state.attachments.length >= maxFiles) {
-                    this.showNotification(`Maximum ${maxFiles} fichiers autorisés`, 'warning');
-                    break;
+            if (this.widget.elements.searchModal && this.widget.elements.panel) {
+                const panelHeader = this.widget.elements.panel.querySelector('.wpvfh-panel-header');
+                if (panelHeader && this.widget.elements.searchModal.parentNode !== this.widget.elements.panel) {
+                    panelHeader.after(this.widget.elements.searchModal);
                 }
-
-                // Vérifier la taille
-                if (file.size > maxSize) {
-                    this.showNotification(`"${file.name}" dépasse la limite de 10 Mo`, 'warning');
-                    continue;
-                }
-
-                // Ajouter à la liste
-                this.state.attachments.push(file);
             }
 
-            // Mettre à jour l'aperçu
-            this.renderAttachmentsPreview();
+            if (this.widget.elements.searchModal) {
+                this.widget.elements.searchModal.hidden = false;
+                this.widget.elements.searchModal.classList.add('active');
+                this.widget.elements.searchModal.classList.add('wpvfh-search-inline');
+            }
 
-            // Réinitialiser l'input
-            if (this.elements.attachmentsInput) {
-                this.elements.attachmentsInput.value = '';
+            if (this.widget.elements.panel && !this.widget.elements.panel.classList.contains('active')) {
+                this.widget.modules.panel.openPanel();
             }
         },
 
-        /**
-         * Afficher l'aperçu des pièces jointes
-         */
-        renderAttachmentsPreview: function() {
-            if (!this.elements.attachmentsPreview) return;
+        closeSearchModal: function() {
+            if (this.widget.elements.searchModal) {
+                this.widget.elements.searchModal.hidden = true;
+                this.widget.elements.searchModal.classList.remove('active');
+                this.widget.elements.searchModal.classList.remove('wpvfh-search-inline');
+            }
 
-            if (this.state.attachments.length === 0) {
-                this.elements.attachmentsPreview.innerHTML = '';
+            const panelBody = document.querySelector('.wpvfh-panel-body');
+            const panelFooter = document.querySelector('.wpvfh-panel-footer');
+            const panelTabs = document.querySelector('.wpvfh-tabs');
+            
+            if (panelBody) panelBody.style.display = '';
+            if (panelFooter) panelFooter.style.display = '';
+            if (panelTabs) panelTabs.style.display = '';
+        },
+
+        performSearch: async function() {
+            const criteria = {
+                id: this.widget.elements.searchId ? this.widget.elements.searchId.value.trim() : '',
+                text: this.widget.elements.searchText ? this.widget.elements.searchText.value.trim() : '',
+                status: this.widget.elements.searchStatus ? this.widget.elements.searchStatus.value : '',
+                priority: this.widget.elements.searchPriority ? this.widget.elements.searchPriority.value : '',
+            };
+
+            let results = this.filterFeedbacksLocally(criteria);
+            this.displaySearchResults(results);
+        },
+
+        filterFeedbacksLocally: function(criteria) {
+            let results = [...(this.widget.state.currentFeedbacks || [])];
+
+            if (criteria.id) {
+                const searchId = parseInt(criteria.id, 10);
+                results = results.filter(f => f.id === searchId);
+            }
+
+            if (criteria.text) {
+                const searchText = criteria.text.toLowerCase();
+                results = results.filter(f =>
+                    (f.comment && f.comment.toLowerCase().includes(searchText))
+                );
+            }
+
+            if (criteria.status) {
+                results = results.filter(f => f.status === criteria.status);
+            }
+
+            if (criteria.priority) {
+                results = results.filter(f => f.priority === criteria.priority);
+            }
+
+            return results;
+        },
+
+        displaySearchResults: function(results) {
+            if (!this.widget.elements.searchResults || !this.widget.elements.searchResultsList) return;
+
+            this.widget.elements.searchResults.hidden = false;
+            this.widget.elements.searchResults.classList.add('active');
+
+            if (this.widget.elements.searchCount) {
+                this.widget.elements.searchCount.textContent = `${results.length} résultat${results.length > 1 ? 's' : ''}`;
+            }
+
+            if (results.length === 0) {
+                this.widget.elements.searchResultsList.innerHTML = '<div class="wpvfh-search-no-results">Aucun feedback trouvé</div>';
                 return;
             }
 
-            const html = this.state.attachments.map((file, index) => {
-                const icon = this.getFileIcon(file.type);
-                const size = this.formatFileSize(file.size);
+            const labels = this.widget.modules.labels;
+            const tools = this.widget.modules.tools;
+
+            this.widget.elements.searchResultsList.innerHTML = results.map(feedback => {
+                const statusColor = labels.getStatusColor(feedback.status);
+                const text = feedback.comment || 'Sans contenu';
+                const date = new Date(feedback.created_at || feedback.date).toLocaleDateString('fr-FR');
 
                 return `
-                    <div class="wpvfh-attachment-preview-item" data-index="${index}">
-                        <span class="wpvfh-file-icon">${icon}</span>
-                        <span class="wpvfh-file-name">${this.escapeHtml(file.name)}</span>
-                        <span class="wpvfh-file-size">${size}</span>
-                        <button type="button" class="wpvfh-remove-attachment" data-index="${index}">&times;</button>
+                    <div class="wpvfh-search-result-item" data-feedback-id="${feedback.id}">
+                        <div class="wpvfh-search-result-header">
+                            <span class="wpvfh-search-result-id">#${feedback.id}</span>
+                            <span class="wpvfh-search-result-status" style="background: ${statusColor}"></span>
+                        </div>
+                        <div class="wpvfh-search-result-text">${tools.escapeHtml(text)}</div>
+                        <div class="wpvfh-search-result-meta">
+                            <span>${feedback.author_name || feedback.author?.name || 'Anonyme'}</span>
+                            <span>${date}</span>
+                        </div>
                     </div>
                 `;
             }).join('');
 
-            this.elements.attachmentsPreview.innerHTML = html;
-
-            // Ajouter les événements de suppression
-            this.elements.attachmentsPreview.querySelectorAll('.wpvfh-remove-attachment').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(btn.dataset.index, 10);
-                    this.state.attachments.splice(index, 1);
-                    this.renderAttachmentsPreview();
-                });
-            });
-        },
-
-        /**
-         * Obtenir l'icône d'un fichier selon son type
-         * @param {string} mimeType - Type MIME
-         * @returns {string} Emoji
-         */
-        getFileIcon: function(mimeType) {
-            if (mimeType.startsWith('image/')) return '🖼️';
-            if (mimeType === 'application/pdf') return '📕';
-            if (mimeType.includes('word') || mimeType.includes('document')) return '📝';
-            if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '📊';
-            return '📎';
-        },
-
-        /**
-         * Formater la taille d'un fichier
-         * @param {number} bytes - Taille en bytes
-         * @returns {string} Taille formatée
-         */
-        formatFileSize: function(bytes) {
-            if (bytes < 1024) return bytes + ' o';
-            if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' Ko';
-            return (bytes / (1024 * 1024)).toFixed(1) + ' Mo';
-        },
-
-        // ===========================================
-        // MENTIONS @
-        // ===========================================
-
-        /**
-         * Gérer l'input pour les mentions
-         * @param {Event} e - Événement input
-         */
-        handleMentionInput: function(e) {
-            const textarea = e.target;
-            const text = textarea.value;
-            const cursorPos = textarea.selectionStart;
-
-            // Trouver si on est en train d'écrire une mention
-            const textBeforeCursor = text.substring(0, cursorPos);
-            const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
-
-            if (mentionMatch) {
-                const searchTerm = mentionMatch[1];
-                this.showMentionDropdown(searchTerm, textarea);
-            } else {
-                this.hideMentionDropdown();
-            }
-        },
-
-        /**
-         * Gérer les touches pour les mentions
-         * @param {KeyboardEvent} e - Événement keydown
-         */
-        handleMentionKeydown: function(e) {
-            if (!this.elements.mentionDropdown || this.elements.mentionDropdown.hidden) {
-                return;
-            }
-
-            const items = this.elements.mentionList?.querySelectorAll('.wpvfh-mention-item');
-            const activeItem = this.elements.mentionList?.querySelector('.wpvfh-mention-item.active');
-            let activeIndex = -1;
-
-            if (items) {
-                items.forEach((item, i) => {
-                    if (item === activeItem) activeIndex = i;
-                });
-            }
-
-            switch (e.key) {
-                case 'ArrowDown':
-                    e.preventDefault();
-                    if (items && items.length > 0) {
-                        const nextIndex = (activeIndex + 1) % items.length;
-                        items.forEach((item, i) => item.classList.toggle('active', i === nextIndex));
-                    }
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    if (items && items.length > 0) {
-                        const prevIndex = activeIndex <= 0 ? items.length - 1 : activeIndex - 1;
-                        items.forEach((item, i) => item.classList.toggle('active', i === prevIndex));
-                    }
-                    break;
-                case 'Enter':
-                case 'Tab':
-                    if (activeItem) {
-                        e.preventDefault();
-                        this.insertMention(activeItem.dataset.username);
-                    }
-                    break;
-                case 'Escape':
-                    this.hideMentionDropdown();
-                    break;
-            }
-        },
-
-        /**
-         * Afficher le dropdown des mentions
-         * @param {string} searchTerm - Terme de recherche
-         * @param {HTMLElement} textarea - Textarea source
-         */
-        showMentionDropdown: async function(searchTerm, textarea) {
-            // Charger les utilisateurs si pas encore fait
-            if (this.state.mentionUsers.length === 0) {
-                await this.loadMentionUsers();
-            }
-
-            // Filtrer les utilisateurs
-            const filtered = this.state.mentionUsers.filter(user =>
-                user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                user.username.toLowerCase().includes(searchTerm.toLowerCase())
-            ).slice(0, 6);
-
-            if (filtered.length === 0) {
-                this.hideMentionDropdown();
-                return;
-            }
-
-            // Générer le HTML
-            const html = filtered.map((user, i) => `
-                <div class="wpvfh-mention-item ${i === 0 ? 'active' : ''}" data-username="${this.escapeHtml(user.username)}">
-                    <div class="wpvfh-mention-avatar">${user.name.charAt(0).toUpperCase()}</div>
-                    <div class="wpvfh-mention-info">
-                        <div class="wpvfh-mention-name">${this.escapeHtml(user.name)}</div>
-                        <div class="wpvfh-mention-email">@${this.escapeHtml(user.username)}</div>
-                    </div>
-                </div>
-            `).join('');
-
-            if (this.elements.mentionList) {
-                this.elements.mentionList.innerHTML = html;
-            }
-
-            // Positionner le dropdown
-            if (this.elements.mentionDropdown) {
-                const rect = textarea.getBoundingClientRect();
-                this.elements.mentionDropdown.style.top = (rect.bottom + window.scrollY) + 'px';
-                this.elements.mentionDropdown.style.left = rect.left + 'px';
-                this.elements.mentionDropdown.hidden = false;
-            }
-
-            // Ajouter les événements de clic
-            this.elements.mentionList?.querySelectorAll('.wpvfh-mention-item').forEach(item => {
+            this.widget.elements.searchResultsList.querySelectorAll('.wpvfh-search-result-item').forEach(item => {
                 item.addEventListener('click', () => {
-                    this.insertMention(item.dataset.username);
+                    const feedbackId = parseInt(item.dataset.feedbackId, 10);
+                    const feedback = this.widget.state.currentFeedbacks.find(f => f.id === feedbackId);
+                    if (feedback) {
+                        this.closeSearchModal();
+                        this.widget.modules.details.showFeedbackDetails(feedback);
+                    }
                 });
             });
-        },
+        }
+    };
 
-        /**
-         * Masquer le dropdown des mentions
-         */
-        hideMentionDropdown: function() {
-            if (this.elements.mentionDropdown) {
-                this.elements.mentionDropdown.hidden = true;
-            }
-        },
+    if (!window.FeedbackWidget) window.FeedbackWidget = { modules: {} };
+    if (!window.FeedbackWidget.modules) window.FeedbackWidget.modules = {};
+    window.FeedbackWidget.modules.search = Search;
 
-        /**
-         * Insérer une mention dans le textarea
-         * @param {string} username - Nom d'utilisateur
-         */
-        insertMention: function(username) {
-            const textarea = this.elements.commentField;
-            if (!textarea) return;
-
-            const text = textarea.value;
-            const cursorPos = textarea.selectionStart;
-
-            // Trouver le début de la mention
-            const textBeforeCursor = text.substring(0, cursorPos);
-            const mentionStart = textBeforeCursor.lastIndexOf('@');
-
-            if (mentionStart >= 0) {
-                // Remplacer @xxx par @username
-                const newText = text.substring(0, mentionStart) + '@' + username + ' ' + text.substring(cursorPos);
-                textarea.value = newText;
-
-                // Positionner le curseur après la mention
-                const newCursorPos = mentionStart + username.length + 2;
-                textarea.setSelectionRange(newCursorPos, newCursorPos);
-                textarea.focus();
-            }
-
-            this.hideMentionDropdown();
-        },
+})(window);

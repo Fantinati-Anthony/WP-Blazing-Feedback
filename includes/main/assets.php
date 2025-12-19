@@ -68,11 +68,47 @@ function wpvfh_enqueue_frontend_assets() {
 		true
 	);
 
-	// Widget principal
+	// Modules du widget (dans l'ordre de dépendance)
+	$widget_modules = array(
+		'tools',
+		'notifications',
+		'core',
+		'api',
+		'labels',
+		'tags',
+		'filters',
+		'screenshot',
+		'media',
+		'attachments',
+		'mentions',
+		'validation',
+		'form',
+		'list',
+		'details',
+		'panel',
+		'search',
+		'events',
+		'participants',
+	);
+
+	$previous_handle = 'wpvfh-screen-recorder';
+	foreach ( $widget_modules as $module ) {
+		$handle = 'wpvfh-module-' . $module;
+		wp_enqueue_script(
+			$handle,
+			WPVFH_PLUGIN_URL . 'assets/js/modules/' . $module . '.js',
+			array( $previous_handle ),
+			WPVFH_VERSION,
+			true
+		);
+		$previous_handle = $handle;
+	}
+
+	// Widget principal (orchestrateur)
 	wp_enqueue_script(
 		'wpvfh-widget',
 		WPVFH_PLUGIN_URL . 'assets/js/feedback-widget.js',
-		array( 'wpvfh-annotation', 'wpvfh-voice-recorder', 'wpvfh-screen-recorder', 'wp-i18n' ),
+		array( $previous_handle, 'wpvfh-annotation', 'wpvfh-voice-recorder', 'wp-i18n' ),
 		WPVFH_VERSION,
 		true
 	);
@@ -135,10 +171,46 @@ function wpvfh_enqueue_admin_assets( $hook ) {
 		wp_add_inline_style( 'wpvfh-admin', $custom_colors_css );
 	}
 
+	// Modules du widget (dans l'ordre de dépendance)
+	$widget_modules = array(
+		'tools',
+		'notifications',
+		'core',
+		'api',
+		'labels',
+		'tags',
+		'filters',
+		'screenshot',
+		'media',
+		'attachments',
+		'mentions',
+		'validation',
+		'form',
+		'list',
+		'details',
+		'panel',
+		'search',
+		'events',
+		'participants',
+	);
+
+	$previous_handle = 'jquery';
+	foreach ( $widget_modules as $module ) {
+		$handle = 'wpvfh-admin-module-' . $module;
+		wp_enqueue_script(
+			$handle,
+			WPVFH_PLUGIN_URL . 'assets/js/modules/' . $module . '.js',
+			array( $previous_handle ),
+			WPVFH_VERSION,
+			true
+		);
+		$previous_handle = $handle;
+	}
+
 	wp_enqueue_script(
 		'wpvfh-admin',
 		WPVFH_PLUGIN_URL . 'assets/js/feedback-widget.js',
-		array( 'jquery', 'wp-i18n' ),
+		array( $previous_handle, 'wp-i18n' ),
 		WPVFH_VERSION,
 		true
 	);

@@ -1,259 +1,119 @@
 /**
- * Gestion des outils (click, voice, video)
- * 
- * Reference file for feedback-widget.js lines 700-940
- * See main file: assets/js/feedback-widget.js
- * 
- * Methods included:
- * - 
-handleToolClick * - startVoiceTimer * - handleTranscriptionUpdate * - clearVoiceRecording * - startVideoTimer * - clearVideoRecording
- * 
+ * Module Tools - Blazing Feedback
+ * Utilitaires DOM et helpers
  * @package Blazing_Feedback
  */
+(function(window) {
+    'use strict';
 
-/* 
- * To view this section, read feedback-widget.js with:
- * offset=700, limit=241
- */
-
-            if (this.elements.videoSection) this.elements.videoSection.hidden = true;
-
-            switch (tool) {
-                case 'screenshot':
-                    event.target.closest('.wpvfh-tool-btn').classList.add('active');
-                    this.captureScreenshot();
-                    break;
-                case 'voice':
-                    event.target.closest('.wpvfh-tool-btn').classList.add('active');
-                    if (this.elements.voiceSection) this.elements.voiceSection.hidden = false;
-                    break;
-                case 'video':
-                    event.target.closest('.wpvfh-tool-btn').classList.add('active');
-                    if (this.elements.videoSection) this.elements.videoSection.hidden = false;
-                    break;
-            }
-        },
-
+    const Tools = {
         /**
-         * Gérer l'enregistrement vocal
+         * Initialiser le module
+         * @param {Object} widget - Instance BlazingFeedback
          */
-        handleVoiceRecord: async function() {
-            if (!window.BlazingVoiceRecorder) {
-                this.showNotification('Enregistrement vocal non disponible', 'error');
-                return;
-            }
-
-            const recorder = window.BlazingVoiceRecorder;
-
-            if (recorder.state.isRecording) {
-                recorder.stop();
-                this.elements.voiceRecordBtn.classList.remove('recording');
-                this.elements.voiceRecordBtn.querySelector('.wpvfh-record-text').textContent = 'Enregistrer';
-                if (this.voiceTimer) clearInterval(this.voiceTimer);
-            } else {
-                const started = await recorder.start();
-                if (started) {
-                    this.elements.voiceRecordBtn.classList.add('recording');
-                    this.elements.voiceRecordBtn.querySelector('.wpvfh-record-text').textContent = 'Arrêter';
-                    this.startVoiceTimer();
-                } else {
-                    this.showNotification('Impossible d\'accéder au microphone', 'error');
-                }
-            }
+        init: function(widget) {
+            this.widget = widget;
         },
 
         /**
-         * Démarrer le timer d'enregistrement vocal
+         * Échapper le HTML
+         * @param {string} str
+         * @returns {string}
          */
-        startVoiceTimer: function() {
-            const timeDisplay = this.elements.voiceSection?.querySelector('.wpvfh-recorder-time');
-            if (!timeDisplay) return;
-
-            this.voiceTimer = setInterval(() => {
-                if (window.BlazingVoiceRecorder) {
-                    const duration = window.BlazingVoiceRecorder.getCurrentDuration();
-                    timeDisplay.textContent = window.BlazingVoiceRecorder.formatDuration(duration);
-                }
-            }, 100);
+        escapeHtml: function(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
         },
 
         /**
-         * Gérer la fin de l'enregistrement vocal
-         * @param {CustomEvent} event
+         * Tronquer un texte
+         * @param {string} text
+         * @param {number} maxLength
+         * @returns {string}
          */
-        handleVoiceComplete: async function(event) {
-            const { audioUrl, transcript } = event.detail;
-
-            if (this.elements.voicePreview) {
-                const audio = this.elements.voicePreview.querySelector('audio');
-                if (audio) audio.src = audioUrl;
-                this.elements.voicePreview.hidden = false;
-            }
-
-            // Stocker les données audio en base64
-            if (window.BlazingVoiceRecorder && this.elements.audioData) {
-                const base64 = await window.BlazingVoiceRecorder.getAudioBase64();
-                this.elements.audioData.value = base64 || '';
-            }
-
-            // Afficher la transcription
-            if (transcript && this.elements.transcriptPreview) {
-                const textEl = this.elements.transcriptPreview.querySelector('.wpvfh-transcript-text');
-                if (textEl) textEl.textContent = transcript;
-                this.elements.transcriptPreview.hidden = false;
-                if (this.elements.transcriptField) {
-                    this.elements.transcriptField.value = transcript;
-                }
-            }
+        truncateText: function(text, maxLength = 100) {
+            if (!text || text.length <= maxLength) return text;
+            return text.substring(0, maxLength - 3) + '...';
         },
 
         /**
-         * Gérer la mise à jour de la transcription
-         * @param {CustomEvent} event
+         * Formater la taille d'un fichier
+         * @param {number} bytes
+         * @returns {string}
          */
-        handleTranscriptionUpdate: function(event) {
-            const { final, interim } = event.detail;
-            if (this.elements.transcriptPreview) {
-                const textEl = this.elements.transcriptPreview.querySelector('.wpvfh-transcript-text');
-                if (textEl) {
-                    textEl.textContent = final + (interim ? ' ' + interim : '');
-                }
-                this.elements.transcriptPreview.hidden = false;
-            }
+        formatFileSize: function(bytes) {
+            if (bytes < 1024) return bytes + ' o';
+            if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' Ko';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' Mo';
         },
 
         /**
-         * Effacer l'enregistrement vocal
+         * Obtenir l'icône d'un fichier selon son type
+         * @param {string} mimeType
+         * @returns {string}
          */
-        clearVoiceRecording: function() {
-            if (window.BlazingVoiceRecorder) {
-                window.BlazingVoiceRecorder.clear();
-            }
-            if (this.elements.voicePreview) {
-                this.elements.voicePreview.hidden = true;
-                const audio = this.elements.voicePreview.querySelector('audio');
-                if (audio) audio.src = '';
-            }
-            if (this.elements.transcriptPreview) {
-                this.elements.transcriptPreview.hidden = true;
-            }
-            if (this.elements.audioData) this.elements.audioData.value = '';
-            if (this.elements.transcriptField) this.elements.transcriptField.value = '';
+        getFileIcon: function(mimeType) {
+            if (!mimeType) return '📎';
+            if (mimeType.startsWith('image/')) return '🖼️';
+            if (mimeType === 'application/pdf') return '📕';
+            if (mimeType.includes('word') || mimeType.includes('document')) return '📝';
+            if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '📊';
+            return '📎';
         },
 
         /**
-         * Gérer l'enregistrement vidéo
+         * Extraire un titre de l'URL
+         * @param {string} url
+         * @returns {string}
          */
-        handleVideoRecord: async function() {
-            if (!window.BlazingScreenRecorder) {
-                this.showNotification('Enregistrement d\'écran non disponible', 'error');
-                return;
-            }
-
-            const recorder = window.BlazingScreenRecorder;
-
-            if (recorder.state.isRecording) {
-                recorder.stop();
-                this.elements.videoRecordBtn.classList.remove('recording');
-                this.elements.videoRecordBtn.querySelector('.wpvfh-record-text').textContent = 'Enregistrer l\'écran';
-                if (this.videoTimer) clearInterval(this.videoTimer);
-            } else {
-                const started = await recorder.start({ includeMicrophone: true });
-                if (started) {
-                    this.elements.videoRecordBtn.classList.add('recording');
-                    this.elements.videoRecordBtn.querySelector('.wpvfh-record-text').textContent = 'Arrêter';
-                    this.startVideoTimer();
-                } else {
-                    this.showNotification('Impossible d\'accéder à l\'écran', 'error');
-                }
+        extractPageTitle: function(url) {
+            try {
+                const urlObj = new URL(url);
+                let path = urlObj.pathname;
+                path = path.replace(/^\/|\/$/g, '');
+                if (!path || path === '') return 'Accueil';
+                const segments = path.split('/');
+                let title = segments[segments.length - 1];
+                title = title.replace(/\.(html?|php|aspx?)$/i, '');
+                title = title.replace(/[-_]/g, ' ');
+                return title.charAt(0).toUpperCase() + title.slice(1);
+            } catch (e) {
+                return url;
             }
         },
 
         /**
-         * Démarrer le timer d'enregistrement vidéo
+         * Raccourcir une URL
+         * @param {string} url
+         * @returns {string}
          */
-        startVideoTimer: function() {
-            const timeDisplay = this.elements.videoSection?.querySelector('.wpvfh-recorder-time');
-            if (!timeDisplay) return;
-
-            this.videoTimer = setInterval(() => {
-                if (window.BlazingScreenRecorder) {
-                    const duration = window.BlazingScreenRecorder.getCurrentDuration();
-                    timeDisplay.textContent = window.BlazingScreenRecorder.formatDuration(duration);
-                }
-            }, 100);
+        shortenUrl: function(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.pathname || '/';
+            } catch (e) {
+                return url;
+            }
         },
 
         /**
-         * Gérer la fin de l'enregistrement vidéo
-         * @param {CustomEvent} event
+         * Émettre un événement personnalisé
+         * @param {string} name
+         * @param {Object} detail
          */
-        handleVideoComplete: async function(event) {
-            const { videoUrl } = event.detail;
+        emitEvent: function(name, detail = {}) {
+            const event = new CustomEvent('blazing-feedback:' + name, {
+                bubbles: true,
+                detail: detail,
+            });
+            document.dispatchEvent(event);
+        }
+    };
 
-            if (this.elements.videoPreview) {
-                const video = this.elements.videoPreview.querySelector('video');
-                if (video) video.src = videoUrl;
-                this.elements.videoPreview.hidden = false;
-            }
+    if (!window.FeedbackWidget) window.FeedbackWidget = { modules: {} };
+    if (!window.FeedbackWidget.modules) window.FeedbackWidget.modules = {};
+    window.FeedbackWidget.modules.tools = Tools;
 
-            // Note: Les vidéos sont trop volumineuses pour base64
-            // On stocke l'URL blob pour l'upload séparé
-            this.state.videoBlob = event.detail.videoBlob;
-        },
-
-        /**
-         * Effacer l'enregistrement vidéo
-         */
-        clearVideoRecording: function() {
-            if (window.BlazingScreenRecorder) {
-                window.BlazingScreenRecorder.clear();
-            }
-            if (this.elements.videoPreview) {
-                this.elements.videoPreview.hidden = true;
-                const video = this.elements.videoPreview.querySelector('video');
-                if (video) video.src = '';
-            }
-            this.state.videoBlob = null;
-        },
-
-        /**
-         * Gérer le toggle du widget (bouton principal "Feedback")
-         * Ouvre le panel avec la liste des feedbacks
-         * @param {Event} event - Événement de clic
-         * @returns {void}
-         */
-        handleToggle: function(event) {
-            event.preventDefault();
-
-            if (this.state.isOpen) {
-                this.closePanel();
-            } else {
-                // Ouvrir le panel avec l'onglet liste
-                this.openPanel('list');
-            }
-        },
-
-        /**
-         * Gérer le clic sur le bouton "+" (ajouter)
-         * Ouvre le panel avec le formulaire nouveau feedback
-         * @param {Event} event
-         * @returns {void}
-         */
-        handleAddClick: function(event) {
-            event.preventDefault();
-
-            // Ouvrir le panel avec l'onglet nouveau
-            this.openPanel('new');
-
-            // Focus sur le champ commentaire
-            if (this.elements.commentField) {
-                setTimeout(() => this.elements.commentField.focus(), 350);
-            }
-        },
-
-        /**
-         * Gérer le clic sur le bouton de visibilité
-         * Affiche/masque les pins
-         * @param {Event} event
-         * @returns {void}
+})(window);

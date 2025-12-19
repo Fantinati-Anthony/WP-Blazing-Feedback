@@ -1,74 +1,48 @@
 /**
- * Notifications, helpers
- * 
- * Reference file for feedback-widget.js lines 2254-2310
- * See main file: assets/js/feedback-widget.js
- * 
- * Methods included:
- * - 
-showNotification * - escapeHtml * - emitEvent
- * 
+ * Module Notifications - Blazing Feedback
+ * Affichage des notifications toast
  * @package Blazing_Feedback
  */
+(function(window) {
+    'use strict';
 
-/* 
- * To view this section, read feedback-widget.js with:
- * offset=2254, limit=57
- */
+    const Notifications = {
+        /**
+         * Initialiser le module
+         * @param {Object} widget
+         */
+        init: function(widget) {
+            this.widget = widget;
+        },
 
-        showNotification: function(message, type = 'info') {
-            if (!this.elements.notifications) return;
+        /**
+         * Afficher une notification
+         * @param {string} message
+         * @param {string} type - success, error, info, warning
+         */
+        show: function(message, type = 'info') {
+            const notifications = this.widget.elements.notifications;
+            if (!notifications) return;
 
             const notification = document.createElement('div');
             notification.className = `wpvfh-notification wpvfh-notification-${type}`;
             notification.textContent = message;
 
-            this.elements.notifications.appendChild(notification);
+            notifications.appendChild(notification);
 
-            // Animation d'entrée
             requestAnimationFrame(() => {
                 notification.classList.add('wpvfh-notification-show');
             });
 
-            // Supprimer après 4 secondes
             setTimeout(() => {
                 notification.classList.remove('wpvfh-notification-show');
                 setTimeout(() => notification.remove(), 300);
             }, 4000);
-        },
+        }
+    };
 
-        /**
-         * Échapper le HTML
-         * @param {string} text - Texte à échapper
-         * @returns {string} Texte échappé
-         */
-        escapeHtml: function(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        },
+    if (!window.FeedbackWidget) window.FeedbackWidget = { modules: {} };
+    if (!window.FeedbackWidget.modules) window.FeedbackWidget.modules = {};
+    window.FeedbackWidget.modules.notifications = Notifications;
 
-        /**
-         * Émettre un événement personnalisé
-         * @param {string} name - Nom de l'événement
-         * @param {Object} detail - Détails
-         * @returns {void}
-         */
-        emitEvent: function(name, detail = {}) {
-            const event = new CustomEvent('blazing-feedback:' + name, {
-                bubbles: true,
-                detail: detail,
-            });
-            document.dispatchEvent(event);
-        },
-
-        // ===========================================
-        // FILTRES
-        // ===========================================
-
-        /**
-         * Gérer le clic sur un filtre
-         * @param {string} status - Statut à filtrer
-         */
-        handleFilterClick: function(status) {
-            this.state.currentFilter = status;
+})(window);

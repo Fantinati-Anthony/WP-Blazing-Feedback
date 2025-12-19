@@ -1,93 +1,148 @@
-/**
- * JavaScript Modules Reference
- * 
- * This directory contains reference files documenting the sections
- * of feedback-widget.js for easier navigation and maintenance.
- * 
- * The main feedback-widget.js file remains the single source of truth.
- * These files are for documentation/reference purposes.
- * 
- * @package Blazing_Feedback
- */
+# Blazing Feedback - Modules JavaScript
 
-Modules:
+## Architecture Modulaire
 
-- core.js (~330 lines, L1-L330)
-  État, éléments, initialisation, thème
-  Methods: init, applyThemeColors, moveFixedElementsToBody, cacheElements
+Le widget Blazing Feedback est désormais organisé en **19 modules JavaScript fonctionnels** et un **orchestrateur léger** (229 lignes).
 
-- events.js (~370 lines, L331-L700)
-  Bindage des événements
-  Methods: bindEvents
+### Fichiers
 
-- tools.js (~241 lines, L700-L940)
-  Gestion des outils (click, voice, video)
-  Methods: handleToolClick, startVoiceTimer, handleTranscriptionUpdate, clearVoiceRecording, startVideoTimer +1 more
+- **feedback-widget.js** (229 lignes) : Orchestrateur principal qui charge et initialise tous les modules
+- **modules/** (19 fichiers, 2556 lignes) : Modules fonctionnels indépendants
 
-- panel.js (~411 lines, L940-L1350)
-  Toggle, panel open/close, tabs
-  Methods: handleToggle, handleAddClick, handleVisibilityToggle, openPanel, closePanel +1 more
+### Liste des Modules
 
-- selection.js (~196 lines, L975-L1170)
-  Sélection d'éléments, inspecteur
-  Methods: handleSelectElement, handleClearSelection, handleElementSelected, handleSelectionCleared, handleInspectorStopped +1 more
+| Module | Lignes | Description |
+|--------|--------|-------------|
+| **tools.js** | 119 | Utilitaires DOM (escapeHtml, formatFileSize, etc.) |
+| **notifications.js** | 48 | Affichage des notifications toast |
+| **core.js** | 229 | Configuration, état, cache DOM, thème |
+| **api.js** | 120 | Requêtes REST API WordPress |
+| **labels.js** | 171 | Gestion des labels (type, statut, priorité) |
+| **tags.js** | 186 | Gestion des tags (création, suppression) |
+| **filters.js** | 66 | Filtrage des feedbacks par statut |
+| **screenshot.js** | 77 | Capture d'écran |
+| **media.js** | 144 | Enregistrement audio/vidéo |
+| **attachments.js** | 85 | Gestion des pièces jointes |
+| **mentions.js** | 131 | Mentions @utilisateur |
+| **validation.js** | 103 | Validation de page |
+| **form.js** | 189 | Formulaire de feedback (soumission, validation) |
+| **list.js** | 75 | Affichage de la liste des feedbacks |
+| **details.js** | 149 | Vue détaillée d'un feedback |
+| **panel.js** | 148 | Gestion du panneau latéral (ouverture/fermeture) |
+| **search.js** | 150 | Recherche de feedbacks |
+| **events.js** | 338 | Gestion de tous les événements |
+| **participants.js** | 28 | Gestion des participants (extension future) |
 
-- list.js (~281 lines, L1350-L1630)
-  Rendu liste, drag-drop, scroll
-  Methods: renderPinsList, initDragAndDrop, updateFeedbackOrder, scrollToPin
+### Pattern de Module
 
-- pins.js (~97 lines, L1594-L1690)
-  Gestion des pins (placement, sélection)
-  Methods: handlePinPlaced, handlePinSelected
+Chaque module suit ce pattern :
 
-- screenshot.js (~55 lines, L1676-L1730)
-  Capture d'écran
-  Methods: showScreenshotPreview, clearScreenshot, handleCaptureSuccess, handleCaptureError
+```javascript
+(function(window) {
+    'use strict';
 
-- form.js (~282 lines, L1729-L2010)
-  Gestion formulaire, soumission, reset
-  Methods: handleCancel, handleSubmitFeedback, resetForm, setSubmitState
+    const ModuleName = {
+        /**
+         * Initialiser le module
+         * @param {Object} widget - Instance BlazingFeedback
+         */
+        init: function(widget) {
+            this.widget = widget;
+        },
 
-- details.js (~278 lines, L2013-L2290)
-  Affichage détails feedback, mise à jour
-  Methods: showFeedbackDetails, handleDetailChange, handleDeleteFeedback
+        // Autres méthodes du module
+        methodName: function() {
+            // Utiliser this.widget pour accéder au widget principal
+            this.widget.state.xxx
+            this.widget.elements.xxx
+            this.widget.modules.xxx.method()
+        }
+    };
 
-- notifications.js (~57 lines, L2254-L2310)
-  Notifications, helpers
-  Methods: showNotification, escapeHtml, emitEvent
+    // Export du module
+    if (!window.FeedbackWidget) window.FeedbackWidget = { modules: {} };
+    if (!window.FeedbackWidget.modules) window.FeedbackWidget.modules = {};
+    window.FeedbackWidget.modules.moduleName = ModuleName;
 
-- filters.js (~93 lines, L2308-L2400)
-  Filtrage par statut
-  Methods: handleFilterClick, getFilteredFeedbacks, updateFilterCounts
+})(window);
+```
 
-- labels.js (~435 lines, L2356-L2790)
-  Labels, config types/priorités/statuts
-  Methods: updateDetailLabels, renderDetailTags, getTypeConfig, getPriorityConfig, getStatusConfig +9 more
+### Ordre d'Initialisation
 
-- tags.js (~244 lines, L2397-L2640)
-  Gestion des tags (ajout, suppression)
-  Methods: addTag, removeTag, removeLastTag, getPredefinedTagColor, addFormTag +5 more
+Les modules sont initialisés dans cet ordre par l'orchestrateur :
 
-- validation.js (~259 lines, L2792-L3050)
-  Validation de page, modales
-  Methods: updateValidationSection, showValidateModal, handleValidatePage, handleRejectPage, loadPageStatus +1 more
+1. **tools** - Utilisé par tous les modules
+2. **notifications** - Utilisé par tous les modules
+3. **core** - Configuration, état, éléments DOM
+4. **api** - Requêtes serveur
+5. **labels** - Utilisé par list, details
+6. **tags** - Utilisé par form, details
+7. **filters** - Utilisé par list
+8. **screenshot, media, attachments, mentions, validation** - Fonctionnalités
+9. **form, list, details, panel, search** - Vues principales
+10. **events** - Attache tous les listeners
+11. **participants** - Extensions futures
 
-- search.js (~301 lines, L3050-L3350)
-  Recherche, modal recherche
-  Methods: openSearchModal, closeSearchModal, performSearch, renderSearchResults, goToFeedback
+### Communication entre Modules
 
-- api.js (~201 lines, L3350-L3550)
-  Appels API, chargement feedbacks
-  Methods: loadExistingFeedbacks, handleFeedbacksLoaded
+Les modules communiquent via :
 
-- mentions.js (~251 lines, L3550-L3800)
-  Mentions utilisateurs
-  Methods: handleMentionInput, showMentionDropdown, hideMentionDropdown, selectMention, searchUsers
+1. **`this.widget.state`** : État partagé
+2. **`this.widget.elements`** : Éléments DOM
+3. **`this.widget.modules.xxx.method()`** : Appels inter-modules
+4. **`this.widget.modules.tools.emitEvent()`** : Événements custom
 
-- participants.js (~201 lines, L3800-L4000)
-  Gestion des participants
-  Methods: loadParticipants, renderParticipants, inviteParticipant
+### Exemple d'Utilisation
 
-- attachments.js (~269 lines, L4000-L4268)
-  Pièces jointes
-  Methods: handleFileSelect, renderAttachments, removeAttachment
+```javascript
+// Dans un module
+this.widget.modules.notifications.show('Message', 'success');
+this.widget.modules.api.request('GET', 'feedbacks/123');
+this.widget.modules.panel.openPanel('details');
+```
+
+### Avantages de cette Architecture
+
+✅ **Modularité** : Chaque module a une responsabilité unique
+✅ **Maintenabilité** : Code organisé et facile à modifier
+✅ **Testabilité** : Modules < 500 lignes, faciles à tester
+✅ **Réutilisabilité** : Modules indépendants réutilisables
+✅ **Performance** : Chargement progressif possible
+✅ **Lisibilité** : Code structuré et bien documenté
+
+### Migration depuis l'Ancien Système
+
+L'ancien fichier monolithique (4268 lignes) a été conservé dans `feedback-widget.js.backup` pour référence.
+
+Le nouveau système maintient la même API publique via l'orchestrateur :
+
+```javascript
+// Ces méthodes restent disponibles
+window.BlazingFeedback.openPanel('list');
+window.BlazingFeedback.showNotification('Message', 'success');
+window.BlazingFeedback.apiRequest('GET', 'feedbacks');
+```
+
+### Statistiques
+
+- **Ancien système** : 1 fichier de 4268 lignes
+- **Nouveau système** : 20 fichiers (1 orchestrateur + 19 modules)
+- **Total lignes** : 2785 lignes
+- **Réduction fichier principal** : 94.6% (4268 → 229 lignes)
+- **Modules les plus gros** : events.js (338), core.js (229), form.js (189)
+- **Modules les plus petits** : participants.js (28), notifications.js (48)
+
+### Développement Futur
+
+Pour ajouter une nouvelle fonctionnalité :
+
+1. Créer un nouveau module dans `modules/`
+2. Suivre le pattern de module
+3. Ajouter le module à la liste d'initialisation dans `feedback-widget.js`
+4. Utiliser `this.widget.modules.xxx` pour communiquer
+
+---
+
+**Version** : 1.0.0
+**Date** : 2025-12-19
+**Architecture** : Modules JavaScript fonctionnels
