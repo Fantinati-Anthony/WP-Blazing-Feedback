@@ -1386,18 +1386,16 @@ class WPVFH_REST_API {
     public static function get_pages( $request ) {
         global $wpdb;
 
-        // Récupérer toutes les URLs uniques avec leur compte de feedbacks
-        $pages_data = $wpdb->get_results( $wpdb->prepare(
-            "SELECT pm.meta_value as url, COUNT(*) as count
-            FROM {$wpdb->postmeta} pm
-            INNER JOIN {$wpdb->posts} p ON pm.post_id = p.ID
-            WHERE pm.meta_key = '_wpvfh_url'
-            AND p.post_type = %s
-            AND p.post_status = 'publish'
-            GROUP BY pm.meta_value
-            ORDER BY count DESC",
-            WPVFH_CPT_Feedback::POST_TYPE
-        ) );
+        // Récupérer toutes les URLs uniques avec leur compte de feedbacks depuis la table personnalisée
+        $table_name = WPVFH_Database::get_table_name( WPVFH_Database::TABLE_FEEDBACKS );
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $pages_data = $wpdb->get_results(
+            "SELECT url, page_path, COUNT(*) as count
+            FROM $table_name
+            GROUP BY page_path
+            ORDER BY count DESC"
+        );
 
         $pages = array();
 

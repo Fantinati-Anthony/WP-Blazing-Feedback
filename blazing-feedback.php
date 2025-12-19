@@ -1256,11 +1256,7 @@ final class WP_Visual_Feedback_Hub {
                         </div>
                         <div id="wpvfh-empty-state" class="wpvfh-empty-state">
                             <div class="wpvfh-empty-icon" aria-hidden="true">📭</div>
-                            <p class="wpvfh-empty-text"><?php esc_html_e( 'Aucun feedback pour cette page', 'blazing-feedback' ); ?></p>
-                            <button type="button" class="wpvfh-btn wpvfh-btn-primary wpvfh-add-feedback-btn" style="margin-top: 16px;">
-                                <span class="wpvfh-btn-emoji">➕</span>
-                                <?php esc_html_e( 'Ajouter un feedback', 'blazing-feedback' ); ?>
-                            </button>
+                            <p class="wpvfh-empty-text"><?php esc_html_e( 'Aucun feedback pour cette page, cliquez sur Nouveau en bas de cette barre latérale', 'blazing-feedback' ); ?></p>
                         </div>
                         <!-- Section validation de page -->
                         <div id="wpvfh-page-validation" class="wpvfh-page-validation" hidden>

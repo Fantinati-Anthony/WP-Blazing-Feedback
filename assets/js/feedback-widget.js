@@ -1330,6 +1330,14 @@
                 // Vérifier si un élément a été ciblé (position ou sélecteur)
                 const hasPosition = feedback.selector || feedback.position_x || feedback.position_y;
 
+                // Récupérer les labels de type et priorité
+                const typeLabel = this.getTypeLabel(feedback.feedback_type);
+                const typeEmoji = this.getTypeEmoji(feedback.feedback_type);
+                const priorityLabel = this.getPriorityLabel(feedback.priority);
+                const priorityEmoji = this.getPriorityEmoji(feedback.priority);
+                const priorityColor = this.getPriorityColor(feedback.priority);
+                const tags = feedback.tags ? feedback.tags.split(',').map(t => t.trim()).filter(t => t) : [];
+
                 return `
                     <div class="wpvfh-pin-item" data-feedback-id="${feedback.id}" data-pin-number="${pinNumber}">
                         ${hasPosition ? `
@@ -1343,17 +1351,21 @@
                             </div>
                             <p class="wpvfh-pin-text">${this.escapeHtml(feedback.comment || feedback.content || '')}</p>
                             <div class="wpvfh-pin-meta">
-                                <span class="wpvfh-pin-status status-${status}" style="color: ${statusColor};">${statusLabel}</span>
+                                <span class="wpvfh-pin-status status-${status}" style="color: ${statusColor};">${statusEmoji} ${statusLabel}</span>
                                 ${date ? `<span class="wpvfh-pin-date">${date}</span>` : ''}
                             </div>
+                            <div class="wpvfh-pin-metadata">
+                                ${feedback.feedback_type ? `<span class="wpvfh-pin-type">${typeEmoji} ${typeLabel}</span>` : ''}
+                                ${feedback.priority && feedback.priority !== 'none' ? `<span class="wpvfh-pin-priority" style="color: ${priorityColor};">${priorityEmoji} ${priorityLabel}</span>` : ''}
+                            </div>
+                            ${tags.length > 0 ? `
+                            <div class="wpvfh-pin-tags">
+                                ${tags.map(tag => `<span class="wpvfh-pin-tag">🏷️ ${this.escapeHtml(tag)}</span>`).join('')}
+                            </div>
+                            ` : ''}
                             ${this.generateFeedbackLabelsHtml(feedback)}
                         </div>
                         <div class="wpvfh-pin-actions">
-                            ${hasPosition ? `
-                            <button type="button" class="wpvfh-pin-action wpvfh-pin-goto" title="Aller au pin">
-                                📍
-                            </button>
-                            ` : ''}
                             ${canDelete ? `
                             <button type="button" class="wpvfh-pin-action wpvfh-pin-delete" title="Supprimer" data-feedback-id="${feedback.id}">
                                 🗑️
@@ -1383,16 +1395,6 @@
                         this.showFeedbackDetails(feedback);
                     }
                 });
-
-                // Clic sur le bouton "aller au pin" (📍)
-                const gotoBtn = item.querySelector('.wpvfh-pin-goto');
-                if (gotoBtn) {
-                    gotoBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const feedbackId = parseInt(item.dataset.feedbackId, 10);
-                        this.scrollToPin(feedbackId);
-                    });
-                }
 
                 // Clic sur le bouton supprimer
                 const deleteBtn = item.querySelector('.wpvfh-pin-delete');
@@ -2048,6 +2050,14 @@
 
             // Ouvrir le panel et basculer sur l'onglet détails
             this.openPanel('details');
+
+            // Scroller vers le pin et le mettre en évidence avec un highlight jaune
+            const hasPosition = feedback.selector || feedback.position_x || feedback.position_y;
+            if (hasPosition && window.BlazingAnnotation) {
+                setTimeout(() => {
+                    window.BlazingAnnotation.scrollToPinWithHighlight(feedback.id);
+                }, 300);
+            }
         },
 
         /**
@@ -2615,6 +2625,56 @@
         getStatusColor: function(statusId) {
             const status = this.getStatusConfig(statusId);
             return status ? status.color : '#95a5a6';
+        },
+
+        /**
+         * Obtenir le label d'un type
+         * @param {string} typeId - ID du type
+         * @returns {string}
+         */
+        getTypeLabel: function(typeId) {
+            const type = this.getTypeConfig(typeId);
+            return type ? type.label : typeId || '';
+        },
+
+        /**
+         * Obtenir l'emoji d'un type
+         * @param {string} typeId - ID du type
+         * @returns {string}
+         */
+        getTypeEmoji: function(typeId) {
+            const type = this.getTypeConfig(typeId);
+            return type ? type.emoji : '';
+        },
+
+        /**
+         * Obtenir le label d'une priorité
+         * @param {string} priorityId - ID de la priorité
+         * @returns {string}
+         */
+        getPriorityLabel: function(priorityId) {
+            const priority = this.getPriorityConfig(priorityId);
+            return priority ? priority.label : priorityId || '';
+        },
+
+        /**
+         * Obtenir l'emoji d'une priorité
+         * @param {string} priorityId - ID de la priorité
+         * @returns {string}
+         */
+        getPriorityEmoji: function(priorityId) {
+            const priority = this.getPriorityConfig(priorityId);
+            return priority ? priority.emoji : '';
+        },
+
+        /**
+         * Obtenir la couleur d'une priorité
+         * @param {string} priorityId - ID de la priorité
+         * @returns {string}
+         */
+        getPriorityColor: function(priorityId) {
+            const priority = this.getPriorityConfig(priorityId);
+            return priority ? priority.color : '#95a5a6';
         },
 
         /**
@@ -3851,22 +3911,51 @@
         },
 
         /**
-         * Ouvrir la modal de recherche
+         * Ouvrir la recherche (remplace le panel-body)
          */
         openSearchModal: function() {
+            // Masquer le panel-body
+            const panelBody = document.querySelector('.wpvfh-panel-body');
+            if (panelBody) {
+                panelBody.style.display = 'none';
+            }
+
+            // Déplacer le modal de recherche dans le panel
+            if (this.elements.searchModal && this.elements.panel) {
+                const panelContent = this.elements.panel.querySelector('.wpvfh-panel-content');
+                if (panelContent && this.elements.searchModal.parentNode !== panelContent) {
+                    panelContent.appendChild(this.elements.searchModal);
+                }
+            }
+
+            // Afficher le contenu de recherche dans le panel
             if (this.elements.searchModal) {
                 this.elements.searchModal.hidden = false;
                 this.elements.searchModal.classList.add('active');
+                this.elements.searchModal.classList.add('wpvfh-search-inline');
+            }
+
+            // Ouvrir le panel s'il n'est pas ouvert
+            if (this.elements.panel && !this.elements.panel.classList.contains('active')) {
+                this.openPanel();
             }
         },
 
         /**
-         * Fermer la modal de recherche
+         * Fermer la recherche (restaure le panel-body)
          */
         closeSearchModal: function() {
+            // Masquer le contenu de recherche
             if (this.elements.searchModal) {
                 this.elements.searchModal.hidden = true;
                 this.elements.searchModal.classList.remove('active');
+                this.elements.searchModal.classList.remove('wpvfh-search-inline');
+            }
+
+            // Restaurer le panel-body
+            const panelBody = document.querySelector('.wpvfh-panel-body');
+            if (panelBody) {
+                panelBody.style.display = '';
             }
         },
 

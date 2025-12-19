@@ -1134,6 +1134,45 @@ button.wpvfh-tab[hidden] {
     background: rgba(231, 76, 60, 0.05);
 }
 
+/* Métadonnées dans pin-item (type, priorité, tags) */
+.wpvfh-pin-metadata {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-top: 6px !important;
+}
+
+.wpvfh-pin-type,
+.wpvfh-pin-priority {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    font-size: 11px !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    background: var(--wpvfh-bg) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+}
+
+.wpvfh-pin-tags {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    margin-top: 4px !important;
+}
+
+.wpvfh-pin-tag {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    font-size: 10px !important;
+    padding: 2px 5px !important;
+    border-radius: 3px !important;
+    background: var(--wpvfh-bg) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    color: var(--wpvfh-text-light) !important;
+}
+
 .wpvfh-pin-marker {
     flex-shrink: 0;
     width: 32px;
@@ -2983,6 +3022,32 @@ body.wpvfh-theme-light .wpvfh-panel {
     border-color: #e74c3c !important;
     background: rgba(231, 76, 60, 0.08) !important;
     box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.4) !important;
+}
+
+/* Highlight jaune vif pour identifier le pin sélectionné */
+.wpvfh-element-feedback-outline.wpvfh-pin-highlighted {
+    border-color: #f1c40f !important;
+    background: rgba(241, 196, 15, 0.15) !important;
+    box-shadow:
+        0 0 0 4px rgba(241, 196, 15, 0.6),
+        0 0 20px rgba(241, 196, 15, 0.5),
+        0 0 40px rgba(241, 196, 15, 0.3) !important;
+    animation: wpvfh-highlight-pulse 1s ease-in-out infinite !important;
+}
+
+@keyframes wpvfh-highlight-pulse {
+    0%, 100% {
+        box-shadow:
+            0 0 0 4px rgba(241, 196, 15, 0.6),
+            0 0 20px rgba(241, 196, 15, 0.5),
+            0 0 40px rgba(241, 196, 15, 0.3);
+    }
+    50% {
+        box-shadow:
+            0 0 0 6px rgba(241, 196, 15, 0.8),
+            0 0 30px rgba(241, 196, 15, 0.7),
+            0 0 60px rgba(241, 196, 15, 0.4);
+    }
 }
 
 @keyframes wpvfh-element-pulse {
@@ -4859,6 +4924,32 @@ button#wpvfh-validate-page-btn {
 
 .wpvfh-search-modal.active {
     display: flex;
+}
+
+/* Mode recherche inline (dans le panel) */
+.wpvfh-search-modal.wpvfh-search-inline {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    background: transparent !important;
+    z-index: auto !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+}
+
+.wpvfh-search-modal.wpvfh-search-inline .wpvfh-modal-overlay {
+    display: none !important;
+}
+
+.wpvfh-search-modal.wpvfh-search-inline .wpvfh-search-content {
+    width: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
 .wpvfh-search-content {
