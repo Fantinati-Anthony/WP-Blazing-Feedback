@@ -25,6 +25,7 @@
                 const response = await this.widget.modules.api.request('GET', 'pages');
                 this.widget.state.allPages = Array.isArray(response) ? response : [];
 
+                this.updatePagesStats();
                 this.renderPagesList();
 
             } catch (error) {
@@ -33,6 +34,30 @@
             } finally {
                 if (el.pagesLoading) el.pagesLoading.hidden = true;
             }
+        },
+
+        /**
+         * Mettre à jour les stats des pages
+         */
+        updatePagesStats: function() {
+            const pages = this.widget.state.allPages || [];
+
+            // Calculer les stats
+            const totalPages = pages.length;
+            const totalFeedbacks = pages.reduce((sum, p) => sum + (p.count || 0), 0);
+            const validatedPages = pages.filter(p => p.validated).length;
+            const pendingPages = totalPages - validatedPages;
+
+            // Mettre à jour les compteurs
+            const totalEl = document.getElementById('wpvfh-pages-total-count');
+            const feedbacksEl = document.getElementById('wpvfh-pages-feedbacks-count');
+            const validatedEl = document.getElementById('wpvfh-pages-validated-count');
+            const pendingEl = document.getElementById('wpvfh-pages-pending-count');
+
+            if (totalEl) totalEl.textContent = totalPages;
+            if (feedbacksEl) feedbacksEl.textContent = totalFeedbacks;
+            if (validatedEl) validatedEl.textContent = validatedPages;
+            if (pendingEl) pendingEl.textContent = pendingPages;
         },
 
         /**

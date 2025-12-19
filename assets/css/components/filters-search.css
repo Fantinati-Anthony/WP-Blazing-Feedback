@@ -240,10 +240,58 @@
    Onglet Pages
    ========================================================================== */
 
+/* Stats des pages */
+#wpvfh-pages-stats {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 10px !important;
+    justify-content: center !important;
+}
+
+.wpvfh-pages-stat-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 6px 10px !important;
+    background: var(--wpvfh-pin-item-bg) !important;
+    border: 1px solid var(--wpvfh-pin-item-border) !important;
+    border-radius: 16px !important;
+    font-size: 12px !important;
+    color: var(--wpvfh-pin-item-text) !important;
+}
+
+.wpvfh-pages-stat-item .wpvfh-stat-icon {
+    font-size: 14px !important;
+}
+
+.wpvfh-pages-stat-item .wpvfh-stat-label {
+    color: var(--wpvfh-pin-item-text-light) !important;
+}
+
+.wpvfh-pages-stat-item .wpvfh-stat-count {
+    font-weight: 700 !important;
+    background: var(--wpvfh-primary, #FE5100) !important;
+    color: #fff !important;
+    padding: 2px 8px !important;
+    border-radius: 10px !important;
+    min-width: 20px !important;
+    text-align: center !important;
+}
+
+.wpvfh-pages-stat-item.wpvfh-stat-validated .wpvfh-stat-count {
+    background: var(--wpvfh-success, #27ae60) !important;
+}
+
+.wpvfh-pages-stat-item.wpvfh-stat-pending .wpvfh-stat-count {
+    background: var(--wpvfh-warning, #f39c12) !important;
+}
+
 .wpvfh-pages-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    margin: 5px;
 }
 
 .wpvfh-page-item {

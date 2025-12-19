@@ -13,8 +13,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <!-- Onglet: Pages -->
 <div id="wpvfh-tab-pages" class="wpvfh-tab-content">
-	<div class="wpvfh-pages-header">
-		<h4><?php esc_html_e( 'Toutes les pages avec feedbacks', 'blazing-feedback' ); ?></h4>
+	<!-- Stats des pages -->
+	<div class="wpvfh-legend" id="wpvfh-pages-stats">
+		<div class="wpvfh-pages-stat-item">
+			<span class="wpvfh-stat-icon">📄</span>
+			<span class="wpvfh-stat-label"><?php esc_html_e( 'Pages', 'blazing-feedback' ); ?></span>
+			<span class="wpvfh-stat-count" id="wpvfh-pages-total-count">0</span>
+		</div>
+		<div class="wpvfh-pages-stat-item">
+			<span class="wpvfh-stat-icon">💬</span>
+			<span class="wpvfh-stat-label"><?php esc_html_e( 'Feedbacks', 'blazing-feedback' ); ?></span>
+			<span class="wpvfh-stat-count" id="wpvfh-pages-feedbacks-count">0</span>
+		</div>
+		<div class="wpvfh-pages-stat-item wpvfh-stat-validated">
+			<span class="wpvfh-stat-icon">✅</span>
+			<span class="wpvfh-stat-label"><?php esc_html_e( 'Validées', 'blazing-feedback' ); ?></span>
+			<span class="wpvfh-stat-count" id="wpvfh-pages-validated-count">0</span>
+		</div>
+		<div class="wpvfh-pages-stat-item wpvfh-stat-pending">
+			<span class="wpvfh-stat-icon">⏳</span>
+			<span class="wpvfh-stat-label"><?php esc_html_e( 'En cours', 'blazing-feedback' ); ?></span>
+			<span class="wpvfh-stat-count" id="wpvfh-pages-pending-count">0</span>
+		</div>
 	</div>
 	<div id="wpvfh-pages-list" class="wpvfh-pages-list">
 		<!-- Les pages seront chargées dynamiquement -->

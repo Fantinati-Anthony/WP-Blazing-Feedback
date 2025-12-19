@@ -300,6 +300,11 @@
                     w.modules.search.performSearch();
                 });
             }
+            if (el.searchReset) {
+                el.searchReset.addEventListener('click', () => {
+                    w.modules.search.resetSearch();
+                });
+            }
 
             // Tags formulaire
             if (el.feedbackTagsInput) {

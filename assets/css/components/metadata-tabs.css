@@ -656,6 +656,7 @@ button#wpvfh-validate-page-btn {
     border-bottom: 1px solid var(--wpvfh-border);
     overflow-x: auto;
     flex-wrap: nowrap;
+    justify-content: center;
 }
 
 .wpvfh-subtab {

@@ -225,7 +225,7 @@ body .wpvfh-panel-logo {
 
 /* Body du panel */
 .wpvfh-panel-body {
-    padding: 20px;
+    padding: 0px;
     overflow-y: auto;
     flex: 1;
 }

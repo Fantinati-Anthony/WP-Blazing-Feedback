@@ -92,6 +92,46 @@
             return results;
         },
 
+        /**
+         * Réinitialiser le formulaire de recherche
+         */
+        resetSearch: function() {
+            // Vider les champs
+            if (this.widget.elements.searchId) {
+                this.widget.elements.searchId.value = '';
+            }
+            if (this.widget.elements.searchText) {
+                this.widget.elements.searchText.value = '';
+            }
+            if (this.widget.elements.searchStatus) {
+                this.widget.elements.searchStatus.value = '';
+            }
+            if (this.widget.elements.searchPriority) {
+                this.widget.elements.searchPriority.value = '';
+            }
+            if (this.widget.elements.searchAuthor) {
+                this.widget.elements.searchAuthor.value = '';
+            }
+            if (this.widget.elements.searchDateFrom) {
+                this.widget.elements.searchDateFrom.value = '';
+            }
+            if (this.widget.elements.searchDateTo) {
+                this.widget.elements.searchDateTo.value = '';
+            }
+
+            // Masquer les résultats
+            if (this.widget.elements.searchResults) {
+                this.widget.elements.searchResults.hidden = true;
+                this.widget.elements.searchResults.classList.remove('active');
+            }
+            if (this.widget.elements.searchResultsList) {
+                this.widget.elements.searchResultsList.innerHTML = '';
+            }
+            if (this.widget.elements.searchCount) {
+                this.widget.elements.searchCount.textContent = '';
+            }
+        },
+
         displaySearchResults: function(results) {
             if (!this.widget.elements.searchResults || !this.widget.elements.searchResultsList) return;
 
