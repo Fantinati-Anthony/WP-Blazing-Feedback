@@ -4153,8 +4153,11 @@
                 const separator = pageUrl.includes('?') ? '&' : '?';
                 window.location.href = pageUrl + separator + 'wpvfh_open=' + feedbackId;
             } else {
-                // On est sur la bonne page, ouvrir les détails directement
-                this.showFeedbackDetails(feedbackId);
+                // On est sur la bonne page, trouver le feedback et ouvrir les détails
+                const feedback = this.state.currentFeedbacks.find(f => f.id === feedbackId);
+                if (feedback) {
+                    this.showFeedbackDetails(feedback);
+                }
 
                 // S'assurer que le panneau est ouvert
                 if (this.elements.panel && !this.elements.panel.classList.contains('active')) {
@@ -4173,7 +4176,11 @@
             if (feedbackId) {
                 // Attendre que les feedbacks soient chargés
                 setTimeout(() => {
-                    this.showFeedbackDetails(parseInt(feedbackId, 10));
+                    const id = parseInt(feedbackId, 10);
+                    const feedback = this.state.currentFeedbacks.find(f => f.id === id);
+                    if (feedback) {
+                        this.showFeedbackDetails(feedback);
+                    }
                     if (this.elements.panel && !this.elements.panel.classList.contains('active')) {
                         this.openPanel();
                     }
