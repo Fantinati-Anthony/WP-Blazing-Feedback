@@ -513,6 +513,15 @@ final class WP_Visual_Feedback_Hub {
                 'bg'          => get_option( 'wpvfh_color_bg', '#ffffff' ),
                 'bgLight'     => get_option( 'wpvfh_color_bg_light', '#f8f9fa' ),
                 'border'      => get_option( 'wpvfh_color_border', '#e0e4e8' ),
+                // Couleurs footer
+                'footerBg'                => get_option( 'wpvfh_color_footer_bg', '#f8f9fa' ),
+                'footerBorder'            => get_option( 'wpvfh_color_footer_border', '#e9ecef' ),
+                'footerBtnAddBg'          => get_option( 'wpvfh_color_footer_btn_add_bg', '#27ae60' ),
+                'footerBtnAddText'        => get_option( 'wpvfh_color_footer_btn_add_text', '#ffffff' ),
+                'footerBtnAddHover'       => get_option( 'wpvfh_color_footer_btn_add_hover', '#219a52' ),
+                'footerBtnVisibilityBg'   => get_option( 'wpvfh_color_footer_btn_visibility_bg', '#3498db' ),
+                'footerBtnVisibilityText' => get_option( 'wpvfh_color_footer_btn_visibility_text', '#ffffff' ),
+                'footerBtnVisibilityHover'=> get_option( 'wpvfh_color_footer_btn_visibility_hover', '#2980b9' ),
             ),
             // Couleurs mode sombre
             'colorsDark'     => array(
@@ -527,6 +536,15 @@ final class WP_Visual_Feedback_Hub {
                 'bg'          => get_option( 'wpvfh_color_bg_dark', '#263e4b' ),
                 'bgLight'     => get_option( 'wpvfh_color_bg_light_dark', '#334a5a' ),
                 'border'      => get_option( 'wpvfh_color_border_dark', '#3d5564' ),
+                // Couleurs footer
+                'footerBg'                => get_option( 'wpvfh_color_footer_bg_dark', '#1a2e38' ),
+                'footerBorder'            => get_option( 'wpvfh_color_footer_border_dark', '#3d5564' ),
+                'footerBtnAddBg'          => get_option( 'wpvfh_color_footer_btn_add_bg_dark', '#27ae60' ),
+                'footerBtnAddText'        => get_option( 'wpvfh_color_footer_btn_add_text_dark', '#ffffff' ),
+                'footerBtnAddHover'       => get_option( 'wpvfh_color_footer_btn_add_hover_dark', '#219a52' ),
+                'footerBtnVisibilityBg'   => get_option( 'wpvfh_color_footer_btn_visibility_bg_dark', '#3498db' ),
+                'footerBtnVisibilityText' => get_option( 'wpvfh_color_footer_btn_visibility_text_dark', '#ffffff' ),
+                'footerBtnVisibilityHover'=> get_option( 'wpvfh_color_footer_btn_visibility_hover_dark', '#2980b9' ),
             ),
             // Logos du panneau
             'panelLogos'     => array(

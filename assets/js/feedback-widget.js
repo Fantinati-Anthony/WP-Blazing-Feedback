@@ -108,6 +108,16 @@
             root.style.setProperty('--wpvfh-bg-light', colors.bgLight || '#f8f9fa');
             root.style.setProperty('--wpvfh-border', colors.border || '#e0e4e8');
 
+            // Appliquer les variables CSS du footer
+            root.style.setProperty('--wpvfh-footer-bg', colors.footerBg || '#f8f9fa');
+            root.style.setProperty('--wpvfh-footer-border', colors.footerBorder || '#e9ecef');
+            root.style.setProperty('--wpvfh-footer-btn-add-bg', colors.footerBtnAddBg || '#27ae60');
+            root.style.setProperty('--wpvfh-footer-btn-add-text', colors.footerBtnAddText || '#ffffff');
+            root.style.setProperty('--wpvfh-footer-btn-add-hover', colors.footerBtnAddHover || '#219a52');
+            root.style.setProperty('--wpvfh-footer-btn-visibility-bg', colors.footerBtnVisibilityBg || '#3498db');
+            root.style.setProperty('--wpvfh-footer-btn-visibility-text', colors.footerBtnVisibilityText || '#ffffff');
+            root.style.setProperty('--wpvfh-footer-btn-visibility-hover', colors.footerBtnVisibilityHover || '#2980b9');
+
             // Mettre à jour le logo du panneau
             if (logo && this.elements.panel) {
                 const panelLogo = this.elements.panel.querySelector('.wpvfh-panel-logo');

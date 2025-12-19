@@ -676,8 +676,8 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     display: flex !important;
     gap: 8px !important;
     padding: 12px 16px !important;
-    background: #f8f9fa !important;
-    border-top: 1px solid #e9ecef !important;
+    background: var(--wpvfh-footer-bg, #f8f9fa) !important;
+    border-top: 1px solid var(--wpvfh-footer-border, #e9ecef) !important;
     flex-shrink: 0 !important;
 }
 
@@ -697,23 +697,23 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
 }
 
 .wpvfh-footer-btn-add {
-    background: #27ae60 !important;
-    color: #fff !important;
+    background: var(--wpvfh-footer-btn-add-bg, #27ae60) !important;
+    color: var(--wpvfh-footer-btn-add-text, #fff) !important;
 }
 
 .wpvfh-footer-btn-add:hover {
-    background: #219a52 !important;
+    background: var(--wpvfh-footer-btn-add-hover, #219a52) !important;
     transform: translateY(-1px) !important;
     box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3) !important;
 }
 
 .wpvfh-footer-btn-visibility {
-    background: #3498db !important;
-    color: #fff !important;
+    background: var(--wpvfh-footer-btn-visibility-bg, #3498db) !important;
+    color: var(--wpvfh-footer-btn-visibility-text, #fff) !important;
 }
 
 .wpvfh-footer-btn-visibility:hover {
-    background: #2980b9 !important;
+    background: var(--wpvfh-footer-btn-visibility-hover, #2980b9) !important;
     transform: translateY(-1px) !important;
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3) !important;
 }
