@@ -158,8 +158,9 @@ class WPVFH_Permissions {
             $user_id = get_current_user_id();
         }
 
-        $feedback = get_post( $feedback_id );
-        if ( ! $feedback || 'visual_feedback' !== $feedback->post_type ) {
+        // Récupérer le feedback depuis la table personnalisée
+        $feedback = WPVFH_Database::get_feedback( $feedback_id );
+        if ( ! $feedback ) {
             return false;
         }
 
@@ -169,7 +170,7 @@ class WPVFH_Permissions {
         }
 
         // L'auteur peut supprimer son propre feedback s'il peut créer des feedbacks
-        if ( (int) $feedback->post_author === $user_id ) {
+        if ( ! empty( $feedback->user_id ) && (int) $feedback->user_id === $user_id ) {
             return user_can( $user_id, 'delete_feedback', $feedback_id ) ||
                    user_can( $user_id, 'publish_feedbacks' ) ||
                    user_can( $user_id, 'delete_feedbacks' );
