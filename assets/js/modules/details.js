@@ -12,11 +12,26 @@
          */
         state: {
             repositioningFeedbackId: null,
+            currentFeedback: null,
+            isEditMode: false,
         },
 
         init: function(widget) {
             this.widget = widget;
             this.bindRepositionEvents();
+            this.bindEditEvents();
+        },
+
+        /**
+         * Attacher les événements d'édition
+         */
+        bindEditEvents: function() {
+            const editBtn = document.getElementById('wpvfh-edit-feedback-btn');
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    this.startEditMode();
+                });
+            }
         },
 
         /**
@@ -60,6 +75,8 @@
 
         showFeedbackDetails: function(feedback) {
             this.widget.state.currentFeedbackId = feedback.id;
+            this.state.currentFeedback = feedback;
+            this.state.isEditMode = false;
 
             const labels = this.widget.modules.labels;
             const tools = this.widget.modules.tools;
@@ -126,6 +143,9 @@
                 this.widget.elements.replyInput.value = '';
             }
 
+            // Afficher les informations de ciblage/position
+            this.displayPinInfo(feedback);
+
             if (this.widget.modules.panel) {
                 this.widget.modules.panel.openPanel('details');
             }
@@ -145,6 +165,103 @@
             }
             if (repositionBtn) {
                 repositionBtn.hidden = !hasPosition;
+            }
+        },
+
+        /**
+         * Afficher les informations du pin (ciblage/position)
+         */
+        displayPinInfo: function(feedback) {
+            const pinInfoEl = this.widget.elements.detailPinInfo;
+            if (!pinInfoEl) return;
+
+            const hasPosition = feedback.selector || feedback.position_x || feedback.position_y;
+
+            if (!hasPosition) {
+                pinInfoEl.hidden = true;
+                return;
+            }
+
+            pinInfoEl.hidden = false;
+
+            // Sélecteur
+            if (this.widget.elements.pinSelectorValue) {
+                if (feedback.selector) {
+                    this.widget.elements.pinSelectorValue.textContent = this.formatSelector(feedback.selector);
+                    this.widget.elements.pinSelectorValue.parentElement.hidden = false;
+                } else {
+                    this.widget.elements.pinSelectorValue.parentElement.hidden = true;
+                }
+            }
+
+            // Position
+            if (this.widget.elements.pinPositionValue) {
+                const x = feedback.position_x || feedback.element_offset_x || 0;
+                const y = feedback.position_y || feedback.element_offset_y || 0;
+                this.widget.elements.pinPositionValue.textContent = `X: ${Math.round(x)}px, Y: ${Math.round(y)}px`;
+            }
+
+            // Page
+            if (this.widget.elements.pinPageValue) {
+                const pageUrl = feedback.page_url || feedback.url || window.location.href;
+                this.widget.elements.pinPageValue.textContent = this.shortenUrl(pageUrl);
+                this.widget.elements.pinPageValue.title = pageUrl;
+            }
+        },
+
+        /**
+         * Formater le sélecteur pour l'affichage
+         */
+        formatSelector: function(selector) {
+            if (!selector) return '';
+            // Tronquer si trop long
+            if (selector.length > 50) {
+                return selector.substring(0, 47) + '...';
+            }
+            return selector;
+        },
+
+        /**
+         * Raccourcir une URL pour l'affichage
+         */
+        shortenUrl: function(url) {
+            if (!url) return '';
+            try {
+                const urlObj = new URL(url);
+                let path = urlObj.pathname;
+                if (path.length > 40) {
+                    path = '...' + path.substring(path.length - 37);
+                }
+                return path || '/';
+            } catch {
+                return url.length > 40 ? url.substring(0, 37) + '...' : url;
+            }
+        },
+
+        /**
+         * Démarrer le mode édition
+         */
+        startEditMode: function() {
+            if (!this.state.currentFeedback) {
+                console.warn('[Blazing Feedback] Pas de feedback à éditer');
+                return;
+            }
+
+            this.state.isEditMode = true;
+            const feedback = this.state.currentFeedback;
+
+            // Passer le feedback au formulaire pour édition
+            if (this.widget.modules.form) {
+                this.widget.modules.form.loadFeedbackForEdit(feedback);
+            }
+
+            // Ouvrir l'onglet "new" en mode édition
+            if (this.widget.modules.panel) {
+                this.widget.modules.panel.openPanel('new');
+            }
+
+            if (this.widget.modules.notifications) {
+                this.widget.modules.notifications.show('Mode édition activé', 'info');
             }
         },
 

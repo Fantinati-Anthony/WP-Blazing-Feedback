@@ -7,8 +7,107 @@
     'use strict';
 
     const Form = {
+        /**
+         * État du module
+         */
+        state: {
+            editingFeedbackId: null,
+            isEditMode: false,
+        },
+
         init: function(widget) {
             this.widget = widget;
+        },
+
+        /**
+         * Charger un feedback pour édition
+         */
+        loadFeedbackForEdit: function(feedback) {
+            if (!feedback) return;
+
+            this.state.editingFeedbackId = feedback.id;
+            this.state.isEditMode = true;
+
+            // Remplir le formulaire avec les données du feedback
+            if (this.widget.elements.commentField) {
+                this.widget.elements.commentField.value = feedback.comment || feedback.content || '';
+            }
+
+            if (this.widget.elements.feedbackType) {
+                this.widget.elements.feedbackType.value = feedback.feedback_type || '';
+            }
+
+            if (this.widget.elements.feedbackPriority) {
+                this.widget.elements.feedbackPriority.value = feedback.priority || 'none';
+            }
+
+            // Charger les tags
+            if (this.widget.modules.tags && feedback.tags) {
+                this.widget.modules.tags.clearFormTags();
+                const tags = Array.isArray(feedback.tags) ? feedback.tags : (feedback.tags || '').split(',').filter(t => t.trim());
+                tags.forEach(tag => {
+                    const tagName = typeof tag === 'object' ? tag.name : tag.trim();
+                    if (tagName) {
+                        this.widget.modules.tags.addFormTag(tagName);
+                    }
+                });
+            }
+
+            // Charger la position si existante
+            if (feedback.selector || feedback.position_x || feedback.position_y) {
+                this.widget.state.pinPosition = {
+                    position_x: feedback.position_x,
+                    position_y: feedback.position_y,
+                    selector: feedback.selector,
+                    element_offset_x: feedback.element_offset_x,
+                    element_offset_y: feedback.element_offset_y,
+                };
+
+                // Afficher l'élément sélectionné
+                if (this.widget.elements.selectElementBtn) {
+                    this.widget.elements.selectElementBtn.hidden = true;
+                }
+                if (this.widget.elements.selectedElement) {
+                    this.widget.elements.selectedElement.hidden = false;
+                    const label = this.widget.elements.selectedElement.querySelector('.wpvfh-selected-element-label');
+                    if (label && feedback.selector) {
+                        label.textContent = this.formatSelectorForDisplay(feedback.selector);
+                    }
+                }
+            }
+
+            // Mettre à jour le texte du bouton
+            this.updateSubmitButton(true);
+
+            // Focus sur le champ commentaire
+            if (this.widget.elements.commentField) {
+                setTimeout(() => this.widget.elements.commentField.focus(), 350);
+            }
+        },
+
+        /**
+         * Formater un sélecteur pour l'affichage
+         */
+        formatSelectorForDisplay: function(selector) {
+            if (!selector) return '';
+            // Extraire juste le tag + id/class
+            const parts = selector.split('>');
+            const lastPart = parts[parts.length - 1].trim();
+            return lastPart.length > 30 ? lastPart.substring(0, 27) + '...' : lastPart;
+        },
+
+        /**
+         * Mettre à jour le bouton de soumission
+         */
+        updateSubmitButton: function(isEditMode) {
+            const btn = this.widget.elements.submitBtn;
+            if (!btn) return;
+
+            if (isEditMode) {
+                btn.innerHTML = '<span class="wpvfh-btn-emoji">💾</span> ' + (this.widget.config.i18n?.updateButton || 'Mettre à jour');
+            } else {
+                btn.innerHTML = '<span class="wpvfh-btn-emoji">📤</span> ' + (this.widget.config.i18n?.submitButton || 'Envoyer');
+            }
         },
 
         /**
@@ -85,28 +184,61 @@
                     tags: this.widget.elements.feedbackTags?.value || '',
                 };
 
-                const response = await this.widget.modules.api.request('POST', 'feedbacks', feedbackData);
+                let response;
+                let isUpdate = this.state.isEditMode && this.state.editingFeedbackId;
+
+                if (isUpdate) {
+                    // Mode édition - PUT
+                    response = await this.widget.modules.api.request('PUT', `feedbacks/${this.state.editingFeedbackId}`, feedbackData);
+                } else {
+                    // Mode création - POST
+                    response = await this.widget.modules.api.request('POST', 'feedbacks', feedbackData);
+                }
 
                 if (response.id) {
-                    this.widget.modules.notifications.show(this.widget.config.i18n?.successMessage || 'Feedback envoyé avec succès !', 'success');
+                    if (isUpdate) {
+                        this.widget.modules.notifications.show(this.widget.config.i18n?.updateSuccessMessage || 'Feedback mis à jour !', 'success');
 
-                    if (window.BlazingAnnotation) {
-                        window.BlazingAnnotation.removeTemporaryPin();
-                        window.BlazingAnnotation.createPin(response);
-                    }
+                        // Mettre à jour le pin existant
+                        if (window.BlazingAnnotation) {
+                            window.BlazingAnnotation.updatePin(response.id, response);
+                        }
 
-                    this.widget.state.currentFeedbacks.push(response);
+                        // Mettre à jour dans la liste locale
+                        const idx = this.widget.state.currentFeedbacks.findIndex(f => f.id === response.id);
+                        if (idx !== -1) {
+                            this.widget.state.currentFeedbacks[idx] = response;
+                        }
 
-                    const postAction = this.widget.config.postFeedbackAction || 'close';
-                    if (postAction === 'list') {
                         this.resetForm();
-                        this.widget.modules.panel.switchTab('list');
-                    } else {
-                        this.widget.modules.panel.closePanel();
-                    }
 
-                    this.widget.modules.api.updateFeedbackCounts(this.widget.state.currentFeedbacks.length);
-                    this.widget.modules.tools.emitEvent('feedback-created', response);
+                        // Retourner aux détails
+                        if (this.widget.modules.details) {
+                            this.widget.modules.details.showFeedbackDetails(response);
+                        }
+
+                        this.widget.modules.tools.emitEvent('feedback-updated', response);
+                    } else {
+                        this.widget.modules.notifications.show(this.widget.config.i18n?.successMessage || 'Feedback envoyé avec succès !', 'success');
+
+                        if (window.BlazingAnnotation) {
+                            window.BlazingAnnotation.removeTemporaryPin();
+                            window.BlazingAnnotation.createPin(response);
+                        }
+
+                        this.widget.state.currentFeedbacks.push(response);
+
+                        const postAction = this.widget.config.postFeedbackAction || 'close';
+                        if (postAction === 'list') {
+                            this.resetForm();
+                            this.widget.modules.panel.switchTab('list');
+                        } else {
+                            this.widget.modules.panel.closePanel();
+                        }
+
+                        this.widget.modules.api.updateFeedbackCounts(this.widget.state.currentFeedbacks.length);
+                        this.widget.modules.tools.emitEvent('feedback-created', response);
+                    }
                 }
             } catch (error) {
                 console.error('[Blazing Feedback] Erreur de soumission:', error);
@@ -121,6 +253,10 @@
          * Réinitialiser le formulaire
          */
         resetForm: function() {
+            // Réinitialiser l'état d'édition
+            this.state.editingFeedbackId = null;
+            this.state.isEditMode = false;
+
             if (this.widget.elements.form) {
                 this.widget.elements.form.reset();
             }
@@ -163,6 +299,9 @@
             if (this.widget.elements.feedbackTagsInput) {
                 this.widget.elements.feedbackTagsInput.value = '';
             }
+
+            // Remettre le bouton en mode création
+            this.updateSubmitButton(false);
         },
 
         /**

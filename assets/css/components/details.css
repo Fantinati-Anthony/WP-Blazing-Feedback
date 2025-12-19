@@ -73,8 +73,34 @@ body.wpvfh-annotation-mode * {
     align-items: center !important;
     gap: 12px !important;
     padding: 12px 16px !important;
-    background: #f8f9fa !important;
-    border-bottom: 1px solid #e9ecef !important;
+    background: var(--wpvfh-bg-light, #f8f9fa) !important;
+    border-bottom: 1px solid var(--wpvfh-border, #e9ecef) !important;
+}
+
+.wpvfh-details-header-bar .wpvfh-feedback-id {
+    flex: 1 !important;
+}
+
+/* Bouton éditer */
+.wpvfh-container .wpvfh-edit-btn,
+.wpvfh-container button.wpvfh-edit-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    background: var(--wpvfh-bg, #fff) !important;
+    border: 1px solid var(--wpvfh-border, #dee2e6) !important;
+    border-radius: 6px !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.wpvfh-container .wpvfh-edit-btn:hover {
+    background: var(--wpvfh-primary, #FE5100) !important;
+    border-color: var(--wpvfh-primary, #FE5100) !important;
 }
 
 .wpvfh-container .wpvfh-back-btn,
@@ -162,6 +188,58 @@ body.wpvfh-annotation-mode * {
     margin-bottom: 16px !important;
     line-height: 1.6 !important;
     white-space: pre-wrap !important;
+}
+
+/* Information de ciblage/position */
+.wpvfh-detail-pin-info {
+    background: var(--wpvfh-bg-light, #f8f9fa) !important;
+    border: 1px solid var(--wpvfh-border, #e9ecef) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    margin-bottom: 16px !important;
+}
+
+.wpvfh-detail-pin-info h4 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    margin: 0 0 10px 0 !important;
+    color: var(--wpvfh-text, #495057) !important;
+}
+
+.wpvfh-pin-info-content {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.wpvfh-pin-info-item {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    font-size: 12px !important;
+}
+
+.wpvfh-pin-info-label {
+    flex-shrink: 0 !important;
+    color: var(--wpvfh-text-light, #6c757d) !important;
+    min-width: 60px !important;
+}
+
+.wpvfh-pin-info-value {
+    color: var(--wpvfh-text, #495057) !important;
+    word-break: break-all !important;
+}
+
+code.wpvfh-pin-info-value {
+    background: var(--wpvfh-bg, #fff) !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    font-family: monospace !important;
+    font-size: 11px !important;
+    border: 1px solid var(--wpvfh-border, #e9ecef) !important;
 }
 
 .wpvfh-detail-screenshot {
