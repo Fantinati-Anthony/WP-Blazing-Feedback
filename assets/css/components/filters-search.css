@@ -1,0 +1,318 @@
+/**
+ * Filtres par état, recherche, pages
+ * 
+ * Reference file for feedback.css lines 3271-3570
+ * See main file: assets/css/feedback.css
+ * 
+ * @package Blazing_Feedback
+ */
+
+/* 
+ * This section includes:
+ * - Start: Liste réorganisable
+ * - End: Section Validation
+ * - Lines: 3271 to 3570 (~300 lines)
+ * 
+ * To view this section, read feedback.css with:
+ * offset=3271, limit=300
+ */
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #e74c3c;
+}
+
+/* ==========================================================================
+   Liste réorganisable (drag-and-drop)
+   ========================================================================== */
+
+.wpvfh-pins-list.sortable {
+    min-height: 50px;
+}
+
+.wpvfh-pin-item {
+    position: relative;
+    cursor: grab;
+    user-select: none;
+}
+
+.wpvfh-pin-item:active {
+    cursor: grabbing;
+}
+
+.wpvfh-pin-item.dragging {
+    opacity: 0.5;
+    background: #e3f2fd !important;
+    border-color: #3498db !important;
+}
+
+.wpvfh-pin-item.drag-over {
+    border-top: 3px solid #3498db !important;
+    margin-top: -3px;
+}
+
+.wpvfh-pin-item .wpvfh-drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    min-width: 24px;
+    color: #adb5bd;
+    cursor: grab;
+    font-size: 16px;
+    transition: color 0.2s ease;
+}
+
+.wpvfh-pin-item:hover .wpvfh-drag-handle {
+    color: #6c757d;
+}
+
+.wpvfh-pin-item .wpvfh-drag-handle:active {
+    cursor: grabbing;
+}
+
+/* Numéro dans le marqueur de la liste */
+.wpvfh-pin-marker {
+    position: relative;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);
+}
+
+.wpvfh-pin-marker.status-new {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    box-shadow: 0 2px 6px rgba(52, 152, 219, 0.3);
+}
+
+.wpvfh-pin-marker.status-in_progress {
+    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    box-shadow: 0 2px 6px rgba(243, 156, 18, 0.3);
+}
+
+.wpvfh-pin-marker.status-resolved {
+    background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+    box-shadow: 0 2px 6px rgba(39, 174, 96, 0.3);
+}
+
+.wpvfh-pin-marker.status-rejected {
+    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+    box-shadow: 0 2px 6px rgba(149, 165, 166, 0.3);
+}
+
+/* Animation de réorganisation */
+@keyframes wpvfh-reorder-flash {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: rgba(52, 152, 219, 0.1); }
+}
+
+.wpvfh-pin-item.reordered {
+    animation: wpvfh-reorder-flash 0.5s ease;
+}
+
+/* ==========================================================================
+   Filtres par état
+   ========================================================================== */
+
+.wpvfh-filter-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 2px !important;
+    border: 2px solid transparent !important;
+    border-radius: 5px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    background: #fff !important;
+    color: #6c757d !important;
+    line-height: 1.4 !important;
+    min-height: auto !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+
+.wpvfh-filter-btn:hover {
+    background: #e9ecef !important;
+}
+
+.wpvfh-filter-btn.active {
+    border-color: currentColor !important;
+    color: #fff !important;
+}
+
+.wpvfh-filter-btn[data-status="new"] {
+    color: #3498db !important;
+}
+
+.wpvfh-filter-btn[data-status="new"].active {
+    background: #3498db !important;
+    color: #fff !important;
+}
+
+.wpvfh-filter-btn[data-status="in_progress"] {
+    color: #f39c12 !important;
+}
+
+.wpvfh-filter-btn[data-status="in_progress"].active {
+    background: #f39c12 !important;
+    color: #fff !important;
+}
+
+.wpvfh-filter-btn[data-status="resolved"] {
+    color: #27ae60 !important;
+}
+
+.wpvfh-filter-btn[data-status="resolved"].active {
+    background: #27ae60 !important;
+    color: #fff !important;
+}
+
+.wpvfh-filter-btn[data-status="rejected"] {
+    color: #95a5a6 !important;
+}
+
+.wpvfh-filter-btn[data-status="rejected"].active {
+    background: #95a5a6 !important;
+    color: #fff !important;
+}
+
+.wpvfh-filter-btn[data-status="all"] {
+    color: var(--wpvfh-primary) !important;
+}
+
+.wpvfh-filter-btn[data-status="all"].active {
+    background: var(--wpvfh-primary) !important;
+    color: #fff !important;
+}
+
+.wpvfh-filter-btn .wpvfh-filter-count {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    padding: 0 5px !important;
+    background: currentColor !important;
+    border-radius: 9px !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+}
+
+.wpvfh-filter-btn .wpvfh-filter-count span {
+    color: #ffffff !important;
+}
+
+/* Quand actif: fond blanc avec texte de la couleur du statut */
+.wpvfh-filter-btn.active .wpvfh-filter-count {
+    background: #ffffff !important;
+}
+
+.wpvfh-filter-btn[data-status="all"].active .wpvfh-filter-count span {
+    color: var(--wpvfh-primary) !important;
+}
+
+.wpvfh-filter-btn[data-status="new"].active .wpvfh-filter-count span {
+    color: #3498db !important;
+}
+
+.wpvfh-filter-btn[data-status="in_progress"].active .wpvfh-filter-count span {
+    color: #f39c12 !important;
+}
+
+.wpvfh-filter-btn[data-status="resolved"].active .wpvfh-filter-count span {
+    color: #27ae60 !important;
+}
+
+.wpvfh-filter-btn[data-status="rejected"].active .wpvfh-filter-count span {
+    color: #95a5a6 !important;
+}
+
+/* ==========================================================================
+   Onglet Pages
+   ========================================================================== */
+
+.wpvfh-pages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.wpvfh-page-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wpvfh-page-item:hover {
+    border-color: #3498db;
+    background: #f8f9fa;
+}
+
+.wpvfh-page-item.current {
+    border-color: #3498db;
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.wpvfh-page-icon {
+    font-size: 20px;
+}
+
+.wpvfh-page-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.wpvfh-page-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wpvfh-page-url {
+    font-size: 11px;
+    color: #95a5a6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wpvfh-page-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.wpvfh-page-badge.has-feedbacks {
+    background: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+}
+
+.wpvfh-page-badge.validated {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+}
+
+.wpvfh-page-badge.no-feedbacks {
+    background: #f1f3f4;

@@ -1,0 +1,247 @@
+/**
+ * Liste des feedbacks, items, drag-drop
+ * 
+ * Reference file for feedback.css lines 1101-1330
+ * See main file: assets/css/feedback.css
+ * 
+ * @package Blazing_Feedback
+ */
+
+/* 
+ * This section includes:
+ * - Start: Liste des pins
+ * - End: Formulaire
+ * - Lines: 1101 to 1330 (~230 lines)
+ * 
+ * To view this section, read feedback.css with:
+ * offset=1101, limit=230
+ */
+
+.wpvfh-tab-content.active {
+    display: block;
+}
+
+/* ==========================================================================
+   Liste des pins/feedbacks existants
+   ========================================================================== */
+
+.wpvfh-pins-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.wpvfh-pin-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: var(--wpvfh-bg-light);
+    border-radius: var(--wpvfh-radius-sm);
+    border: 1px solid var(--wpvfh-border);
+    cursor: pointer;
+    transition: all var(--wpvfh-transition);
+}
+
+.wpvfh-pin-item:hover {
+    border-color: var(--wpvfh-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wpvfh-pin-item.selected {
+    border-color: var(--wpvfh-primary);
+    background: rgba(231, 76, 60, 0.05);
+}
+
+/* Métadonnées dans pin-item (type, priorité, tags) */
+.wpvfh-pin-metadata {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-top: 6px !important;
+}
+
+.wpvfh-pin-type,
+.wpvfh-pin-priority {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    font-size: 11px !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    background: var(--wpvfh-bg) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+}
+
+.wpvfh-pin-tags {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    margin-top: 4px !important;
+}
+
+.wpvfh-pin-tag {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    font-size: 10px !important;
+    padding: 2px 5px !important;
+    border-radius: 3px !important;
+    background: var(--wpvfh-bg) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    color: var(--wpvfh-text-light) !important;
+}
+
+.wpvfh-pin-marker {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.wpvfh-pin-marker.status-new { background: #3498db; }
+.wpvfh-pin-marker.status-in_progress { background: #f39c12; }
+.wpvfh-pin-marker.status-resolved { background: #27ae60; }
+.wpvfh-pin-marker.status-rejected { background: #e74c3c; }
+
+.wpvfh-pin-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.wpvfh-pin-text {
+    margin: 0 0 6px 0;
+    font-size: 14px;
+    color: var(--wpvfh-text);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.wpvfh-pin-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--wpvfh-text-light);
+}
+
+.wpvfh-pin-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.wpvfh-pin-status.status-new { background: #e3f2fd; color: #1565c0; }
+.wpvfh-pin-status.status-in_progress { background: #fff3e0; color: #ef6c00; }
+.wpvfh-pin-status.status-resolved { background: #e8f5e9; color: #2e7d32; }
+.wpvfh-pin-status.status-rejected { background: #ffebee; color: #c62828; }
+
+.wpvfh-pin-date {
+    color: var(--wpvfh-text-light);
+}
+
+.wpvfh-pin-actions,
+.wpvfh-container .wpvfh-pin-actions,
+.wpvfh-panel .wpvfh-pin-actions,
+html body .wpvfh-pin-actions,
+.elementor .wpvfh-pin-actions {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    border: 0 !important;
+    border-width: 0 !important;
+    border-style: none !important;
+}
+
+.wpvfh-pin-action,
+.wpvfh-container .wpvfh-pin-action,
+.wpvfh-panel .wpvfh-pin-action,
+html body .wpvfh-pin-action,
+html body.elementor-page .wpvfh-pin-action,
+html body.elementor-default .wpvfh-pin-action,
+.elementor .wpvfh-pin-action,
+button.wpvfh-pin-action,
+button.wpvfh-pin-action.wpvfh-pin-goto,
+button.wpvfh-pin-action.wpvfh-pin-delete {
+    all: revert !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-radius: var(--wpvfh-radius-sm) !important;
+    cursor: pointer !important;
+    color: var(--wpvfh-text-light) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all var(--wpvfh-transition) !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    box-shadow: none !important;
+}
+
+.wpvfh-pin-action:hover,
+.wpvfh-container .wpvfh-pin-action:hover,
+html body .wpvfh-pin-action:hover,
+.elementor .wpvfh-pin-action:hover,
+button.wpvfh-pin-action:hover {
+    background: var(--wpvfh-border) !important;
+    background-color: var(--wpvfh-border) !important;
+    color: var(--wpvfh-text) !important;
+    border: none !important;
+}
+
+/* Bouton supprimer dans la liste */
+.wpvfh-pin-action.wpvfh-pin-delete,
+button.wpvfh-pin-action.wpvfh-pin-delete,
+html body .wpvfh-pin-action.wpvfh-pin-delete,
+.elementor .wpvfh-pin-action.wpvfh-pin-delete {
+    color: #bdc3c7 !important;
+    border: none !important;
+}
+
+.wpvfh-pin-action.wpvfh-pin-delete:hover,
+button.wpvfh-pin-action.wpvfh-pin-delete:hover,
+html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
+.elementor .wpvfh-pin-action.wpvfh-pin-delete:hover {
+    background: #ffebee !important;
+    background-color: #ffebee !important;
+    color: #e74c3c !important;
+    border: none !important;
+}
+
+/* Message liste vide */
+.wpvfh-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--wpvfh-text-light);
+}
+
+.wpvfh-empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.wpvfh-empty-text {
+    margin: 0;
+    font-size: 14px;
+}

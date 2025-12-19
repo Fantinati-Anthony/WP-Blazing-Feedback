@@ -1,0 +1,448 @@
+/**
+ * Sidebar panel, header, onglets, body
+ * 
+ * Reference file for feedback.css lines 671-1100
+ * See main file: assets/css/feedback.css
+ * 
+ * @package Blazing_Feedback
+ */
+
+/* 
+ * This section includes:
+ * - Start: Footer de la sidebar
+ * - End: Liste des pins
+ * - Lines: 671 to 1100 (~430 lines)
+ * 
+ * To view this section, read feedback.css with:
+ * offset=671, limit=430
+ */
+/* ==========================================================================
+   Footer de la sidebar (boutons + et visibilité)
+   ========================================================================== */
+
+.wpvfh-panel-footer {
+    display: flex !important;
+    gap: 8px !important;
+    padding: 12px 16px !important;
+    background: var(--wpvfh-footer-bg, #f8f9fa) !important;
+    border-top: 1px solid var(--wpvfh-footer-border, #e9ecef) !important;
+    flex-shrink: 0 !important;
+}
+
+.wpvfh-footer-btn {
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 10px 16px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+.wpvfh-footer-btn-add {
+    background: var(--wpvfh-footer-btn-add-bg, #27ae60) !important;
+    color: var(--wpvfh-footer-btn-add-text, #fff) !important;
+}
+
+.wpvfh-footer-btn-add:hover {
+    background: var(--wpvfh-footer-btn-add-hover, #219a52) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3) !important;
+}
+
+.wpvfh-footer-btn-visibility {
+    background: var(--wpvfh-footer-btn-visibility-bg, #3498db) !important;
+    color: var(--wpvfh-footer-btn-visibility-text, #fff) !important;
+}
+
+.wpvfh-footer-btn-visibility:hover {
+    background: var(--wpvfh-footer-btn-visibility-hover, #2980b9) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3) !important;
+}
+
+.wpvfh-footer-btn-visibility[data-visible="false"] {
+    background: #95a5a6 !important;
+}
+
+.wpvfh-footer-btn-visibility[data-visible="false"]:hover {
+    background: #7f8c8d !important;
+    box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3) !important;
+}
+
+.wpvfh-footer-btn-icon {
+    font-size: 16px !important;
+    line-height: 1 !important;
+}
+
+.wpvfh-footer-btn-text {
+    white-space: nowrap !important;
+}
+
+/* ==========================================================================
+   Sidebar de feedback (barre latérale droite)
+   ========================================================================== */
+
+.wpvfh-panel {
+    position: fixed !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: 100vh !important;
+    z-index: var(--wpvfh-z-index) !important;
+    width: 400px !important;
+    max-width: 90vw !important;
+    background: var(--wpvfh-bg) !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.3s ease !important;
+    visibility: hidden !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Mode push content - le panel pousse le contenu au lieu de l'overlay */
+body.wpvfh-panel-active {
+    margin-right: 400px !important;
+    transition: margin-right 0.3s ease !important;
+}
+
+/* Masquer l'overlay en mode push */
+body.wpvfh-panel-active .wpvfh-sidebar-overlay {
+    display: none !important;
+}
+
+/* ===== PANEL POSITION GAUCHE ===== */
+/* Cibler directement le panel car il est déplacé vers body */
+.wpvfh-panel[data-panel-position="left"] {
+    right: auto !important;
+    left: 0 !important;
+    transform: translateX(-100%) !important;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.wpvfh-panel[data-panel-position="left"].wpvfh-panel-open {
+    transform: translateX(0) !important;
+}
+
+.wpvfh-panel[data-panel-position="left"][hidden]:not(.wpvfh-panel-open) {
+    transform: translateX(-100%) !important;
+}
+
+body.wpvfh-panel-active.wpvfh-panel-left {
+    margin-right: 0 !important;
+    margin-left: 400px !important;
+    transition: margin 0.3s ease !important;
+}
+
+/* Responsive: sur mobile, pas de push mais overlay */
+@media screen and (max-width: 600px) {
+    body.wpvfh-panel-active {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+    body.wpvfh-panel-active.wpvfh-panel-left {
+        margin-left: 0 !important;
+    }
+    body.wpvfh-panel-active .wpvfh-sidebar-overlay {
+        display: block !important;
+    }
+
+    /* Bouton coin plus petit sur mobile */
+    .wpvfh-corner-btn {
+        width: 60px !important;
+        height: 60px !important;
+    }
+
+    .wpvfh-corner-btn:hover {
+        width: 65px !important;
+        height: 65px !important;
+    }
+
+    .wpvfh-corner-icon-wrapper {
+        margin-top: 8px !important;
+        margin-left: 8px !important;
+    }
+
+    .wpvfh-corner-icon {
+        font-size: 20px !important;
+    }
+
+    .wpvfh-corner-icon img {
+        width: 22px !important;
+        height: 22px !important;
+    }
+
+    .wpvfh-corner-count {
+        min-width: 16px !important;
+        height: 16px !important;
+        font-size: 9px !important;
+        top: -6px !important;
+        right: -8px !important;
+    }
+}
+
+.wpvfh-panel.wpvfh-panel-open {
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+/* Quand caché (sans la classe open), rester hors écran */
+.wpvfh-panel[hidden]:not(.wpvfh-panel-open) {
+    display: flex !important;
+    visibility: hidden !important;
+    transform: translateX(100%) !important;
+}
+
+/* Overlay derrière la sidebar */
+.wpvfh-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: calc(var(--wpvfh-z-index) - 1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Ajuster l'overlay pour la barre admin */
+.admin-bar .wpvfh-sidebar-overlay {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    .admin-bar .wpvfh-sidebar-overlay {
+        top: 46px;
+    }
+}
+
+.wpvfh-sidebar-overlay.wpvfh-overlay-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+@keyframes wpvfh-slide-in {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+/* Header du panel */
+.wpvfh-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--wpvfh-border);
+    background: var(--wpvfh-bg-light);
+    flex-shrink: 0;
+}
+
+.wpvfh-panel-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--wpvfh-text);
+}
+
+.wpvfh-panel-logo,
+.wpvfh-panel-header .wpvfh-panel-logo,
+.wpvfh-panel .wpvfh-panel-header .wpvfh-panel-logo,
+.elementor-widget-container .wpvfh-panel-logo,
+body .wpvfh-panel-logo {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-height: 36px !important;
+    height: auto !important;
+    width: auto !important;
+    max-width: 200px !important;
+    object-fit: contain !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.wpvfh-close-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    font-size: 24px !important;
+    color: var(--wpvfh-text-light) !important;
+    transition: all var(--wpvfh-transition) !important;
+    min-height: auto !important;
+    line-height: 1 !important;
+}
+
+.wpvfh-close-btn:hover {
+    background: var(--wpvfh-border) !important;
+    color: var(--wpvfh-text) !important;
+}
+
+/* Onglets de navigation - Style agressif contre Elementor */
+.wpvfh-tabs,
+.wpvfh-container .wpvfh-tabs,
+.wpvfh-panel .wpvfh-tabs,
+html body .wpvfh-tabs,
+html body.elementor-page .wpvfh-tabs,
+html body.elementor-default .wpvfh-tabs,
+.elementor .wpvfh-tabs {
+    display: flex !important;
+    border-bottom: 2px solid var(--wpvfh-border) !important;
+    background: var(--wpvfh-bg-light) !important;
+    flex-shrink: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.wpvfh-container .wpvfh-tab,
+.wpvfh-container button.wpvfh-tab,
+.wpvfh-panel .wpvfh-tab,
+.wpvfh-panel button.wpvfh-tab,
+html body .wpvfh-tab,
+html body .wpvfh-tabs .wpvfh-tab,
+html body.elementor-page .wpvfh-tab,
+html body.elementor-page .wpvfh-tabs .wpvfh-tab,
+html body.elementor-default .wpvfh-tab,
+html body.elementor-default .wpvfh-tabs .wpvfh-tab,
+.elementor .wpvfh-tab,
+.elementor .wpvfh-tabs .wpvfh-tab,
+.elementor-widget-container .wpvfh-tab {
+    all: revert !important;
+    flex: 1 !important;
+    padding: 14px 16px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    border-radius: 0 !important;
+    margin-bottom: -2px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    color: var(--wpvfh-text-light) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    line-height: 1.4 !important;
+    box-shadow: none !important;
+}
+
+.wpvfh-container .wpvfh-tab:hover,
+.wpvfh-container button.wpvfh-tab:hover,
+.wpvfh-panel .wpvfh-tab:hover,
+html body .wpvfh-tab:hover,
+html body .wpvfh-tabs .wpvfh-tab:hover,
+html body.elementor-page .wpvfh-tab:hover,
+html body.elementor-default .wpvfh-tab:hover,
+.elementor .wpvfh-tab:hover {
+    color: var(--wpvfh-text) !important;
+    background: var(--wpvfh-bg-light) !important;
+    background-color: var(--wpvfh-bg-light) !important;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    text-decoration: none !important;
+}
+
+.wpvfh-container .wpvfh-tab.active,
+.wpvfh-container button.wpvfh-tab.active,
+.wpvfh-panel .wpvfh-tab.active,
+html body .wpvfh-tab.active,
+html body .wpvfh-tabs .wpvfh-tab.active,
+html body.elementor-page .wpvfh-tab.active,
+html body.elementor-default .wpvfh-tab.active,
+.elementor .wpvfh-tab.active {
+    color: var(--wpvfh-primary) !important;
+    border: none !important;
+    border-bottom: 3px solid var(--wpvfh-primary) !important;
+    background: var(--wpvfh-bg) !important;
+    background-color: var(--wpvfh-bg) !important;
+}
+
+/* Onglets cachés - APRÈS les autres règles pour garantir la priorité */
+.wpvfh-tab[hidden],
+.wpvfh-tabs .wpvfh-tab[hidden],
+.wpvfh-tabs button.wpvfh-tab[hidden],
+.wpvfh-container .wpvfh-tab[hidden],
+.wpvfh-container .wpvfh-tabs .wpvfh-tab[hidden],
+.wpvfh-container button.wpvfh-tab[hidden],
+.wpvfh-panel .wpvfh-tab[hidden],
+.wpvfh-panel .wpvfh-tabs .wpvfh-tab[hidden],
+html body .wpvfh-tab[hidden],
+html body .wpvfh-tabs .wpvfh-tab[hidden],
+html body.elementor-page .wpvfh-tab[hidden],
+html body.elementor-page .wpvfh-tabs .wpvfh-tab[hidden],
+html body.elementor-default .wpvfh-tab[hidden],
+html body.elementor-default .wpvfh-tabs .wpvfh-tab[hidden],
+.elementor .wpvfh-tab[hidden],
+.elementor .wpvfh-tabs .wpvfh-tab[hidden],
+button.wpvfh-tab[hidden] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    flex: 0 !important;
+}
+
+.wpvfh-tab-icon {
+    font-size: 16px !important;
+    line-height: 1 !important;
+}
+
+.wpvfh-tab-count {
+    font-size: 12px !important;
+    background: var(--wpvfh-primary) !important;
+    color: #fff !important;
+    padding: 2px 8px !important;
+    border-radius: 10px !important;
+    margin-left: 4px !important;
+}
+
+/* Body du panel */
+.wpvfh-panel-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Section des onglets */
+.wpvfh-tab-content {
+    display: none;
+}

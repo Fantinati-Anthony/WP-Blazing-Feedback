@@ -1,0 +1,168 @@
+/**
+ * Mode sombre, accessibilité
+ * 
+ * Reference file for feedback.css lines 2751-2900
+ * See main file: assets/css/feedback.css
+ * 
+ * @package Blazing_Feedback
+ */
+
+/* 
+ * This section includes:
+ * - Start: Responsive
+ * - End: Mode inspecteur
+ * - Lines: 2751 to 2900 (~150 lines)
+ * 
+ * To view this section, read feedback.css with:
+ * offset=2751, limit=150
+ */
+
+@media (max-width: 768px) {
+    .wpvfh-toggle-btn {
+        bottom: 16px;
+        right: 16px;
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .wpvfh-panel {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .wpvfh-btn-text {
+        display: none;
+    }
+
+    .wpvfh-toggle-btn {
+        padding: 12px;
+        border-radius: 50%;
+    }
+
+    .wpvfh-btn-icon {
+        font-size: 22px;
+    }
+
+    .wpvfh-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .wpvfh-tab {
+        padding: 10px 12px;
+        white-space: nowrap;
+    }
+}
+
+/* ==========================================================================
+   Responsive - Mobile
+   ========================================================================== */
+
+@media (max-width: 480px) {
+    .wpvfh-panel {
+        width: 100%;
+    }
+
+    .wpvfh-toggle-btn {
+        bottom: 12px;
+        right: 12px;
+    }
+
+    .wpvfh-panel-body {
+        padding: 16px;
+    }
+
+    .wpvfh-form-actions {
+        flex-direction: column;
+    }
+
+    .wpvfh-btn {
+        width: 100%;
+    }
+
+    .wpvfh-pin-item {
+        flex-wrap: wrap;
+    }
+
+    .wpvfh-pin-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 8px;
+    }
+}
+
+/* ==========================================================================
+   Mode sombre (si préféré par l'utilisateur)
+   ========================================================================== */
+
+/* Dark mode - Couleurs du mode sombre (fallback CSS, sera overridé par JS) */
+@media (prefers-color-scheme: dark) {
+    .wpvfh-container {
+        --wpvfh-text: #ffffff;
+        --wpvfh-text-light: #b0bcc4;
+        --wpvfh-bg: #263e4b;
+        --wpvfh-bg-light: #334a5a;
+        --wpvfh-border: #3d5564;
+        --wpvfh-secondary: #4a6572;
+    }
+
+    .wpvfh-textarea {
+        background: var(--wpvfh-bg-light);
+        color: var(--wpvfh-text);
+    }
+
+    .wpvfh-help-text {
+        background: #1b4332;
+        color: #74c69d;
+    }
+
+    .wpvfh-notification-success {
+        background: #1b4332;
+        color: #74c69d;
+    }
+
+    .wpvfh-notification-error {
+        background: #450a0a;
+        color: #fca5a5;
+    }
+
+    .wpvfh-notification-info {
+        background: #0c4a6e;
+        color: #7dd3fc;
+    }
+
+    .wpvfh-notification-warning {
+        background: #78350f;
+        color: #fcd34d;
+    }
+}
+
+/* Classes pour le mode thème forcé (appliqué par JS) */
+body.wpvfh-theme-dark .wpvfh-container,
+body.wpvfh-theme-dark .wpvfh-panel {
+    --wpvfh-text: #ffffff;
+    --wpvfh-text-light: #b0bcc4;
+    --wpvfh-bg: #263e4b;
+    --wpvfh-bg-light: #334a5a;
+    --wpvfh-border: #3d5564;
+    --wpvfh-secondary: #4a6572;
+}
+
+body.wpvfh-theme-light .wpvfh-container,
+body.wpvfh-theme-light .wpvfh-panel {
+    --wpvfh-text: #263e4b;
+    --wpvfh-text-light: #5a7282;
+    --wpvfh-bg: #ffffff;
+    --wpvfh-bg-light: #f8f9fa;
+    --wpvfh-border: #e0e4e8;
+    --wpvfh-secondary: #263e4b;
+}
+
+/* ==========================================================================
+   Accessibilité
+   ========================================================================== */
+
+/* Focus visible pour la navigation clavier */
+.wpvfh-container :focus-visible {
+    outline: 2px solid var(--wpvfh-secondary);
+    outline-offset: 2px;

@@ -1,0 +1,508 @@
+/**
+ * Validation de page, modals, invitations
+ * 
+ * Reference file for feedback.css lines 3571-4060
+ * See main file: assets/css/feedback.css
+ * 
+ * @package Blazing_Feedback
+ */
+
+/* 
+ * This section includes:
+ * - Start: Section Validation
+ * - End: Onglet Priorité
+ * - Lines: 3571 to 4060 (~490 lines)
+ * 
+ * To view this section, read feedback.css with:
+ * offset=3571, limit=490
+ */
+    color: #95a5a6;
+}
+
+/* ==========================================================================
+   Section Validation de Page
+   ========================================================================== */
+
+.wpvfh-validation-section {
+    padding: 16px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-top: 1px solid #e9ecef;
+}
+
+.wpvfh-validation-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.wpvfh-validation-status.pending {
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.05) 100%);
+    border: 2px solid rgba(243, 156, 18, 0.3);
+}
+
+.wpvfh-validation-status.ready {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%);
+    border: 2px solid rgba(52, 152, 219, 0.3);
+}
+
+.wpvfh-validation-status.validated {
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%);
+    border: 2px solid rgba(39, 174, 96, 0.3);
+}
+
+.wpvfh-validation-icon {
+    font-size: 32px;
+}
+
+.wpvfh-validation-info {
+    flex: 1;
+}
+
+.wpvfh-validation-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.wpvfh-validation-status.pending .wpvfh-validation-title {
+    color: #e67e22;
+}
+
+.wpvfh-validation-status.ready .wpvfh-validation-title {
+    color: #2980b9;
+}
+
+.wpvfh-validation-status.validated .wpvfh-validation-title {
+    color: #27ae60;
+}
+
+.wpvfh-validation-desc {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.wpvfh-validation-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.wpvfh-progress-bar {
+    flex: 1;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.wpvfh-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.wpvfh-progress-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6c757d;
+    min-width: 60px;
+    text-align: right;
+}
+
+.wpvfh-validate-btn {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.wpvfh-validate-btn:disabled {
+    background: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+.wpvfh-validate-btn:not(:disabled) {
+    background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.wpvfh-validate-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+}
+
+.wpvfh-validated-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%);
+    border: 2px solid #27ae60;
+    border-radius: 10px;
+    color: #27ae60;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+/* ==========================================================================
+   Boutons d'action dans les feedbacks
+   ========================================================================== */
+
+.wpvfh-pin-item .wpvfh-pin-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.wpvfh-pin-action {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    color: #6c757d;
+}
+
+.wpvfh-pin-action:hover {
+    background: #f1f3f4;
+}
+
+.wpvfh-pin-action.wpvfh-delete-btn:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+/* ==========================================================================
+   Mentions et pièces jointes
+   ========================================================================== */
+
+.wpvfh-mentions-input {
+    position: relative;
+}
+
+.wpvfh-mentions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+.wpvfh-mention-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.wpvfh-mention-item:hover,
+.wpvfh-mention-item.selected {
+    background: #f8f9fa;
+}
+
+.wpvfh-mention-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.wpvfh-mention-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3e50;
+}
+
+.wpvfh-mention-email {
+    font-size: 12px;
+    color: #95a5a6;
+}
+
+.wpvfh-mention-tag {
+    display: inline;
+    padding: 2px 6px;
+    background: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* Pièces jointes */
+.wpvfh-attachments-section {
+    margin-top: 12px;
+    border: 1px solid var(--wpvfh-border);
+    padding: 10px;
+    border-radius: 5px;
+    background: var(--wpvfh-bg-light);
+    text-align: center;
+}
+
+.wpvfh-attachments-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.wpvfh-attachment-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.wpvfh-attachment-icon {
+    font-size: 18px;
+}
+
+.wpvfh-attachment-name {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #2c3e50;
+}
+
+.wpvfh-attachment-size {
+    color: #95a5a6;
+}
+
+.wpvfh-attachment-remove {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #95a5a6;
+    font-size: 14px;
+}
+
+.wpvfh-attachment-remove:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.wpvfh-add-attachment-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #fff;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    color: #6c757d;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wpvfh-add-attachment-btn:hover {
+    border-color: #3498db;
+    color: #3498db;
+    background: rgba(52, 152, 219, 0.05);
+}
+
+/* ==========================================================================
+   Légende des couleurs pour les novices
+   ========================================================================== */
+
+.wpvfh-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0px;
+    background: #fff;
+    border-top: 1px solid #e9ecef;
+    font-size: 11px;
+    justify-content: space-between;
+}
+
+.wpvfh-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.wpvfh-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.wpvfh-legend-dot.status-new {
+    background: #3498db;
+}
+
+.wpvfh-legend-dot.status-in_progress {
+    background: #f39c12;
+}
+
+.wpvfh-legend-dot.status-resolved {
+    background: #27ae60;
+}
+
+.wpvfh-legend-dot.status-rejected {
+    background: #95a5a6;
+}
+
+.wpvfh-legend-text {
+    color: #6c757d;
+}
+
+.wpvfh-legend-title {
+    font-weight: 600;
+    color: #495057;
+    margin-right: 8px;
+}
+
+.wpvfh-legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.wpvfh-legend-new .wpvfh-legend-dot { background: #3498db; }
+.wpvfh-legend-progress .wpvfh-legend-dot { background: #f39c12; }
+.wpvfh-legend-resolved .wpvfh-legend-dot { background: #27ae60; }
+.wpvfh-legend-rejected .wpvfh-legend-dot { background: #95a5a6; }
+
+/* ==========================================================================
+   Modals (Confirmation, Validation)
+   ========================================================================== */
+
+.wpvfh-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2147483647;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.wpvfh-modal[hidden] {
+    display: none;
+}
+
+.wpvfh-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.wpvfh-modal-content {
+    position: relative;
+    background: #fff;
+    border-radius: 16px;
+    padding: 0px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: wpvfh-modal-appear 0.3s ease-out;
+}
+
+@keyframes wpvfh-modal-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.wpvfh-modal-body {
+    padding: 24px;
+}
+
+.wpvfh-modal-icon {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.wpvfh-modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 12px 0;
+    color: #2c3e50;
+}
+
+.wpvfh-modal-text {
+    font-size: 14px;
+    text-align: center;
+    color: #6c757d;
+    margin: 0 0 24px 0;
+    line-height: 1.6;
+}
+
+.wpvfh-modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.wpvfh-modal-actions .wpvfh-btn {
+    flex: 1;
+}
+
+/* Bouton danger dans les modals */
+.wpvfh-btn-danger {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+    color: #fff !important;
+}
+
+.wpvfh-btn-danger:hover:not(:disabled) {

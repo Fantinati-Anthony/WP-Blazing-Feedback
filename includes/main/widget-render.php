@@ -1,0 +1,1106 @@
+<?php
+/**
+ * Rendu du widget HTML
+ * 
+ * Reference file for blazing-feedback.php lines 708-1800
+ * See main file: blazing-feedback.php
+ * 
+ * @package Blazing_Feedback
+ */
+
+// To view this section, read blazing-feedback.php with:
+// offset=708, limit=1093
+
+    public function render_feedback_widget() {
+        // Vérifier les permissions
+        if ( ! $this->can_user_see_feedback_widget() ) {
+            return;
+        }
+
+        // Ne pas afficher dans l'admin
+        if ( is_admin() ) {
+            return;
+        }
+
+        /**
+         * Action avant le rendu du widget de feedback
+         *
+         * @since 1.0.0
+         */
+        do_action( 'wpvfh_before_widget' );
+
+        // Template du widget
+        $template = WPVFH_PLUGIN_DIR . 'templates/feedback-widget.php';
+
+        /**
+         * Filtre le chemin du template du widget
+         *
+         * @since 1.0.0
+         * @param string $template Chemin du template
+         */
+        $template = apply_filters( 'wpvfh_widget_template', $template );
+
+        if ( file_exists( $template ) ) {
+            include $template;
+        } else {
+            // Template par défaut inline
+            $this->render_default_widget();
+        }
+
+        /**
+         * Action après le rendu du widget de feedback
+         *
+         * @since 1.0.0
+         */
+        do_action( 'wpvfh_after_widget' );
+    }
+
+    /**
+     * Rendu du widget par défaut
+     *
+     * @since 1.0.0
+     * @return void
+     */
+    private function render_default_widget() {
+        $button_position = get_option( 'wpvfh_button_position', 'bottom-right' );
+        $panel_position = get_option( 'wpvfh_panel_position', 'right' );
+        ?>
+        <div id="wpvfh-container" class="wpvfh-container" data-position="<?php echo esc_attr( $button_position ); ?>" data-panel-position="<?php echo esc_attr( $panel_position ); ?>" role="complementary" aria-label="<?php esc_attr_e( 'Feedback visuel', 'blazing-feedback' ); ?>">
+            <!-- Overlay pour la sidebar -->
+            <div id="wpvfh-sidebar-overlay" class="wpvfh-sidebar-overlay"></div>
+
+            <!-- Bouton principal Feedback -->
+            <?php
+            $icon_mode = get_option( 'wpvfh_icon_mode', 'emoji' );
+            $icon_emoji = get_option( 'wpvfh_icon_emoji', '💬' );
+            $icon_image_url = get_option( 'wpvfh_icon_image_url', '' );
+            $button_style = get_option( 'wpvfh_button_style', 'detached' );
+            // Forme automatique selon la position (angle = quart de cercle, centre = demi-cercle)
+            $corner_positions = array( 'bottom-right', 'bottom-left', 'top-right', 'top-left' );
+            $button_shape = in_array( $button_position, $corner_positions, true ) ? 'quarter' : 'half';
+            $button_size = absint( get_option( 'wpvfh_button_size', 56 ) );
+            $button_border_radius = absint( get_option( 'wpvfh_button_border_radius', 50 ) );
+            $button_border_radius_unit = get_option( 'wpvfh_button_border_radius_unit', 'percent' );
+            $button_margin = absint( get_option( 'wpvfh_button_margin', 20 ) );
+            $button_color = get_option( 'wpvfh_button_color', '#e74c3c' );
+
+            // Calculer les styles inline
+            $btn_styles = array();
+            $btn_styles[] = 'background-color: ' . esc_attr( $button_color );
+            $btn_styles[] = '--wpvfh-btn-size: ' . $button_size . 'px';
+
+            if ( 'attached' === $button_style ) {
+                // Bouton collé au bord
+                if ( 'quarter' === $button_shape ) {
+                    // Quart de cercle pour les angles
+                    $btn_styles[] = 'width: ' . $button_size . 'px';
+                    $btn_styles[] = 'height: ' . $button_size . 'px';
+
+                    switch ( $button_position ) {
+                        case 'bottom-right':
+                            $btn_styles[] = 'border-radius: ' . $button_size . 'px 0 0 0';
+                            $btn_styles[] = 'bottom: 0';
+                            $btn_styles[] = 'right: 0';
+                            break;
+                        case 'bottom-left':
+                            $btn_styles[] = 'border-radius: 0 ' . $button_size . 'px 0 0';
+                            $btn_styles[] = 'bottom: 0';
+                            $btn_styles[] = 'left: 0';
+                            break;
+                        case 'top-right':
+                            $btn_styles[] = 'border-radius: 0 0 0 ' . $button_size . 'px';
+                            $btn_styles[] = 'top: 0';
+                            $btn_styles[] = 'right: 0';
+                            break;
+                        case 'top-left':
+                            $btn_styles[] = 'border-radius: 0 0 ' . $button_size . 'px 0';
+                            $btn_styles[] = 'top: 0';
+                            $btn_styles[] = 'left: 0';
+                            break;
+                    }
+                } else {
+                    // Demi-cercle pour les positions centrales
+                    $half_size = $button_size / 2;
+
+                    switch ( $button_position ) {
+                        case 'bottom-center':
+                            $btn_styles[] = 'width: ' . $button_size . 'px';
+                            $btn_styles[] = 'height: ' . $half_size . 'px';
+                            $btn_styles[] = 'border-radius: ' . $button_size . 'px ' . $button_size . 'px 0 0';
+                            $btn_styles[] = 'bottom: 0';
+                            $btn_styles[] = 'left: 50%';
+                            $btn_styles[] = 'transform: translateX(-50%)';
+                            break;
+                        case 'top-center':
+                            $btn_styles[] = 'width: ' . $button_size . 'px';
+                            $btn_styles[] = 'height: ' . $half_size . 'px';
+                            $btn_styles[] = 'border-radius: 0 0 ' . $button_size . 'px ' . $button_size . 'px';
+                            $btn_styles[] = 'top: 0';
+                            $btn_styles[] = 'left: 50%';
+                            $btn_styles[] = 'transform: translateX(-50%)';
+                            break;
+                        case 'middle-left':
+                            $btn_styles[] = 'width: ' . $half_size . 'px';
+                            $btn_styles[] = 'height: ' . $button_size . 'px';
+                            $btn_styles[] = 'border-radius: 0 ' . $button_size . 'px ' . $button_size . 'px 0';
+                            $btn_styles[] = 'top: 50%';
+                            $btn_styles[] = 'left: 0';
+                            $btn_styles[] = 'transform: translateY(-50%)';
+                            break;
+                        case 'middle-right':
+                            $btn_styles[] = 'width: ' . $half_size . 'px';
+                            $btn_styles[] = 'height: ' . $button_size . 'px';
+                            $btn_styles[] = 'border-radius: ' . $button_size . 'px 0 0 ' . $button_size . 'px';
+                            $btn_styles[] = 'top: 50%';
+                            $btn_styles[] = 'right: 0';
+                            $btn_styles[] = 'transform: translateY(-50%)';
+                            break;
+                    }
+                }
+            } else {
+                // Bouton séparé
+                $radius_unit = ( 'percent' === $button_border_radius_unit ) ? '%' : 'px';
+                $btn_styles[] = 'width: ' . $button_size . 'px';
+                $btn_styles[] = 'height: ' . $button_size . 'px';
+                $btn_styles[] = 'border-radius: ' . $button_border_radius . $radius_unit;
+                $btn_styles[] = 'box-shadow: 0 4px 12px rgba(0,0,0,0.15)';
+
+                switch ( $button_position ) {
+                    case 'bottom-right':
+                        $btn_styles[] = 'bottom: ' . $button_margin . 'px';
+                        $btn_styles[] = 'right: ' . $button_margin . 'px';
+                        break;
+                    case 'bottom-left':
+                        $btn_styles[] = 'bottom: ' . $button_margin . 'px';
+                        $btn_styles[] = 'left: ' . $button_margin . 'px';
+                        break;
+                    case 'top-right':
+                        $btn_styles[] = 'top: ' . $button_margin . 'px';
+                        $btn_styles[] = 'right: ' . $button_margin . 'px';
+                        break;
+                    case 'top-left':
+                        $btn_styles[] = 'top: ' . $button_margin . 'px';
+                        $btn_styles[] = 'left: ' . $button_margin . 'px';
+                        break;
+                    case 'bottom-center':
+                        $btn_styles[] = 'bottom: ' . $button_margin . 'px';
+                        $btn_styles[] = 'left: 50%';
+                        $btn_styles[] = 'transform: translateX(-50%)';
+                        break;
+                    case 'top-center':
+                        $btn_styles[] = 'top: ' . $button_margin . 'px';
+                        $btn_styles[] = 'left: 50%';
+                        $btn_styles[] = 'transform: translateX(-50%)';
+                        break;
+                    case 'middle-left':
+                        $btn_styles[] = 'top: 50%';
+                        $btn_styles[] = 'left: ' . $button_margin . 'px';
+                        $btn_styles[] = 'transform: translateY(-50%)';
+                        break;
+                    case 'middle-right':
+                        $btn_styles[] = 'top: 50%';
+                        $btn_styles[] = 'right: ' . $button_margin . 'px';
+                        $btn_styles[] = 'transform: translateY(-50%)';
+                        break;
+                }
+            }
+
+            $btn_class = 'wpvfh-corner-btn';
+            $btn_class .= ' wpvfh-btn-' . esc_attr( $button_style );
+            if ( 'attached' === $button_style ) {
+                $btn_class .= ' wpvfh-btn-' . esc_attr( $button_shape );
+            }
+            ?>
+            <button
+                type="button"
+                id="wpvfh-toggle-btn"
+                class="<?php echo esc_attr( $btn_class ); ?>"
+                data-position="<?php echo esc_attr( $button_position ); ?>"
+                data-style="<?php echo esc_attr( $button_style ); ?>"
+                aria-expanded="false"
+                aria-controls="wpvfh-panel"
+                title="<?php esc_attr_e( 'Voir les feedbacks', 'blazing-feedback' ); ?>"
+                style="<?php echo esc_attr( implode( '; ', $btn_styles ) ); ?>"
+            >
+                <span class="wpvfh-corner-icon-wrapper">
+                    <span class="wpvfh-corner-icon" aria-hidden="true">
+                        <?php if ( $icon_mode === 'image' && ! empty( $icon_image_url ) ) : ?>
+                            <img src="<?php echo esc_url( $icon_image_url ); ?>" alt="">
+                        <?php else : ?>
+                            <?php echo esc_html( $icon_emoji ); ?>
+                        <?php endif; ?>
+                    </span>
+                    <span class="wpvfh-corner-count" id="wpvfh-feedback-count" hidden></span>
+                </span>
+            </button>
+
+            <!-- Sidebar de feedback -->
+            <div id="wpvfh-panel" class="wpvfh-panel" data-panel-position="<?php echo esc_attr( $panel_position ); ?>" hidden aria-hidden="true">
+                <div class="wpvfh-panel-header">
+                    <?php
+                    $logo_mode = get_option( 'wpvfh_logo_mode', 'none' );
+                    $logo_url = '';
+                    if ( $logo_mode === 'light' ) {
+                        $logo_url = WPVFH_PLUGIN_URL . 'assets/logo/light-mode-feedback.png';
+                    } elseif ( $logo_mode === 'dark' ) {
+                        $logo_url = WPVFH_PLUGIN_URL . 'assets/logo/dark-mode-feedback.png';
+                    } elseif ( $logo_mode === 'custom' ) {
+                        $logo_url = get_option( 'wpvfh_logo_custom_url', '' );
+                    }
+                    if ( $logo_mode !== 'none' && $logo_url ) : ?>
+                    <img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php esc_attr_e( 'Blazing Feedback', 'blazing-feedback' ); ?>" class="wpvfh-panel-logo">
+                    <?php else : ?>
+                    <h3 class="wpvfh-panel-title"><?php esc_html_e( 'Feedbacks', 'blazing-feedback' ); ?></h3>
+                    <?php endif; ?>
+                    <div class="wpvfh-header-actions">
+                        <button type="button" class="wpvfh-search-btn" id="wpvfh-search-btn" aria-label="<?php esc_attr_e( 'Rechercher', 'blazing-feedback' ); ?>" title="<?php esc_attr_e( 'Rechercher un feedback', 'blazing-feedback' ); ?>">
+                            <span aria-hidden="true">🔍</span>
+                        </button>
+                        <button type="button" class="wpvfh-close-btn" aria-label="<?php esc_attr_e( 'Fermer', 'blazing-feedback' ); ?>">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Onglets -->
+                <div class="wpvfh-tabs">
+                    <button type="button" class="wpvfh-tab" data-tab="new" id="wpvfh-tab-new-btn" hidden>
+                        <span class="wpvfh-tab-icon" aria-hidden="true">➕</span>
+                        <?php esc_html_e( 'Nouveau', 'blazing-feedback' ); ?>
+                    </button>
+                    <button type="button" class="wpvfh-tab active" data-tab="list">
+                        <span class="wpvfh-tab-icon" aria-hidden="true">📋</span>
+                        <?php esc_html_e( 'Liste', 'blazing-feedback' ); ?>
+                        <span class="wpvfh-tab-count" id="wpvfh-pins-count"></span>
+                    </button>
+                    <button type="button" class="wpvfh-tab" data-tab="pages">
+                        <span class="wpvfh-tab-icon" aria-hidden="true">📄</span>
+                        <?php esc_html_e( 'Pages', 'blazing-feedback' ); ?>
+                    </button>
+                    <button type="button" class="wpvfh-tab" data-tab="metadata">
+                        <span class="wpvfh-tab-icon" aria-hidden="true">🏷️</span>
+                        <?php esc_html_e( 'Métadatas', 'blazing-feedback' ); ?>
+                    </button>
+                    <button type="button" class="wpvfh-tab" data-tab="details" id="wpvfh-tab-details-btn" hidden>
+                        <span class="wpvfh-tab-icon" aria-hidden="true">👁️</span>
+                        <?php esc_html_e( 'Détails', 'blazing-feedback' ); ?>
+                    </button>
+                </div>
+
+                <div class="wpvfh-panel-body">
+                    <!-- Onglet: Nouveau feedback -->
+                    <div id="wpvfh-tab-new" class="wpvfh-tab-content">
+                        <form id="wpvfh-form" class="wpvfh-form">
+                        <!-- Zone de texte principale -->
+                        <div class="wpvfh-form-group">
+                            <textarea
+                                id="wpvfh-comment"
+                                name="comment"
+                                class="wpvfh-textarea"
+                                rows="3"
+                                required
+                                placeholder="<?php esc_attr_e( 'Décrivez votre feedback...', 'blazing-feedback' ); ?>"
+                            ></textarea>
+                        </div>
+
+                        <!-- Section ciblage d'élément (optionnel) -->
+                        <div class="wpvfh-target-section">
+                            <button type="button" id="wpvfh-select-element-btn" class="wpvfh-select-element-btn">
+                                <span class="wpvfh-btn-emoji">🎯</span>
+                                <span><?php esc_html_e( 'Cibler un élément', 'blazing-feedback' ); ?></span>
+                                <span class="wpvfh-optional-badge"><?php esc_html_e( 'optionnel', 'blazing-feedback' ); ?></span>
+                            </button>
+                            <div id="wpvfh-selected-element" class="wpvfh-selected-element" hidden>
+                                <span class="wpvfh-selected-icon">✓</span>
+                                <span class="wpvfh-selected-text"><?php esc_html_e( 'Élément sélectionné', 'blazing-feedback' ); ?></span>
+                                <button type="button" class="wpvfh-clear-selection" title="<?php esc_attr_e( 'Retirer la sélection', 'blazing-feedback' ); ?>">&times;</button>
+                            </div>
+                        </div>
+
+                        <!-- Barre d'outils média -->
+                        <div class="wpvfh-media-toolbar">
+                            <button type="button" class="wpvfh-tool-btn wpvfh-tool-screenshot" data-tool="screenshot" title="<?php esc_attr_e( 'Capture d\'écran', 'blazing-feedback' ); ?>">
+                                <span class="wpvfh-tool-emoji">📸</span>
+                                <span><?php esc_html_e( 'Capture', 'blazing-feedback' ); ?></span>
+                            </button>
+                            <button type="button" class="wpvfh-tool-btn wpvfh-tool-voice" data-tool="voice" title="<?php esc_attr_e( 'Message vocal', 'blazing-feedback' ); ?>">
+                                <span class="wpvfh-tool-emoji">🎤</span>
+                                <span><?php esc_html_e( 'Audio', 'blazing-feedback' ); ?></span>
+                            </button>
+                            <button type="button" class="wpvfh-tool-btn wpvfh-tool-video" data-tool="video" title="<?php esc_attr_e( 'Enregistrer l\'écran', 'blazing-feedback' ); ?>">
+                                <span class="wpvfh-tool-emoji">🎬</span>
+                                <span><?php esc_html_e( 'Vidéo', 'blazing-feedback' ); ?></span>
+                            </button>
+                        </div>
+
+                        <!-- Section enregistrement vocal -->
+                        <div id="wpvfh-voice-section" class="wpvfh-media-section" hidden>
+                            <div class="wpvfh-recorder-controls">
+                                <button type="button" id="wpvfh-voice-record" class="wpvfh-record-btn">
+                                    <span class="wpvfh-record-icon"></span>
+                                    <span class="wpvfh-record-text"><?php esc_html_e( 'Enregistrer', 'blazing-feedback' ); ?></span>
+                                </button>
+                                <div class="wpvfh-recorder-status">
+                                    <span class="wpvfh-recorder-time">0:00</span>
+                                    <span class="wpvfh-recorder-max">/ 2:00</span>
+                                </div>
+                            </div>
+                            <div id="wpvfh-voice-preview" class="wpvfh-audio-preview" hidden>
+                                <audio controls></audio>
+                                <button type="button" class="wpvfh-remove-media">&times;</button>
+                            </div>
+                            <div id="wpvfh-transcript-preview" class="wpvfh-transcript-preview" hidden>
+                                <label><?php esc_html_e( 'Transcription:', 'blazing-feedback' ); ?></label>
+                                <p class="wpvfh-transcript-text"></p>
+                            </div>
+                        </div>
+
+                        <!-- Section enregistrement vidéo -->
+                        <div id="wpvfh-video-section" class="wpvfh-media-section" hidden>
+                            <div class="wpvfh-recorder-controls">
+                                <button type="button" id="wpvfh-video-record" class="wpvfh-record-btn">
+                                    <span class="wpvfh-record-icon"></span>
+                                    <span class="wpvfh-record-text"><?php esc_html_e( 'Enregistrer l\'écran', 'blazing-feedback' ); ?></span>
+                                </button>
+                                <div class="wpvfh-recorder-status">
+                                    <span class="wpvfh-recorder-time">0:00</span>
+                                    <span class="wpvfh-recorder-max">/ 5:00</span>
+                                </div>
+                            </div>
+                            <div id="wpvfh-video-preview" class="wpvfh-video-preview" hidden>
+                                <video controls></video>
+                                <button type="button" class="wpvfh-remove-media">&times;</button>
+                            </div>
+                        </div>
+
+                        <!-- Aperçu capture d'écran -->
+                        <div id="wpvfh-screenshot-preview" class="wpvfh-screenshot-preview" hidden>
+                            <img src="" alt="<?php esc_attr_e( 'Aperçu de la capture', 'blazing-feedback' ); ?>">
+                            <button type="button" class="wpvfh-remove-media">&times;</button>
+                        </div>
+
+                        <!-- Section pièces jointes -->
+                        <div class="wpvfh-attachments-section">
+                            <label class="wpvfh-attachments-label">
+                                <span class="wpvfh-label-icon">📎</span>
+                                <?php esc_html_e( 'Pièces jointes', 'blazing-feedback' ); ?>
+                                <span class="wpvfh-optional-badge"><?php esc_html_e( 'optionnel', 'blazing-feedback' ); ?></span>
+                            </label>
+                            <div class="wpvfh-attachments-input">
+                                <input type="file" id="wpvfh-attachments" name="attachments" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt" hidden>
+                                <button type="button" id="wpvfh-add-attachment-btn" class="wpvfh-add-attachment-btn">
+                                    <span>➕</span>
+                                    <?php esc_html_e( 'Ajouter des fichiers', 'blazing-feedback' ); ?>
+                                </button>
+                            </div>
+                            <div id="wpvfh-attachments-preview" class="wpvfh-attachments-preview"></div>
+                            <p class="wpvfh-attachments-hint"><?php esc_html_e( 'Images, PDF, documents (max 5 fichiers, 10 Mo chacun)', 'blazing-feedback' ); ?></p>
+                        </div>
+
+                        <!-- Champs déroulants (Type, Priorité, Tags, Groupes personnalisés) -->
+                        <?php
+                        $feedback_types    = WPVFH_Options_Manager::get_types();
+                        $priorities        = WPVFH_Options_Manager::get_priorities();
+                        $predefined_tags   = WPVFH_Options_Manager::get_predefined_tags();
+                        $custom_groups     = WPVFH_Options_Manager::get_custom_groups();
+                        $types_settings    = WPVFH_Options_Manager::get_group_settings( 'types' );
+                        $priority_settings = WPVFH_Options_Manager::get_group_settings( 'priorities' );
+                        $tags_settings     = WPVFH_Options_Manager::get_group_settings( 'tags' );
+                        ?>
+                        <div class="wpvfh-form-dropdowns">
+                            <!-- Type de feedback -->
+                            <?php if ( $types_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'types' ) ) : ?>
+                            <div class="wpvfh-dropdown-group">
+                                <label for="wpvfh-feedback-type">
+                                    <span class="wpvfh-dropdown-icon">🏷️</span>
+                                    <?php esc_html_e( 'Type', 'blazing-feedback' ); ?>
+                                    <?php if ( $types_settings['required'] ) : ?>
+                                        <span class="wpvfh-required-badge">*</span>
+                                    <?php endif; ?>
+                                </label>
+                                <select id="wpvfh-feedback-type" name="feedback_type" class="wpvfh-dropdown" <?php echo $types_settings['required'] ? 'required' : ''; ?>>
+                                    <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
+                                    <?php foreach ( $feedback_types as $type ) : ?>
+                                        <?php if ( ! empty( $type['enabled'] ) ) : ?>
+                                        <option value="<?php echo esc_attr( $type['id'] ); ?>" data-color="<?php echo esc_attr( $type['color'] ); ?>">
+                                            <?php echo esc_html( $type['emoji'] . ' ' . $type['label'] ); ?>
+                                        </option>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <?php endif; ?>
+
+                            <!-- Niveau de priorité -->
+                            <?php if ( $priority_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'priorities' ) ) : ?>
+                            <div class="wpvfh-dropdown-group">
+                                <label for="wpvfh-feedback-priority">
+                                    <span class="wpvfh-dropdown-icon">⚡</span>
+                                    <?php esc_html_e( 'Priorité', 'blazing-feedback' ); ?>
+                                    <?php if ( $priority_settings['required'] ) : ?>
+                                        <span class="wpvfh-required-badge">*</span>
+                                    <?php endif; ?>
+                                </label>
+                                <select id="wpvfh-feedback-priority" name="feedback_priority" class="wpvfh-dropdown" <?php echo $priority_settings['required'] ? 'required' : ''; ?>>
+                                    <?php foreach ( $priorities as $index => $priority ) : ?>
+                                        <?php if ( ! empty( $priority['enabled'] ) ) : ?>
+                                        <option value="<?php echo esc_attr( $priority['id'] ); ?>" data-color="<?php echo esc_attr( $priority['color'] ); ?>" <?php selected( $index, 0 ); ?>>
+                                            <?php echo esc_html( $priority['emoji'] . ' ' . $priority['label'] ); ?>
+                                        </option>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <?php endif; ?>
+
+                            <!-- Tags -->
+                            <?php if ( $tags_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'tags' ) ) : ?>
+                            <div class="wpvfh-dropdown-group wpvfh-tags-group">
+                                <label for="wpvfh-feedback-tags-input">
+                                    <span class="wpvfh-dropdown-icon">🔖</span>
+                                    <?php esc_html_e( 'Tags', 'blazing-feedback' ); ?>
+                                    <?php if ( $tags_settings['required'] ) : ?>
+                                        <span class="wpvfh-required-badge">*</span>
+                                    <?php endif; ?>
+                                </label>
+                                <div class="wpvfh-tags-container" id="wpvfh-feedback-tags-container">
+                                    <?php if ( ! empty( $predefined_tags ) ) : ?>
+                                        <div class="wpvfh-predefined-tags" id="wpvfh-predefined-tags">
+                                            <?php foreach ( $predefined_tags as $tag ) : ?>
+                                                <?php if ( ! empty( $tag['enabled'] ) ) : ?>
+                                                <button type="button" class="wpvfh-predefined-tag-btn" data-tag="<?php echo esc_attr( $tag['label'] ); ?>" data-color="<?php echo esc_attr( $tag['color'] ); ?>">
+                                                    <?php echo esc_html( $tag['label'] ); ?>
+                                                </button>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <input type="text" id="wpvfh-feedback-tags-input" class="wpvfh-tags-input-inline" placeholder="<?php esc_attr_e( 'Ajouter...', 'blazing-feedback' ); ?>" <?php echo $tags_settings['required'] ? 'data-required="true"' : ''; ?>>
+                                </div>
+                                <input type="hidden" id="wpvfh-feedback-tags" name="feedback_tags" <?php echo $tags_settings['required'] ? 'required' : ''; ?>>
+                            </div>
+                            <?php endif; ?>
+
+                            <!-- Groupes personnalisés -->
+                            <?php foreach ( $custom_groups as $slug => $group ) :
+                                $group_settings = WPVFH_Options_Manager::get_group_settings( $slug );
+                                if ( ! $group_settings['enabled'] || ! WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
+                                    continue;
+                                }
+                                $group_items = WPVFH_Options_Manager::get_custom_group_items( $slug );
+                                if ( empty( $group_items ) ) {
+                                    continue;
+                                }
+                            ?>
+                            <div class="wpvfh-dropdown-group wpvfh-custom-group" data-group="<?php echo esc_attr( $slug ); ?>">
+                                <label for="wpvfh-custom-<?php echo esc_attr( $slug ); ?>">
+                                    <span class="wpvfh-dropdown-icon">📋</span>
+                                    <?php echo esc_html( $group['name'] ); ?>
+                                    <?php if ( $group_settings['required'] ) : ?>
+                                        <span class="wpvfh-required-badge">*</span>
+                                    <?php endif; ?>
+                                </label>
+                                <select id="wpvfh-custom-<?php echo esc_attr( $slug ); ?>" name="custom_<?php echo esc_attr( $slug ); ?>" class="wpvfh-dropdown wpvfh-custom-dropdown" <?php echo $group_settings['required'] ? 'required' : ''; ?>>
+                                    <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
+                                    <?php foreach ( $group_items as $item ) : ?>
+                                        <?php if ( ! empty( $item['enabled'] ) ) : ?>
+                                        <option value="<?php echo esc_attr( $item['id'] ); ?>" data-color="<?php echo esc_attr( $item['color'] ); ?>">
+                                            <?php echo esc_html( $item['emoji'] . ' ' . $item['label'] ); ?>
+                                        </option>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <!-- Info pin -->
+                        <div class="wpvfh-form-group wpvfh-pin-info" hidden>
+                            <p class="wpvfh-help-text">
+                                <span class="wpvfh-pin-icon" aria-hidden="true">📍</span>
+                                <?php esc_html_e( 'Position du marqueur enregistrée', 'blazing-feedback' ); ?>
+                            </p>
+                        </div>
+
+                        <!-- Champs cachés -->
+                        <input type="hidden" id="wpvfh-position-x" name="position_x" value="">
+                        <input type="hidden" id="wpvfh-position-y" name="position_y" value="">
+                        <input type="hidden" id="wpvfh-screenshot-data" name="screenshot_data" value="">
+                        <input type="hidden" id="wpvfh-audio-data" name="audio_data" value="">
+                        <input type="hidden" id="wpvfh-video-data" name="video_data" value="">
+                        <input type="hidden" id="wpvfh-transcript" name="transcript" value="">
+
+                        <!-- Actions -->
+                        <div class="wpvfh-form-actions">
+                            <button type="button" class="wpvfh-btn wpvfh-btn-secondary wpvfh-cancel-btn">
+                                <span class="wpvfh-btn-emoji">✕</span>
+                                <?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
+                            </button>
+                            <button type="submit" class="wpvfh-btn wpvfh-btn-primary wpvfh-submit-btn">
+                                <span class="wpvfh-btn-emoji">📨</span>
+                                <?php esc_html_e( 'Envoyer', 'blazing-feedback' ); ?>
+                            </button>
+                        </div>
+                    </form>
+                    </div><!-- /wpvfh-tab-new -->
+
+                    <!-- Onglet: Liste des feedbacks -->
+                    <div id="wpvfh-tab-list" class="wpvfh-tab-content active">
+                        <!-- Filtres par état -->
+                        <div class="wpvfh-legend" id="wpvfh-filters">
+                            <button type="button" class="wpvfh-filter-btn active" data-status="all">
+                                <?php esc_html_e( 'Tous', 'blazing-feedback' ); ?>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-all-count"><span>0</span></span>
+                            </button>
+                            <?php foreach ( WPVFH_Options_Manager::get_statuses() as $status ) : ?>
+                            <button type="button" class="wpvfh-filter-btn" data-status="<?php echo esc_attr( $status['id'] ); ?>">
+                                <?php echo esc_html( $status['label'] ); ?>
+                                <span class="wpvfh-filter-count" id="wpvfh-filter-<?php echo esc_attr( $status['id'] ); ?>-count"><span>0</span></span>
+                            </button>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <div id="wpvfh-pins-list" class="wpvfh-pins-list">
+                            <!-- Les pins seront chargés dynamiquement -->
+                        </div>
+                        <div id="wpvfh-empty-state" class="wpvfh-empty-state">
+                            <div class="wpvfh-empty-icon" aria-hidden="true">📭</div>
+                            <p class="wpvfh-empty-text"><?php esc_html_e( 'Aucun feedback pour cette page, cliquez sur Nouveau en bas de cette barre latérale', 'blazing-feedback' ); ?></p>
+                        </div>
+                        <!-- Section validation de page -->
+                        <div id="wpvfh-page-validation" class="wpvfh-page-validation" hidden>
+                            <div class="wpvfh-validation-status" id="wpvfh-validation-status">
+                                <span class="wpvfh-validation-icon">⏳</span>
+                                <span class="wpvfh-validation-text"><?php esc_html_e( 'Points en attente de résolution', 'blazing-feedback' ); ?></span>
+                            </div>
+                            <button type="button" id="wpvfh-validate-page-btn" class="wpvfh-btn wpvfh-btn-validate" disabled>
+                                <span class="wpvfh-btn-emoji">✅</span>
+                                <?php esc_html_e( 'Valider cette page', 'blazing-feedback' ); ?>
+                            </button>
+                            <p class="wpvfh-validation-hint" id="wpvfh-validation-hint">
+                                <?php esc_html_e( 'Tous les points doivent être résolus ou rejetés avant validation.', 'blazing-feedback' ); ?>
+                            </p>
+                        </div>
+
+                    </div><!-- /wpvfh-tab-list -->
+
+                    <!-- Onglet: Pages -->
+                    <div id="wpvfh-tab-pages" class="wpvfh-tab-content">
+                        <div class="wpvfh-pages-header">
+                            <h4><?php esc_html_e( 'Toutes les pages avec feedbacks', 'blazing-feedback' ); ?></h4>
+                        </div>
+                        <div id="wpvfh-pages-list" class="wpvfh-pages-list">
+                            <!-- Les pages seront chargées dynamiquement -->
+                        </div>
+                        <div id="wpvfh-pages-empty" class="wpvfh-empty-state" hidden>
+                            <div class="wpvfh-empty-icon" aria-hidden="true">📄</div>
+                            <p class="wpvfh-empty-text"><?php esc_html_e( 'Aucune page avec des feedbacks', 'blazing-feedback' ); ?></p>
+                        </div>
+                        <div id="wpvfh-pages-loading" class="wpvfh-loading-state">
+                            <span class="wpvfh-spinner"></span>
+                            <span><?php esc_html_e( 'Chargement des pages...', 'blazing-feedback' ); ?></span>
+                        </div>
+                    </div><!-- /wpvfh-tab-pages -->
+
+
+                    <!-- Onglet: Métadatas -->
+                    <div id="wpvfh-tab-metadata" class="wpvfh-tab-content">
+                        <!-- Sous-onglets pour les groupes de métadonnées -->
+                        <div class="wpvfh-subtabs" id="wpvfh-metadata-subtabs">
+                            <?php
+                            // Récupérer tous les groupes de métadonnées
+                            $metadata_groups = array();
+
+                            // Groupes standards
+                            $statuses_settings = WPVFH_Options_Manager::get_group_settings( 'statuses' );
+                            if ( $statuses_settings['enabled'] && $statuses_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'statuses' ) ) {
+                                $metadata_groups['statuses'] = array(
+                                    'slug' => 'statuses',
+                                    'name' => __( 'Statuts', 'blazing-feedback' ),
+                                    'icon' => '📊',
+                                    'items' => WPVFH_Options_Manager::get_statuses(),
+                                );
+                            }
+
+                            $types_settings = WPVFH_Options_Manager::get_group_settings( 'types' );
+                            if ( $types_settings['enabled'] && $types_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'types' ) ) {
+                                $metadata_groups['types'] = array(
+                                    'slug' => 'types',
+                                    'name' => __( 'Types', 'blazing-feedback' ),
+                                    'icon' => '🏷️',
+                                    'items' => WPVFH_Options_Manager::get_types(),
+                                );
+                            }
+
+                            $priorities_settings = WPVFH_Options_Manager::get_group_settings( 'priorities' );
+                            if ( $priorities_settings['enabled'] && $priorities_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'priorities' ) ) {
+                                $metadata_groups['priorities'] = array(
+                                    'slug' => 'priorities',
+                                    'name' => __( 'Priorités', 'blazing-feedback' ),
+                                    'icon' => '⚡',
+                                    'items' => WPVFH_Options_Manager::get_priorities(),
+                                );
+                            }
+
+                            $tags_settings = WPVFH_Options_Manager::get_group_settings( 'tags' );
+                            if ( $tags_settings['enabled'] && $tags_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'tags' ) ) {
+                                $metadata_groups['tags'] = array(
+                                    'slug' => 'tags',
+                                    'name' => __( 'Tags', 'blazing-feedback' ),
+                                    'icon' => '🔖',
+                                    'items' => WPVFH_Options_Manager::get_predefined_tags(),
+                                );
+                            }
+
+                            // Groupes personnalisés
+                            $custom_groups = WPVFH_Options_Manager::get_custom_groups();
+                            foreach ( $custom_groups as $slug => $group ) {
+                                $group_settings = WPVFH_Options_Manager::get_group_settings( $slug );
+                                if ( $group_settings['enabled'] && $group_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
+                                    $metadata_groups[ $slug ] = array(
+                                        'slug' => $slug,
+                                        'name' => $group['name'],
+                                        'icon' => '📋',
+                                        'items' => WPVFH_Options_Manager::get_custom_group_items( $slug ),
+                                    );
+                                }
+                            }
+
+                            $first = true;
+                            foreach ( $metadata_groups as $group_slug => $group ) :
+                            ?>
+                            <button type="button" class="wpvfh-subtab <?php echo $first ? 'active' : ''; ?>" data-subtab="<?php echo esc_attr( $group_slug ); ?>">
+                                <span class="wpvfh-subtab-icon"><?php echo esc_html( $group['icon'] ); ?></span>
+                                <span class="wpvfh-subtab-text"><?php echo esc_html( $group['name'] ); ?></span>
+                            </button>
+                            <?php
+                            $first = false;
+                            endforeach;
+                            ?>
+                        </div>
+
+                        <!-- Contenu des sous-onglets -->
+                        <div class="wpvfh-metadata-content">
+                            <?php
+                            $first = true;
+                            foreach ( $metadata_groups as $group_slug => $group ) :
+                                $items = $group['items'];
+                            ?>
+                            <div id="wpvfh-metadata-<?php echo esc_attr( $group_slug ); ?>" class="wpvfh-metadata-subtab-content <?php echo $first ? 'active' : ''; ?>" data-group="<?php echo esc_attr( $group_slug ); ?>">
+                                <!-- Zones de dépôt sticky -->
+                                <div class="wpvfh-metadata-dropzones" data-group="<?php echo esc_attr( $group_slug ); ?>">
+                                    <?php foreach ( $items as $item ) : ?>
+                                        <?php if ( ! empty( $item['enabled'] ) ) : ?>
+                                        <div class="wpvfh-dropzone wpvfh-dropzone-metadata" data-group="<?php echo esc_attr( $group_slug ); ?>" data-value="<?php echo esc_attr( $item['id'] ); ?>" style="--dropzone-color: <?php echo esc_attr( $item['color'] ?? '#6c757d' ); ?>;">
+                                            <span class="wpvfh-dropzone-label"><?php echo esc_html( ( $item['emoji'] ?? '' ) . ' ' . $item['label'] ); ?></span>
+                                        </div>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <!-- Listes par valeur -->
+                                <div class="wpvfh-metadata-sections" data-group="<?php echo esc_attr( $group_slug ); ?>">
+                                    <!-- Section "Non assigné" -->
+                                    <div class="wpvfh-metadata-section" data-group="<?php echo esc_attr( $group_slug ); ?>" data-value="none">
+                                        <h4 class="wpvfh-metadata-title">
+                                            ⚪ <?php printf( esc_html__( 'Sans %s', 'blazing-feedback' ), esc_html( strtolower( $group['name'] ) ) ); ?>
+                                        </h4>
+                                        <div class="wpvfh-metadata-list" id="wpvfh-metadata-<?php echo esc_attr( $group_slug ); ?>-none-list"></div>
+                                    </div>
+
+                                    <?php foreach ( $items as $item ) : ?>
+                                        <?php if ( ! empty( $item['enabled'] ) ) : ?>
+                                        <div class="wpvfh-metadata-section" data-group="<?php echo esc_attr( $group_slug ); ?>" data-value="<?php echo esc_attr( $item['id'] ); ?>">
+                                            <h4 class="wpvfh-metadata-title" style="--section-color: <?php echo esc_attr( $item['color'] ?? '#6c757d' ); ?>;">
+                                                <?php echo esc_html( ( $item['emoji'] ?? '' ) . ' ' . $item['label'] ); ?>
+                                            </h4>
+                                            <div class="wpvfh-metadata-list" id="wpvfh-metadata-<?php echo esc_attr( $group_slug ); ?>-<?php echo esc_attr( $item['id'] ); ?>-list"></div>
+                                        </div>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <?php
+                            $first = false;
+                            endforeach;
+                            ?>
+                        </div>
+                    </div><!-- /wpvfh-tab-metadata -->
+
+                    <!-- Onglet: Détails d'un feedback -->
+                    <div id="wpvfh-tab-details" class="wpvfh-tab-content">
+                        <div class="wpvfh-details-header-bar">
+                            <button type="button" class="wpvfh-back-btn" id="wpvfh-back-to-list">
+                                <span aria-hidden="true">←</span>
+                                <?php esc_html_e( 'Retour', 'blazing-feedback' ); ?>
+                            </button>
+                            <span class="wpvfh-feedback-id" id="wpvfh-detail-id"></span>
+                        </div>
+
+                        <div class="wpvfh-detail-content" id="wpvfh-detail-content">
+                            <!-- Statut -->
+                            <div class="wpvfh-detail-status" id="wpvfh-detail-status"></div>
+
+                            <!-- Auteur et date -->
+                            <div class="wpvfh-detail-meta">
+                                <div class="wpvfh-detail-author" id="wpvfh-detail-author"></div>
+                                <div class="wpvfh-detail-date" id="wpvfh-detail-date"></div>
+                            </div>
+
+                            <!-- Étiquettes (Type, Priorité) -->
+                            <div class="wpvfh-detail-labels" id="wpvfh-detail-labels">
+                                <div class="wpvfh-label-item wpvfh-label-type" id="wpvfh-detail-type-label" hidden>
+                                    <span class="wpvfh-label-icon"></span>
+                                    <span class="wpvfh-label-text"></span>
+                                </div>
+                                <div class="wpvfh-label-item wpvfh-label-priority" id="wpvfh-detail-priority-label" hidden>
+                                    <span class="wpvfh-label-icon"></span>
+                                    <span class="wpvfh-label-text"></span>
+                                </div>
+                            </div>
+
+                            <!-- Champs éditables (Type, Priorité, Groupes personnalisés) -->
+                            <div class="wpvfh-detail-dropdowns" id="wpvfh-detail-dropdowns">
+                                <?php if ( $types_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'types' ) ) : ?>
+                                <div class="wpvfh-dropdown-group">
+                                    <label for="wpvfh-detail-type">
+                                        <span class="wpvfh-dropdown-icon">🏷️</span>
+                                        <?php esc_html_e( 'Type', 'blazing-feedback' ); ?>
+                                    </label>
+                                    <select id="wpvfh-detail-type" class="wpvfh-dropdown">
+                                        <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
+                                        <?php foreach ( $feedback_types as $type ) : ?>
+                                            <?php if ( ! empty( $type['enabled'] ) ) : ?>
+                                            <option value="<?php echo esc_attr( $type['id'] ); ?>" data-color="<?php echo esc_attr( $type['color'] ); ?>">
+                                                <?php echo esc_html( $type['emoji'] . ' ' . $type['label'] ); ?>
+                                            </option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <?php endif; ?>
+                                <?php if ( $priority_settings['enabled'] && WPVFH_Options_Manager::user_can_access_group( 'priorities' ) ) : ?>
+                                <div class="wpvfh-dropdown-group">
+                                    <label for="wpvfh-detail-priority-select">
+                                        <span class="wpvfh-dropdown-icon">⚡</span>
+                                        <?php esc_html_e( 'Priorité', 'blazing-feedback' ); ?>
+                                    </label>
+                                    <select id="wpvfh-detail-priority-select" class="wpvfh-dropdown">
+                                        <?php foreach ( $priorities as $priority ) : ?>
+                                            <?php if ( ! empty( $priority['enabled'] ) ) : ?>
+                                            <option value="<?php echo esc_attr( $priority['id'] ); ?>" data-color="<?php echo esc_attr( $priority['color'] ); ?>">
+                                                <?php echo esc_html( $priority['emoji'] . ' ' . $priority['label'] ); ?>
+                                            </option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <?php endif; ?>
+                                <!-- Groupes personnalisés dans les détails -->
+                                <?php foreach ( $custom_groups as $slug => $group ) :
+                                    $group_settings = WPVFH_Options_Manager::get_group_settings( $slug );
+                                    if ( ! $group_settings['enabled'] || ! WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
+                                        continue;
+                                    }
+                                    $group_items = WPVFH_Options_Manager::get_custom_group_items( $slug );
+                                    if ( empty( $group_items ) ) {
+                                        continue;
+                                    }
+                                ?>
+                                <div class="wpvfh-dropdown-group wpvfh-custom-group" data-group="<?php echo esc_attr( $slug ); ?>">
+                                    <label for="wpvfh-detail-custom-<?php echo esc_attr( $slug ); ?>">
+                                        <span class="wpvfh-dropdown-icon">📋</span>
+                                        <?php echo esc_html( $group['name'] ); ?>
+                                    </label>
+                                    <select id="wpvfh-detail-custom-<?php echo esc_attr( $slug ); ?>" class="wpvfh-dropdown wpvfh-detail-custom-dropdown" data-group="<?php echo esc_attr( $slug ); ?>">
+                                        <option value=""><?php esc_html_e( '-- Sélectionner --', 'blazing-feedback' ); ?></option>
+                                        <?php foreach ( $group_items as $item ) : ?>
+                                            <?php if ( ! empty( $item['enabled'] ) ) : ?>
+                                            <option value="<?php echo esc_attr( $item['id'] ); ?>" data-color="<?php echo esc_attr( $item['color'] ); ?>">
+                                                <?php echo esc_html( $item['emoji'] . ' ' . $item['label'] ); ?>
+                                            </option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <!-- Commentaire -->
+                            <div class="wpvfh-detail-comment" id="wpvfh-detail-comment"></div>
+
+                            <!-- Pièces jointes -->
+                            <div class="wpvfh-detail-attachments" id="wpvfh-detail-attachments" hidden>
+                                <h4><?php esc_html_e( 'Pièces jointes', 'blazing-feedback' ); ?></h4>
+                                <div class="wpvfh-attachments-list" id="wpvfh-attachments-list"></div>
+                            </div>
+
+                            <!-- Tags -->
+                            <div class="wpvfh-detail-tags-section" id="wpvfh-detail-tags-section">
+                                <h4>
+                                    <span class="wpvfh-dropdown-icon">🔖</span>
+                                    <?php esc_html_e( 'Tags', 'blazing-feedback' ); ?>
+                                </h4>
+                                <div class="wpvfh-tags-container" id="wpvfh-detail-tags-container">
+                                    <input type="text" id="wpvfh-detail-tags-input" class="wpvfh-tags-input-inline" placeholder="<?php esc_attr_e( 'Ajouter un tag...', 'blazing-feedback' ); ?>">
+                                </div>
+                            </div>
+
+                            <!-- Screenshot -->
+                            <div class="wpvfh-detail-screenshot" id="wpvfh-detail-screenshot" hidden>
+                                <img src="" alt="<?php esc_attr_e( 'Screenshot', 'blazing-feedback' ); ?>">
+                            </div>
+
+                            <!-- Réponses -->
+                            <div class="wpvfh-detail-replies" id="wpvfh-detail-replies" hidden>
+                                <h4><?php esc_html_e( 'Réponses', 'blazing-feedback' ); ?></h4>
+                                <div class="wpvfh-replies-list" id="wpvfh-replies-list"></div>
+                            </div>
+
+                            <!-- Inviter des utilisateurs -->
+                            <div class="wpvfh-invite-section" id="wpvfh-invite-section">
+                                <h4><?php esc_html_e( 'Participants', 'blazing-feedback' ); ?></h4>
+                                <div class="wpvfh-participants-list" id="wpvfh-participants-list">
+                                    <!-- Liste des participants -->
+                                </div>
+                                <div class="wpvfh-invite-input-wrapper">
+                                    <input type="text" id="wpvfh-invite-input" class="wpvfh-invite-input" placeholder="<?php esc_attr_e( 'Rechercher un utilisateur...', 'blazing-feedback' ); ?>">
+                                    <button type="button" id="wpvfh-invite-btn" class="wpvfh-btn wpvfh-btn-small">
+                                        <span>➕</span>
+                                        <?php esc_html_e( 'Inviter', 'blazing-feedback' ); ?>
+                                    </button>
+                                </div>
+                                <div id="wpvfh-user-suggestions" class="wpvfh-user-suggestions" hidden></div>
+                            </div>
+
+                            <!-- Actions modérateur -->
+                            <div class="wpvfh-detail-actions" id="wpvfh-detail-actions" hidden>
+                                <div class="wpvfh-status-change">
+                                    <label for="wpvfh-status-select"><?php esc_html_e( 'Statut:', 'blazing-feedback' ); ?></label>
+                                    <select id="wpvfh-status-select" class="wpvfh-status-select">
+                                        <?php foreach ( WPVFH_Options_Manager::get_statuses() as $status ) : ?>
+                                            <option value="<?php echo esc_attr( $status['id'] ); ?>">
+                                                <?php echo esc_html( $status['emoji'] . ' ' . $status['label'] ); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="wpvfh-reply-section">
+                                    <label for="wpvfh-reply-input"><?php esc_html_e( 'Ajouter une réponse:', 'blazing-feedback' ); ?></label>
+                                    <textarea id="wpvfh-reply-input" class="wpvfh-textarea" rows="2" placeholder="<?php esc_attr_e( 'Votre réponse...', 'blazing-feedback' ); ?>"></textarea>
+                                    <button type="button" class="wpvfh-btn wpvfh-btn-primary" id="wpvfh-send-reply">
+                                        <span class="wpvfh-btn-emoji">📨</span>
+                                        <?php esc_html_e( 'Envoyer', 'blazing-feedback' ); ?>
+                                    </button>
+                                </div>
+
+                                <!-- Bouton supprimer (visible pour créateur/admin) -->
+                                <div class="wpvfh-delete-section" id="wpvfh-delete-section" hidden>
+                                    <hr class="wpvfh-separator">
+                                    <button type="button" class="wpvfh-btn wpvfh-btn-danger" id="wpvfh-delete-feedback-btn">
+                                        <span class="wpvfh-btn-emoji">🗑️</span>
+                                        <?php esc_html_e( 'Supprimer ce feedback', 'blazing-feedback' ); ?>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /wpvfh-tab-details -->
+                </div>
+
+                <!-- Footer de la sidebar avec boutons d'action -->
+                <div class="wpvfh-panel-footer">
+                    <button
+                        type="button"
+                        id="wpvfh-add-btn"
+                        class="wpvfh-footer-btn wpvfh-footer-btn-add"
+                        title="<?php esc_attr_e( 'Ajouter un feedback', 'blazing-feedback' ); ?>"
+                    >
+                        <span class="wpvfh-footer-btn-icon" aria-hidden="true">➕</span>
+                        <span class="wpvfh-footer-btn-text"><?php esc_html_e( 'Nouveau', 'blazing-feedback' ); ?></span>
+                    </button>
+                    <button
+                        type="button"
+                        id="wpvfh-visibility-btn"
+                        class="wpvfh-footer-btn wpvfh-footer-btn-visibility"
+                        title="<?php esc_attr_e( 'Afficher/masquer les points', 'blazing-feedback' ); ?>"
+                        data-visible="true"
+                    >
+                        <span class="wpvfh-footer-btn-icon wpvfh-icon-visible" aria-hidden="true">👁️</span>
+                        <span class="wpvfh-footer-btn-icon wpvfh-icon-hidden" aria-hidden="true" hidden>🙈</span>
+                        <span class="wpvfh-footer-btn-text"><?php esc_html_e( 'Pins', 'blazing-feedback' ); ?></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Conteneur pour les pins existants -->
+            <div id="wpvfh-pins-container" class="wpvfh-pins-container" aria-live="polite"></div>
+
+            <!-- Overlay mode annotation -->
+            <div id="wpvfh-annotation-overlay" class="wpvfh-annotation-overlay" hidden>
+                <div class="wpvfh-annotation-hint">
+                    <span class="wpvfh-hint-icon" aria-hidden="true">👆</span>
+                    <span class="wpvfh-hint-text"><?php esc_html_e( 'Cliquez pour placer un marqueur', 'blazing-feedback' ); ?></span>
+                    <button type="button" class="wpvfh-hint-close"><?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?></button>
+                </div>
+            </div>
+
+            <!-- Messages de notification -->
+            <div id="wpvfh-notifications" class="wpvfh-notifications" aria-live="assertive"></div>
+
+            <!-- Dropdown suggestions mentions @ -->
+            <div id="wpvfh-mention-dropdown" class="wpvfh-mention-dropdown" hidden>
+                <div class="wpvfh-mention-list" id="wpvfh-mention-list">
+                    <!-- Utilisateurs suggérés chargés dynamiquement -->
+                </div>
+            </div>
+
+            <!-- Modal confirmation suppression -->
+            <div id="wpvfh-confirm-modal" class="wpvfh-modal" hidden>
+                <div class="wpvfh-modal-overlay"></div>
+                <div class="wpvfh-modal-content">
+                    <div class="wpvfh-modal-body">
+                        <h3 class="wpvfh-modal-title"><?php esc_html_e( 'Confirmer la suppression', 'blazing-feedback' ); ?></h3>
+                        <p class="wpvfh-modal-text"><?php esc_html_e( 'Êtes-vous sûr de vouloir supprimer ce feedback ? Cette action est irréversible.', 'blazing-feedback' ); ?></p>
+                        <div class="wpvfh-modal-actions">
+                            <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-cancel-delete">
+                                <?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
+                            </button>
+                            <button type="button" class="wpvfh-btn wpvfh-btn-danger" id="wpvfh-confirm-delete">
+                                <?php esc_html_e( 'Supprimer', 'blazing-feedback' ); ?>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal validation page -->
+            <div id="wpvfh-validate-modal" class="wpvfh-modal" hidden>
+                <div class="wpvfh-modal-overlay"></div>
+                <div class="wpvfh-modal-content">
+                    <div class="wpvfh-modal-body">
+                        <div class="wpvfh-modal-icon">✅</div>
+                        <h3 class="wpvfh-modal-title"><?php esc_html_e( 'Valider cette page', 'blazing-feedback' ); ?></h3>
+                        <p class="wpvfh-modal-text"><?php esc_html_e( 'En validant cette page, vous confirmez que tous les feedbacks ont été traités. Cette page sera marquée comme terminée.', 'blazing-feedback' ); ?></p>
+                        <div class="wpvfh-modal-actions">
+                            <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-cancel-validate">
+                                <?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
+                            </button>
+                            <button type="button" class="wpvfh-btn wpvfh-btn-success" id="wpvfh-confirm-validate">
+                                <?php esc_html_e( 'Valider', 'blazing-feedback' ); ?>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de recherche -->
+            <div id="wpvfh-search-modal" class="wpvfh-modal wpvfh-search-modal" hidden>
+                <div class="wpvfh-modal-overlay"></div>
+                <div class="wpvfh-modal-content wpvfh-search-content">
+                    <div class="wpvfh-search-header">
+                        <h3 class="wpvfh-modal-title">🔍 <?php esc_html_e( 'Rechercher un feedback', 'blazing-feedback' ); ?></h3>
+                        <button type="button" class="wpvfh-search-close" id="wpvfh-search-close">&times;</button>
+                    </div>
+                    <form id="wpvfh-search-form" class="wpvfh-search-form">
+                        <!-- Recherche par ID -->
+                        <div class="wpvfh-search-group">
+                            <label for="wpvfh-search-id"><?php esc_html_e( 'Numéro du feedback', 'blazing-feedback' ); ?></label>
+                            <input type="number" id="wpvfh-search-id" placeholder="<?php esc_attr_e( 'Ex: 123', 'blazing-feedback' ); ?>" min="1">
+                        </div>
+
+                        <!-- Recherche par texte -->
+                        <div class="wpvfh-search-group">
+                            <label for="wpvfh-search-text"><?php esc_html_e( 'Contenu du commentaire', 'blazing-feedback' ); ?></label>
+                            <input type="text" id="wpvfh-search-text" placeholder="<?php esc_attr_e( 'Rechercher dans le texte...', 'blazing-feedback' ); ?>">
+                        </div>
+
+                        <!-- Filtres sur une ligne -->
+                        <div class="wpvfh-search-filters">
+                            <!-- Statut -->
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-status"><?php esc_html_e( 'Statut', 'blazing-feedback' ); ?></label>
+                                <select id="wpvfh-search-status">
+                                    <option value=""><?php esc_html_e( 'Tous', 'blazing-feedback' ); ?></option>
+                                    <option value="new"><?php esc_html_e( 'Nouveau', 'blazing-feedback' ); ?></option>
+                                    <option value="in_progress"><?php esc_html_e( 'En cours', 'blazing-feedback' ); ?></option>
+                                    <option value="resolved"><?php esc_html_e( 'Résolu', 'blazing-feedback' ); ?></option>
+                                    <option value="rejected"><?php esc_html_e( 'Rejeté', 'blazing-feedback' ); ?></option>
+                                </select>
+                            </div>
+
+                            <!-- Priorité -->
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-priority"><?php esc_html_e( 'Priorité', 'blazing-feedback' ); ?></label>
+                                <select id="wpvfh-search-priority">
+                                    <option value=""><?php esc_html_e( 'Toutes', 'blazing-feedback' ); ?></option>
+                                    <option value="high"><?php esc_html_e( 'Haute', 'blazing-feedback' ); ?></option>
+                                    <option value="medium"><?php esc_html_e( 'Moyenne', 'blazing-feedback' ); ?></option>
+                                    <option value="low"><?php esc_html_e( 'Basse', 'blazing-feedback' ); ?></option>
+                                    <option value="none"><?php esc_html_e( 'Aucune', 'blazing-feedback' ); ?></option>
+                                </select>
+                            </div>
+
+                            <!-- Auteur -->
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-author"><?php esc_html_e( 'Auteur', 'blazing-feedback' ); ?></label>
+                                <input type="text" id="wpvfh-search-author" placeholder="<?php esc_attr_e( 'Nom...', 'blazing-feedback' ); ?>">
+                            </div>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="wpvfh-search-dates">
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-date-from"><?php esc_html_e( 'Du', 'blazing-feedback' ); ?></label>
+                                <input type="date" id="wpvfh-search-date-from">
+                            </div>
+                            <div class="wpvfh-search-group wpvfh-search-filter">
+                                <label for="wpvfh-search-date-to"><?php esc_html_e( 'Au', 'blazing-feedback' ); ?></label>
+                                <input type="date" id="wpvfh-search-date-to">
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="wpvfh-search-actions">
+                            <button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-search-reset">
+                                <?php esc_html_e( 'Réinitialiser', 'blazing-feedback' ); ?>
+                            </button>
+                            <button type="submit" class="wpvfh-btn wpvfh-btn-primary">
+                                <?php esc_html_e( 'Rechercher', 'blazing-feedback' ); ?>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Résultats -->
+                    <div id="wpvfh-search-results" class="wpvfh-search-results" hidden>
+                        <div class="wpvfh-search-results-header">
+                            <span id="wpvfh-search-results-count"></span>
+                        </div>
+                        <div id="wpvfh-search-results-list" class="wpvfh-search-results-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Notice pour version PHP insuffisante
+     *
+     * @since 1.0.0
+     * @return void
+     */
+    public function php_version_notice() {
+        ?>
+        <div class="notice notice-error">
+            <p>
+                <?php
+                printf(
+                    /* translators: %s: version PHP minimale requise */
+                    esc_html__( 'WP Visual Feedback Hub nécessite PHP %s ou supérieur. Veuillez mettre à jour votre version de PHP.', 'blazing-feedback' ),
+                    WPVFH_MINIMUM_PHP_VERSION
+                );
+                ?>
+            </p>
+        </div>
+        <?php

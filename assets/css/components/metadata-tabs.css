@@ -1,0 +1,1157 @@
+/**
+ * Onglets priorité, métadonnées, search modal
+ * 
+ * Reference file for feedback.css lines 4061-5200
+ * See main file: assets/css/feedback.css
+ * 
+ * @package Blazing_Feedback
+ */
+
+/* 
+ * This section includes:
+ * - Start: Onglet Priorité
+ * - End: End of file
+ * - Lines: 4061 to 5200 (~1140 lines)
+ * 
+ * To view this section, read feedback.css with:
+ * offset=4061, limit=1140
+ */
+    background: linear-gradient(135deg, #c0392b 0%, #a93226 100%) !important;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4) !important;
+}
+
+/* ==========================================================================
+   Section Invitations / Participants
+   ========================================================================== */
+
+.wpvfh-invite-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
+}
+
+.wpvfh-invite-section h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: #495057;
+}
+
+.wpvfh-participants-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.wpvfh-participant {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.wpvfh-participant-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 600;
+    font-size: 10px;
+}
+
+.wpvfh-participant-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.wpvfh-participant-remove {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #adb5bd;
+    font-size: 12px;
+    margin-left: 2px;
+}
+
+.wpvfh-participant-remove:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.wpvfh-invite-input-wrapper {
+    display: flex;
+    gap: 8px;
+}
+
+.wpvfh-invite-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.wpvfh-invite-input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.wpvfh-btn-small {
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+}
+
+.wpvfh-user-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    margin-top: 4px;
+}
+
+.wpvfh-user-suggestion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.wpvfh-user-suggestion:hover {
+    background: #f8f9fa;
+}
+
+/* ==========================================================================
+   Dropdown Mentions
+   ========================================================================== */
+
+.wpvfh-mention-dropdown {
+    position: fixed;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    z-index: 2147483647;
+    min-width: 280px;
+}
+
+.wpvfh-mention-list {
+    padding: 8px 0;
+}
+
+.wpvfh-mention-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.wpvfh-mention-item:hover,
+.wpvfh-mention-item.active {
+    background: #f8f9fa;
+}
+
+.wpvfh-mention-info {
+    flex: 1;
+    min-width: 0;
+}
+
+/* ==========================================================================
+   Section Validation de Page (dans le panel)
+   ========================================================================== */
+
+.wpvfh-page-validation {
+    padding: 16px;
+    background: var(--wpvfh-bg-light);
+    border: 1px solid var(--wpvfh-border);
+    margin-top: 16px;
+    border-radius: 5px;
+}
+
+.wpvfh-page-validation .wpvfh-validation-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.05) 100%);
+    border: 2px solid rgba(243, 156, 18, 0.3);
+    justify-content: center;
+}
+
+.wpvfh-page-validation.ready .wpvfh-validation-status {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%);
+    border-color: rgba(52, 152, 219, 0.3);
+}
+
+.wpvfh-page-validation.validated .wpvfh-validation-status {
+    background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%);
+    border-color: rgba(39, 174, 96, 0.3);
+}
+
+.wpvfh-validation-hint {
+    font-size: 11px;
+    color: #95a5a6;
+    text-align: center;
+    margin: 8px 0 0 0;
+}
+
+/* Bouton Valider la page - NUCLEAR */
+.wpvfh-btn-validate,
+.wpvfh-container .wpvfh-btn-validate,
+.wpvfh-panel .wpvfh-btn-validate,
+html body .wpvfh-btn-validate,
+html body.elementor-page .wpvfh-btn-validate,
+html body.elementor-default .wpvfh-btn-validate,
+.elementor .wpvfh-btn-validate,
+button.wpvfh-btn-validate {
+    all: revert !important;
+    width: 100% !important;
+    padding: 14px 20px !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    line-height: 1.4 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+}
+
+.wpvfh-btn-validate:not(:disabled),
+.wpvfh-container .wpvfh-btn-validate:not(:disabled),
+.wpvfh-panel .wpvfh-btn-validate:not(:disabled),
+html body .wpvfh-btn-validate:not(:disabled),
+html body.elementor-page .wpvfh-btn-validate:not(:disabled),
+html body.elementor-default .wpvfh-btn-validate:not(:disabled),
+.elementor .wpvfh-btn-validate:not(:disabled),
+button.wpvfh-btn-validate:not(:disabled) {
+    background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
+    background-color: #27ae60 !important;
+    background-image: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3) !important;
+}
+
+.wpvfh-btn-validate:not(:disabled):hover,
+.wpvfh-container .wpvfh-btn-validate:not(:disabled):hover,
+html body .wpvfh-btn-validate:not(:disabled):hover,
+.elementor .wpvfh-btn-validate:not(:disabled):hover,
+button.wpvfh-btn-validate:not(:disabled):hover {
+    background: linear-gradient(135deg, #1e8449 0%, #196f3d 100%) !important;
+    background-color: #1e8449 !important;
+    background-image: linear-gradient(135deg, #1e8449 0%, #196f3d 100%) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4) !important;
+}
+
+button#wpvfh-validate-page-btn {
+    width: 100% !important;
+}
+
+/* ==========================================================================
+   Pièces jointes - Form Section
+   ========================================================================== */
+
+.wpvfh-attachments-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    justify-content: center;
+}
+
+.wpvfh-attachments-label .wpvfh-label-icon {
+    font-size: 16px;
+}
+
+.wpvfh-attachments-label .wpvfh-optional-badge {
+    background: #e9ecef;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+/* Badge champ requis */
+.wpvfh-required-badge {
+    color: #e74c3c;
+    font-weight: 700;
+    margin-left: 2px;
+}
+
+.wpvfh-dropdown-group label .wpvfh-required-badge {
+    font-size: 14px;
+}
+
+.wpvfh-attachments-input {
+    margin-bottom: 8px;
+}
+
+.wpvfh-attachments-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.wpvfh-attachments-hint {
+    font-size: 11px;
+    color: #95a5a6;
+    margin: 8px 0 0 0;
+}
+
+.wpvfh-attachment-preview-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.wpvfh-attachment-preview-item .wpvfh-file-icon {
+    font-size: 18px;
+}
+
+.wpvfh-attachment-preview-item .wpvfh-file-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #2c3e50;
+}
+
+.wpvfh-attachment-preview-item .wpvfh-file-size {
+    color: #95a5a6;
+}
+
+.wpvfh-attachment-preview-item .wpvfh-remove-attachment {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #adb5bd;
+    font-size: 14px;
+}
+
+.wpvfh-attachment-preview-item .wpvfh-remove-attachment:hover {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+/* ==========================================================================
+   Mention hint dans le formulaire
+   ========================================================================== */
+
+.wpvfh-mention-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #95a5a6;
+    margin: 0;
+    padding: 8px 0;
+}
+
+.wpvfh-mention-hint .wpvfh-hint-icon {
+    font-size: 14px;
+}
+
+/* ==========================================================================
+   Section suppression dans les détails
+   ========================================================================== */
+
+.wpvfh-delete-section {
+    margin-top: 24px;
+}
+
+.wpvfh-separator {
+    border: none;
+    height: 1px;
+    background: #e9ecef;
+    margin: 0 0 16px 0;
+}
+
+/* ==========================================================================
+   Loading state pour les pages
+   ========================================================================== */
+
+.wpvfh-loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.wpvfh-loading-state .wpvfh-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #e9ecef;
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: wpvfh-spin 0.8s linear infinite;
+}
+
+/* ==========================================================================
+   Pages header
+   ========================================================================== */
+
+.wpvfh-pages-header {
+    margin-bottom: 16px;
+}
+
+.wpvfh-pages-header h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #495057;
+    margin: 0;
+}
+
+/* ==========================================================================
+   Onglet Priorité
+   ========================================================================== */
+
+.wpvfh-priority-dropzones {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    background: var(--wpvfh-bg-light);
+    border: 1px solid var(--wpvfh-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-radius: 5px;
+}
+
+.wpvfh-dropzone {
+    flex: 1;
+    padding: 12px 8px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px dashed transparent;
+}
+
+.wpvfh-dropzone-high {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border-color: rgba(231, 76, 60, 0.3);
+}
+
+.wpvfh-dropzone-high.drag-over {
+    background: rgba(231, 76, 60, 0.3);
+    border-color: #e74c3c;
+}
+
+.wpvfh-dropzone-medium {
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+    border-color: rgba(243, 156, 18, 0.3);
+}
+
+.wpvfh-dropzone-medium.drag-over {
+    background: rgba(243, 156, 18, 0.3);
+    border-color: #f39c12;
+}
+
+.wpvfh-dropzone-low {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+    border-color: rgba(39, 174, 96, 0.3);
+}
+
+.wpvfh-dropzone-low.drag-over {
+    background: rgba(39, 174, 96, 0.3);
+    border-color: #27ae60;
+}
+
+.wpvfh-dropzone-label {
+    display: block;
+    white-space: nowrap;
+}
+
+.wpvfh-priority-sections {
+    padding: 12px;
+}
+
+.wpvfh-priority-section {
+    margin-bottom: 16px;
+}
+
+.wpvfh-priority-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.wpvfh-priority-high {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.wpvfh-priority-medium {
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+}
+
+.wpvfh-priority-low {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+}
+
+.wpvfh-priority-none {
+    background: rgba(149, 165, 166, 0.1);
+    color: #95a5a6;
+}
+
+.wpvfh-priority-list {
+    min-height: 40px;
+    border: 2px dashed var(--wpvfh-border);
+    border-radius: 8px;
+    padding: 8px;
+    transition: all 0.2s ease;
+}
+
+.wpvfh-priority-list.drag-over {
+    border-color: var(--wpvfh-primary);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.wpvfh-priority-list .wpvfh-pin-item {
+    cursor: grab;
+    margin-bottom: 8px;
+}
+
+.wpvfh-priority-list .wpvfh-pin-item:last-child {
+    margin-bottom: 0;
+}
+
+.wpvfh-priority-list .wpvfh-pin-item.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.wpvfh-priority-list:empty::after {
+    content: 'Déposez des feedbacks ici';
+    display: block;
+    text-align: center;
+    color: #adb5bd;
+    font-size: 12px;
+    padding: 12px;
+}
+
+/* Zone dépliable pour feedbacks archivés */
+.wpvfh-priority-archived {
+    margin-top: 12px;
+    border-top: 1px dashed var(--wpvfh-border);
+    padding-top: 8px;
+}
+
+.wpvfh-archived-toggle {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    padding: 8px 12px !important;
+    background: var(--wpvfh-bg-light) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: var(--wpvfh-text-light) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.wpvfh-archived-toggle:hover {
+    background: var(--wpvfh-border) !important;
+    color: var(--wpvfh-text) !important;
+}
+
+.wpvfh-archived-icon {
+    font-size: 10px;
+    transition: transform 0.2s ease;
+}
+
+.wpvfh-archived-content {
+    margin-top: 8px;
+    padding-left: 8px;
+    border-left: 2px solid var(--wpvfh-border);
+}
+
+.wpvfh-archived-content .wpvfh-pin-item {
+    opacity: 0.7;
+}
+
+.wpvfh-archived-content .wpvfh-pin-item:hover {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   Onglet Métadatas - Sous-onglets
+   ========================================================================== */
+
+.wpvfh-subtabs {
+    display: flex;
+    gap: 4px;
+    padding: 8px 12px;
+    background: var(--wpvfh-bg-light);
+    border-bottom: 1px solid var(--wpvfh-border);
+    overflow-x: auto;
+    flex-wrap: nowrap;
+}
+
+.wpvfh-subtab {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 6px 12px !important;
+    background: transparent !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: 16px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: var(--wpvfh-text-light) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+}
+
+.wpvfh-subtab:hover {
+    background: var(--wpvfh-border) !important;
+    color: var(--wpvfh-text) !important;
+}
+
+.wpvfh-subtab.active {
+    background: var(--wpvfh-primary) !important;
+    border-color: var(--wpvfh-primary) !important;
+    color: #fff !important;
+}
+
+.wpvfh-subtab-icon {
+    font-size: 12px;
+}
+
+.wpvfh-subtab-text {
+    font-size: 11px;
+}
+
+/* Contenu des sous-onglets */
+.wpvfh-metadata-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.wpvfh-metadata-subtab-content {
+    display: none;
+}
+
+.wpvfh-metadata-subtab-content.active {
+    display: block;
+}
+
+/* Dropzones des métadonnées */
+.wpvfh-metadata-dropzones {
+    display: flex;
+    gap: 6px;
+    padding: 10px 12px;
+    background: var(--wpvfh-bg-light);
+    border: 1px solid var(--wpvfh-border);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-radius: 5px;
+    margin: 12px;
+    flex-wrap: wrap;
+}
+
+.wpvfh-dropzone-metadata {
+    flex: 1 1 auto;
+    min-width: 80px;
+    padding: 8px 6px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px dashed transparent;
+    background: color-mix(in srgb, var(--dropzone-color, #6c757d) 10%, transparent);
+    color: var(--dropzone-color, #6c757d);
+    border-color: color-mix(in srgb, var(--dropzone-color, #6c757d) 30%, transparent);
+}
+
+.wpvfh-dropzone-metadata.drag-over {
+    background: color-mix(in srgb, var(--dropzone-color, #6c757d) 25%, transparent);
+    border-color: var(--dropzone-color, #6c757d);
+    transform: scale(1.02);
+}
+
+.wpvfh-dropzone-metadata .wpvfh-dropzone-label {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Sections des métadonnées */
+.wpvfh-metadata-sections {
+    padding: 12px;
+}
+
+.wpvfh-metadata-section {
+    margin-bottom: 16px;
+}
+
+.wpvfh-metadata-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--section-color, #95a5a6) 10%, transparent);
+    color: var(--section-color, #95a5a6);
+    border-left: 3px solid var(--section-color, #95a5a6);
+}
+
+.wpvfh-metadata-list {
+    min-height: 40px;
+    border: 2px dashed var(--wpvfh-border);
+    border-radius: 8px;
+    padding: 8px;
+    transition: all 0.2s ease;
+}
+
+.wpvfh-metadata-list.drag-over {
+    border-color: var(--wpvfh-primary);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.wpvfh-metadata-list .wpvfh-pin-item {
+    cursor: grab;
+    margin-bottom: 8px;
+}
+
+.wpvfh-metadata-list .wpvfh-pin-item:last-child {
+    margin-bottom: 0;
+}
+
+.wpvfh-metadata-list .wpvfh-pin-item.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.wpvfh-metadata-list:empty::after {
+    content: 'Déposez des feedbacks ici';
+    display: block;
+    text-align: center;
+    color: #adb5bd;
+    font-size: 12px;
+    padding: 12px;
+}
+
+/* Fallback pour navigateurs sans color-mix */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+    .wpvfh-dropzone-metadata {
+        background: rgba(108, 117, 125, 0.1);
+        border-color: rgba(108, 117, 125, 0.3);
+    }
+    .wpvfh-dropzone-metadata.drag-over {
+        background: rgba(108, 117, 125, 0.25);
+    }
+    .wpvfh-metadata-title {
+        background: rgba(149, 165, 166, 0.1);
+    }
+}
+
+/* =====================================================
+   Header Actions & Search Button
+   ===================================================== */
+
+.wpvfh-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wpvfh-search-btn {
+    background: transparent !important;
+    border: none !important;
+    padding: 4px 8px !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    opacity: 0.7;
+    transition: opacity 0.2s ease !important;
+}
+
+.wpvfh-search-btn:hover {
+    opacity: 1;
+}
+
+/* =====================================================
+   Feedback ID Display
+   ===================================================== */
+
+.wpvfh-pin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.wpvfh-pin-id {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--wpvfh-primary);
+    background: rgba(52, 152, 219, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* =====================================================
+   Search Modal
+   ===================================================== */
+
+.wpvfh-search-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000001;
+    justify-content: center;
+    align-items: center;
+}
+
+.wpvfh-search-modal.active {
+    display: flex;
+}
+
+/* Mode recherche inline (dans le panel) */
+.wpvfh-search-modal.wpvfh-search-inline {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    background: transparent !important;
+    z-index: auto !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+}
+
+.wpvfh-search-modal.wpvfh-search-inline .wpvfh-modal-overlay {
+    display: none !important;
+}
+
+.wpvfh-search-modal.wpvfh-search-inline .wpvfh-search-content {
+    width: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.wpvfh-search-content {
+    background: var(--wpvfh-bg);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.wpvfh-search-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--wpvfh-border);
+    background: var(--wpvfh-bg-light);
+}
+
+.wpvfh-search-header h3 {
+    margin: 0 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text) !important;
+}
+
+.wpvfh-search-close {
+    background: transparent !important;
+    border: none !important;
+    font-size: 24px !important;
+    cursor: pointer !important;
+    color: var(--wpvfh-text-light) !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    transition: background 0.2s ease !important;
+}
+
+.wpvfh-search-close:hover {
+    background: var(--wpvfh-border) !important;
+}
+
+.wpvfh-search-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.wpvfh-search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.wpvfh-search-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.wpvfh-search-field label {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.wpvfh-search-field input,
+.wpvfh-search-field select {
+    padding: 10px 12px !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    background: var(--wpvfh-bg) !important;
+    color: var(--wpvfh-text) !important;
+    transition: border-color 0.2s ease !important;
+}
+
+.wpvfh-search-field input:focus,
+.wpvfh-search-field select:focus {
+    outline: none !important;
+    border-color: var(--wpvfh-primary) !important;
+}
+
+.wpvfh-search-field input::placeholder {
+    color: var(--wpvfh-text-light) !important;
+}
+
+.wpvfh-search-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.wpvfh-search-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.wpvfh-search-actions button {
+    flex: 1;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+#wpvfh-search-submit {
+    background: var(--wpvfh-primary) !important;
+    color: white !important;
+    border: none !important;
+}
+
+#wpvfh-search-submit:hover {
+    background: #2980b9 !important;
+}
+
+#wpvfh-search-reset {
+    background: transparent !important;
+    color: var(--wpvfh-text) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+}
+
+#wpvfh-search-reset:hover {
+    background: var(--wpvfh-bg-light) !important;
+}
+
+/* Search Results */
+.wpvfh-search-results {
+    margin-top: 20px;
+    border-top: 1px solid var(--wpvfh-border);
+    padding-top: 16px;
+    display: none;
+}
+
+.wpvfh-search-results.active {
+    display: block;
+}
+
+.wpvfh-search-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.wpvfh-search-results-header h4 {
+    margin: 0 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text) !important;
+}
+
+.wpvfh-search-count {
+    font-size: 12px;
+    color: var(--wpvfh-text-light);
+    background: var(--wpvfh-bg-light);
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+.wpvfh-search-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.wpvfh-search-result-item {
+    padding: 12px;
+    background: var(--wpvfh-bg-light);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.wpvfh-search-result-item:hover {
+    border-color: var(--wpvfh-primary);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.wpvfh-search-result-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.wpvfh-search-result-id {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--wpvfh-primary);
+    background: rgba(52, 152, 219, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.wpvfh-search-result-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.wpvfh-search-result-text {
+    font-size: 13px;
+    color: var(--wpvfh-text);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.wpvfh-search-result-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--wpvfh-text-light);
+}
+
+.wpvfh-search-no-results {
+    text-align: center;
+    padding: 24px;
+    color: var(--wpvfh-text-light);
+    font-size: 14px;
+}
