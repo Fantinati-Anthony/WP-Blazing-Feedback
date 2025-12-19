@@ -142,6 +142,10 @@
             if (tabName === 'pages' && this.widget.modules.pages) {
                 this.widget.modules.pages.loadAllPages();
             }
+
+            if (tabName === 'metadata' && this.widget.modules.list) {
+                this.widget.modules.list.renderMetadataLists();
+            }
         },
 
         /**
