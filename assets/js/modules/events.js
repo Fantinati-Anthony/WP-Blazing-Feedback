@@ -328,6 +328,99 @@
                     }
                 });
             }
+
+            // =======================
+            // CIBLAGE D'ÉLÉMENTS
+            // =======================
+
+            // Bouton cibler un élément
+            if (el.selectElementBtn) {
+                el.selectElementBtn.addEventListener('click', () => {
+                    if (window.BlazingAnnotation) {
+                        w.modules.panel.closePanel();
+                        window.BlazingAnnotation.startInspector();
+                    }
+                });
+            }
+
+            // Bouton effacer la sélection
+            if (el.clearSelectionBtn) {
+                el.clearSelectionBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.BlazingAnnotation) {
+                        window.BlazingAnnotation.clearSelection();
+                    }
+                    w.state.pinPosition = null;
+
+                    if (el.selectElementBtn) {
+                        el.selectElementBtn.hidden = false;
+                    }
+                    if (el.selectedElement) {
+                        el.selectedElement.hidden = true;
+                    }
+                });
+            }
+
+            // Événement: élément sélectionné
+            document.addEventListener('blazing-feedback:element-selected', (e) => {
+                const { element, data } = e.detail;
+                if (!element || !data) return;
+
+                // Stocker la position
+                w.state.pinPosition = data;
+
+                // Mettre à jour l'UI
+                if (el.selectElementBtn) {
+                    el.selectElementBtn.hidden = true;
+                }
+
+                if (el.selectedElement) {
+                    el.selectedElement.hidden = false;
+                    const label = el.selectedElement.querySelector('.wpvfh-selected-element-label');
+                    if (label) {
+                        const tagName = element.tagName.toLowerCase();
+                        const id = element.id ? `#${element.id}` : '';
+                        const classes = element.className && typeof element.className === 'string'
+                            ? '.' + element.className.split(/\s+/).filter(c => c && !c.startsWith('wpvfh-')).slice(0, 2).join('.')
+                            : '';
+                        label.textContent = tagName + id + classes;
+                    }
+                }
+
+                // Rouvrir le panel sur l'onglet nouveau
+                if (!w.state.isOpen) {
+                    w.modules.panel.openPanel('new');
+                } else {
+                    w.modules.panel.switchTab('new');
+                }
+
+                if (el.commentField) {
+                    setTimeout(() => el.commentField.focus(), 350);
+                }
+
+                w.modules.notifications.show('Élément ciblé', 'success');
+            });
+
+            // Événement: sélection effacée
+            document.addEventListener('blazing-feedback:selection-cleared', () => {
+                w.state.pinPosition = null;
+
+                if (el.selectElementBtn) {
+                    el.selectElementBtn.hidden = false;
+                }
+                if (el.selectedElement) {
+                    el.selectedElement.hidden = true;
+                }
+            });
+
+            // Événement: inspecteur arrêté (sans sélection)
+            document.addEventListener('blazing-feedback:inspector-stopped', () => {
+                // Rouvrir le panel si fermé sans sélection
+                if (!w.state.isOpen && !window.BlazingAnnotation?.hasSelection()) {
+                    w.modules.panel.openPanel('new');
+                }
+            });
         }
     };
 
