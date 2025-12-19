@@ -975,7 +975,17 @@
         handleSelectElement: function(event) {
             event.preventDefault();
 
+            // Sauvegarder le contenu du formulaire avant de fermer le panel
+            this.state.savedFormData = {
+                comment: this.elements.commentInput?.value || '',
+                type: this.elements.feedbackType?.value || '',
+                priority: this.elements.feedbackPriority?.value || '',
+                tags: this.elements.feedbackTags?.value || '',
+            };
+
             // Fermer temporairement le panel pour faciliter la sélection
+            // Mais marquer qu'on ne doit pas réinitialiser le formulaire
+            this.state.isSelectingElement = true;
             if (this.state.isOpen) {
                 this.closePanel();
             }
@@ -1063,6 +1073,27 @@
                 this.openPanel('new');
             }
 
+            // Restaurer le contenu du formulaire sauvegardé
+            if (this.state.savedFormData) {
+                if (this.elements.commentInput && this.state.savedFormData.comment) {
+                    this.elements.commentInput.value = this.state.savedFormData.comment;
+                }
+                if (this.elements.feedbackType && this.state.savedFormData.type) {
+                    this.elements.feedbackType.value = this.state.savedFormData.type;
+                }
+                if (this.elements.feedbackPriority && this.state.savedFormData.priority) {
+                    this.elements.feedbackPriority.value = this.state.savedFormData.priority;
+                }
+                if (this.elements.feedbackTags && this.state.savedFormData.tags) {
+                    this.elements.feedbackTags.value = this.state.savedFormData.tags;
+                }
+                // Nettoyer les données sauvegardées
+                this.state.savedFormData = null;
+            }
+
+            // Réinitialiser le flag de sélection d'élément
+            this.state.isSelectingElement = false;
+
             console.log('[Blazing Feedback] Élément sélectionné:', data);
         },
 
@@ -1093,9 +1124,26 @@
          * @returns {void}
          */
         handleInspectorStopped: function(event) {
-            // Si aucune sélection n'a été faite, réouvrir le panel
-            if (!window.BlazingAnnotation || !window.BlazingAnnotation.hasSelection()) {
-                // Ne pas rouvrir automatiquement, l'utilisateur a annulé
+            // Si on était en mode sélection d'élément et aucune sélection n'a été faite
+            if (this.state.isSelectingElement) {
+                // Réouvrir le panel et restaurer le contenu sauvegardé
+                if (this.state.savedFormData) {
+                    this.openPanel('new');
+                    if (this.elements.commentInput && this.state.savedFormData.comment) {
+                        this.elements.commentInput.value = this.state.savedFormData.comment;
+                    }
+                    if (this.elements.feedbackType && this.state.savedFormData.type) {
+                        this.elements.feedbackType.value = this.state.savedFormData.type;
+                    }
+                    if (this.elements.feedbackPriority && this.state.savedFormData.priority) {
+                        this.elements.feedbackPriority.value = this.state.savedFormData.priority;
+                    }
+                    if (this.elements.feedbackTags && this.state.savedFormData.tags) {
+                        this.elements.feedbackTags.value = this.state.savedFormData.tags;
+                    }
+                    this.state.savedFormData = null;
+                }
+                this.state.isSelectingElement = false;
             }
         },
 
@@ -1210,8 +1258,10 @@
                 this.elements.toggleBtn.setAttribute('aria-expanded', 'false');
             }
 
-            // Nettoyer le formulaire
-            this.resetForm();
+            // Nettoyer le formulaire seulement si on n'est pas en mode sélection d'élément
+            if (!this.state.isSelectingElement) {
+                this.resetForm();
+            }
 
             console.log('[Blazing Feedback] Panel fermé');
 
@@ -1322,7 +1372,8 @@
                 const statusColor = this.getStatusColor(status);
                 const statusEmoji = this.getStatusEmoji(status);
                 const date = feedback.date ? new Date(feedback.date).toLocaleDateString() : '';
-                const pinNumber = index + 1;
+                // Utiliser _displayOrder si disponible (cohérent avec les pins sur la page)
+                const pinNumber = feedback._displayOrder || (index + 1);
 
                 // Vérifier si l'utilisateur peut supprimer ce feedback
                 const isCreator = feedback.author?.id === this.config.userId;
@@ -1905,6 +1956,15 @@
                 console.log('[Blazing Feedback] Réponse API:', response);
 
                 if (Array.isArray(response)) {
+                    // Calculer _displayOrder pour les feedbacks avec position
+                    let pinIndex = 1;
+                    response.forEach(feedback => {
+                        const hasPosition = feedback.selector || feedback.position_x || feedback.position_y;
+                        if (hasPosition) {
+                            feedback._displayOrder = pinIndex++;
+                        }
+                    });
+
                     this.state.currentFeedbacks = response;
                     console.log('[Blazing Feedback] Feedbacks chargés:', response.length);
 
