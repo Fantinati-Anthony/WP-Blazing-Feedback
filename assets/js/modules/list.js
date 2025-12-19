@@ -296,25 +296,42 @@
                 };
                 const field = fieldMap[groupSlug] || groupSlug;
 
+                // Déterminer la valeur à envoyer
+                let apiValue = newValue;
+                if (newValue === 'none') {
+                    if (field === 'status') {
+                        apiValue = 'new'; // Le statut "none" n'existe pas, utiliser "new"
+                    } else if (field === 'priority') {
+                        apiValue = 'none'; // La priorité accepte "none"
+                    } else {
+                        apiValue = ''; // Pour type et tags, utiliser chaîne vide
+                    }
+                }
+
                 // Mettre à jour localement
                 const feedback = this.widget.state.currentFeedbacks.find(f => f.id == feedbackId);
                 if (feedback) {
-                    feedback[field] = newValue === 'none' ? '' : newValue;
+                    if (field === 'status') {
+                        feedback[field] = apiValue;
+                    } else if (field === 'priority') {
+                        feedback[field] = apiValue;
+                    } else {
+                        feedback[field] = newValue === 'none' ? '' : newValue;
+                    }
                 }
 
                 // Re-rendre immédiatement
                 this.renderMetadataLists();
 
-                // Sauvegarder sur le serveur
-                const data = {};
-                data[field] = newValue === 'none' ? '' : newValue;
-
                 // Utiliser l'endpoint approprié selon le type
                 if (field === 'status') {
-                    await this.widget.modules.api.request('PUT', `feedbacks/${feedbackId}/status`, { status: newValue === 'none' ? 'new' : newValue });
+                    await this.widget.modules.api.request('PUT', `feedbacks/${feedbackId}/status`, { status: apiValue });
                 } else if (field === 'priority') {
-                    await this.widget.modules.api.request('PUT', `feedbacks/${feedbackId}`, { priority: newValue === 'none' ? '' : newValue });
+                    await this.widget.modules.api.request('PUT', `feedbacks/${feedbackId}/priority`, { priority: apiValue });
                 } else {
+                    // Pour type et tags, utiliser l'endpoint général
+                    const data = {};
+                    data[field] = newValue === 'none' ? '' : newValue;
                     await this.widget.modules.api.request('PUT', `feedbacks/${feedbackId}`, data);
                 }
 
@@ -324,13 +341,18 @@
 
                 // Mettre à jour le pin sur la page si c'est le statut
                 if (field === 'status' && window.BlazingAnnotation) {
-                    window.BlazingAnnotation.updatePin(feedbackId, { status: newValue });
+                    window.BlazingAnnotation.updatePin(feedbackId, { status: apiValue });
                 }
 
             } catch (error) {
                 console.error('[Blazing Feedback] Erreur mise à jour métadonnée:', error);
                 if (this.widget.modules.notifications) {
                     this.widget.modules.notifications.show('Erreur lors de la mise à jour', 'error');
+                }
+                // Recharger les feedbacks pour revenir à l'état serveur
+                if (this.widget.modules.api && this.widget.modules.api.loadExistingFeedbacks) {
+                    await this.widget.modules.api.loadExistingFeedbacks();
+                    this.renderMetadataLists();
                 }
             }
         }
