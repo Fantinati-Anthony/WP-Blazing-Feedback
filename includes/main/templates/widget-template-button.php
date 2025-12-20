@@ -26,6 +26,7 @@ $button_color = WPVFH_Database::get_setting( 'wpvfh_button_color', '#e74c3c' );
 
 // Calculer les styles inline
 $btn_styles = array();
+$btn_styles[] = 'position: fixed';
 $btn_styles[] = 'background-color: ' . esc_attr( $button_color );
 $btn_styles[] = '--wpvfh-btn-size: ' . $button_size . 'px';
 

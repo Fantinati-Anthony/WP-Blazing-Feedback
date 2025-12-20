@@ -26,7 +26,7 @@ $templates_dir = __DIR__ . '/templates/';
 	<?php include $templates_dir . 'widget-template-button.php'; ?>
 
 	<!-- Sidebar de feedback -->
-	<div id="wpvfh-panel" class="wpvfh-panel" data-panel-position="<?php echo esc_attr( $panel_position ); ?>" hidden aria-hidden="true">
+	<div id="wpvfh-panel" class="wpvfh-panel" data-panel-position="<?php echo esc_attr( $panel_position ); ?>" style="position: fixed;" hidden aria-hidden="true">
 		<?php
 		// Header et onglets
 		include $templates_dir . 'widget-template-panel-header.php';
