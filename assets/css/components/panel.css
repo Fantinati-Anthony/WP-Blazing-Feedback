@@ -79,7 +79,13 @@
    Sidebar de feedback (barre latérale droite)
    ========================================================================== */
 
-.wpvfh-panel {
+.wpvfh-panel,
+body .wpvfh-panel,
+html body .wpvfh-panel,
+.wpvfh-container .wpvfh-panel,
+.elementor .wpvfh-panel,
+html body.elementor-page .wpvfh-panel,
+html body.elementor-default .wpvfh-panel {
     position: fixed !important;
     right: 0 !important;
     top: 0 !important;

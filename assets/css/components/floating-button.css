@@ -11,8 +11,16 @@
    Bouton de feedback (styles communs)
    ========================================================================== */
 
-.wpvfh-corner-btn {
+.wpvfh-corner-btn,
+body .wpvfh-corner-btn,
+html body .wpvfh-corner-btn,
+.wpvfh-container .wpvfh-corner-btn,
+.elementor .wpvfh-corner-btn,
+html body.elementor-page .wpvfh-corner-btn,
+html body.elementor-default .wpvfh-corner-btn {
     position: fixed !important;
+    bottom: 0 !important;
+    right: 0 !important;
     border: none !important;
     cursor: pointer !important;
     transition: all var(--wpvfh-transition) !important;
