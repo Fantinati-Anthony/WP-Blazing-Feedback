@@ -37,7 +37,7 @@
     gap: 12px;
     padding: 12px;
     background: var(--wpvfh-pin-item-bg);
-    border-radius: var(--wpvfh-radius-pin-item);
+    border-radius: var(--wpvfh-radius);
     border: 1px solid var(--wpvfh-pin-item-border);
     color: var(--wpvfh-pin-item-text);
     cursor: pointer;
@@ -70,7 +70,7 @@
     gap: 3px !important;
     font-size: 11px !important;
     padding: 2px 6px !important;
-    border-radius: 4px !important;
+    border-radius: var(--wpvfh-radius) !important;
     background: var(--wpvfh-bg) !important;
     border: 1px solid var(--wpvfh-border) !important;
 }
@@ -88,7 +88,7 @@
     gap: 2px !important;
     font-size: 10px !important;
     padding: 2px 5px !important;
-    border-radius: 3px !important;
+    border-radius: var(--wpvfh-radius) !important;
     background: var(--wpvfh-bg) !important;
     border: 1px solid var(--wpvfh-border) !important;
     color: var(--wpvfh-pin-item-text-light) !important;
@@ -141,7 +141,7 @@
     align-items: center;
     gap: 4px;
     padding: 2px 8px;
-    border-radius: var(--wpvfh-radius-badge);
+    border-radius: var(--wpvfh-radius);
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
@@ -189,7 +189,7 @@ button.wpvfh-pin-action.wpvfh-pin-delete {
     border: none !important;
     border-width: 0 !important;
     border-style: none !important;
-    border-radius: var(--wpvfh-radius-sm) !important;
+    border-radius: var(--wpvfh-radius) !important;
     cursor: pointer !important;
     color: var(--wpvfh-text-light) !important;
     display: flex !important;

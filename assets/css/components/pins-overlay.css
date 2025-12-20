@@ -37,7 +37,7 @@ html body.elementor-default .wpvfh-panel .wpvfh-btn,
     gap: 8px !important;
     padding: 12px 24px !important;
     border: none !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -185,7 +185,7 @@ html body.elementor-default .wpvfh-btn-success,
     background-color: #27ae60 !important;
     background-image: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
     border: none !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #fff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -291,7 +291,7 @@ html body.elementor-page .wpvfh-btn-success:hover:not(:disabled),
     padding: 8px 16px;
     background: var(--wpvfh-bg-light);
     border: 1px solid var(--wpvfh-border);
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     font-size: 13px;
     cursor: pointer;
     transition: all var(--wpvfh-transition);

@@ -25,7 +25,7 @@
 
 .wpvfh-notification {
     padding: 12px 20px;
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     font-size: 14px;
     font-weight: 500;
     box-shadow: var(--wpvfh-shadow);

@@ -28,7 +28,7 @@
     gap: 8px !important;
     padding: 10px 16px !important;
     border: none !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     cursor: pointer !important;
     font-size: 13px !important;
     font-weight: 500 !important;
@@ -392,6 +392,6 @@ button.wpvfh-tab[hidden] {
     background: var(--wpvfh-primary) !important;
     color: #fff !important;
     padding: 2px 8px !important;
-    border-radius: 10px !important;
+    border-radius: var(--wpvfh-radius) !important;
     margin-left: 4px !important;
 }

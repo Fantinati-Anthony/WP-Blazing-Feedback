@@ -29,7 +29,7 @@ html body.elementor-default .wpvfh-select-element-btn,
     background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
     background-color: #f39c12 !important;
     border: none !important;
-    border-radius: 12px !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #fff !important;
     font-size: 15px !important;
     font-weight: 600 !important;
@@ -86,7 +86,7 @@ html body.elementor-default .wpvfh-add-attachment-btn,
     background-color: transparent !important;
     background-image: none !important;
     border: 2px dashed #e74c3c !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #e74c3c !important;
     font-size: 14px !important;
     font-weight: 500 !important;
@@ -135,7 +135,7 @@ html body.elementor-default .wpvfh-cancel-btn,
     background-color: #f8f9fa !important;
     background-image: none !important;
     border: 1px solid #dee2e6 !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #495057 !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -197,7 +197,7 @@ html body.elementor-default [type=submit].wpvfh-submit-btn,
     background-color: #e74c3c !important;
     background-image: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
     border: none !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #fff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -263,7 +263,7 @@ html body.elementor-default .wpvfh-panel .wpvfh-btn,
     gap: 8px !important;
     padding: 12px 24px !important;
     border: none !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -411,7 +411,7 @@ html body.elementor-default .wpvfh-btn-success,
     background-color: #27ae60 !important;
     background-image: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
     border: none !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #fff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -483,7 +483,7 @@ button.wpvfh-btn-validate {
     all: revert !important;
     width: 100% !important;
     padding: 14px 20px !important;
-    border-radius: 10px !important;
+    border-radius: var(--wpvfh-radius) !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -550,7 +550,7 @@ button#wpvfh-validate-page-btn {
     padding: 8px 12px !important;
     background: #fff !important;
     border: 1px solid #dee2e6 !important;
-    border-radius: 6px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 13px !important;
     color: #495057 !important;
     cursor: pointer !important;
@@ -622,7 +622,7 @@ button.wpvfh-pin-action.wpvfh-pin-delete {
     border: none !important;
     border-width: 0 !important;
     border-style: none !important;
-    border-radius: var(--wpvfh-radius-sm) !important;
+    border-radius: var(--wpvfh-radius) !important;
     cursor: pointer !important;
     color: var(--wpvfh-text-light) !important;
     display: flex !important;

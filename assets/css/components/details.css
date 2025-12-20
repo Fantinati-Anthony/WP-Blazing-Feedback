@@ -92,7 +92,7 @@ body.wpvfh-annotation-mode * {
     padding: 0 !important;
     background: var(--wpvfh-bg, #fff) !important;
     border: 1px solid var(--wpvfh-border, #dee2e6) !important;
-    border-radius: 6px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 16px !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
@@ -111,7 +111,7 @@ body.wpvfh-annotation-mode * {
     padding: 8px 12px !important;
     background: #fff !important;
     border: 1px solid #dee2e6 !important;
-    border-radius: 6px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 13px !important;
     color: #495057 !important;
     cursor: pointer !important;
@@ -140,7 +140,7 @@ body.wpvfh-annotation-mode * {
 .wpvfh-detail-status .wpvfh-status-badge {
     display: inline-block !important;
     padding: 6px 14px !important;
-    border-radius: 20px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 13px !important;
     font-weight: 600 !important;
 }
@@ -184,7 +184,7 @@ body.wpvfh-annotation-mode * {
 .wpvfh-detail-comment {
     background: #f8f9fa !important;
     padding: 16px !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     margin-bottom: 16px !important;
     line-height: 1.6 !important;
     white-space: pre-wrap !important;
@@ -194,7 +194,7 @@ body.wpvfh-annotation-mode * {
 .wpvfh-detail-pin-info {
     background: var(--wpvfh-bg-light, #f8f9fa) !important;
     border: 1px solid var(--wpvfh-border, #e9ecef) !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     padding: 12px !important;
     margin-bottom: 16px !important;
 }
@@ -236,7 +236,7 @@ body.wpvfh-annotation-mode * {
 code.wpvfh-pin-info-value {
     background: var(--wpvfh-bg, #fff) !important;
     padding: 2px 6px !important;
-    border-radius: 4px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-family: monospace !important;
     font-size: 11px !important;
     border: 1px solid var(--wpvfh-border, #e9ecef) !important;
@@ -248,7 +248,7 @@ code.wpvfh-pin-info-value {
 
 .wpvfh-detail-screenshot img {
     max-width: 100% !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     border: 1px solid #e9ecef !important;
 }
 
@@ -274,7 +274,7 @@ code.wpvfh-pin-info-value {
 .wpvfh-reply-item {
     background: #f8f9fa !important;
     padding: 12px !important;
-    border-radius: var(--wpvfh-radius-button) !important;
+    border-radius: var(--wpvfh-radius) !important;
     border-left: 3px solid var(--wpvfh-primary) !important;
 }
 
@@ -312,7 +312,7 @@ code.wpvfh-pin-info-value {
     width: 100% !important;
     padding: 10px 12px !important;
     border: 1px solid #dee2e6 !important;
-    border-radius: 6px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 14px !important;
     background: #fff !important;
     cursor: pointer !important;

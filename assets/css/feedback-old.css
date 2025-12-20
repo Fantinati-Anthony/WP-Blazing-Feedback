@@ -29,7 +29,7 @@
     --wpvfh-border: #e0e4e8;
     --wpvfh-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     --wpvfh-radius: 8px;
-    --wpvfh-radius-sm: 4px;
+    
     --wpvfh-transition: 0.2s ease;
     --wpvfh-z-index: 999999;
 }
@@ -126,7 +126,7 @@ html body.elementor-default .wpvfh-select-element-btn,
     background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
     background-color: #f39c12 !important;
     border: none !important;
-    border-radius: 12px !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #fff !important;
     font-size: 15px !important;
     font-weight: 600 !important;
@@ -183,7 +183,7 @@ html body.elementor-default .wpvfh-add-attachment-btn,
     background-color: transparent !important;
     background-image: none !important;
     border: 2px dashed #e74c3c !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #e74c3c !important;
     font-size: 14px !important;
     font-weight: 500 !important;
@@ -232,7 +232,7 @@ html body.elementor-default .wpvfh-cancel-btn,
     background-color: #f8f9fa !important;
     background-image: none !important;
     border: 1px solid #dee2e6 !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #495057 !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -294,7 +294,7 @@ html body.elementor-default [type=submit].wpvfh-submit-btn,
     background-color: #e74c3c !important;
     background-image: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
     border: none !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #fff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -487,7 +487,7 @@ html body.elementor-default .wpvfh-hidden {
     color: #fff !important;
     font-size: 10px !important;
     font-weight: 700 !important;
-    border-radius: 9px !important;
+    border-radius: var(--wpvfh-radius) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -609,7 +609,7 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     transform: translateX(-50%) !important;
     width: 100px !important;
     height: 50px !important;
-    border-radius: 100px 100px 0 0 !important;
+    border-radius: var(--wpvfh-radius) 100px 0 0 !important;
     padding: 0 0 8px 0 !important;
     flex-direction: row !important;
     gap: 8px !important;
@@ -658,7 +658,7 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     transform: translateY(-50%) !important;
     width: 50px !important;
     height: 100px !important;
-    border-radius: 100px 0 0 100px !important;
+    border-radius: var(--wpvfh-radius) 0 0 100px !important;
     padding: 0 8px 0 0 !important;
 }
 
@@ -692,7 +692,7 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     gap: 8px !important;
     padding: 10px 16px !important;
     border: none !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     cursor: pointer !important;
     font-size: 13px !important;
     font-weight: 500 !important;
@@ -1086,7 +1086,7 @@ button.wpvfh-tab[hidden] {
     background: var(--wpvfh-primary) !important;
     color: #fff !important;
     padding: 2px 8px !important;
-    border-radius: 10px !important;
+    border-radius: var(--wpvfh-radius) !important;
     margin-left: 4px !important;
 }
 
@@ -1121,7 +1121,7 @@ button.wpvfh-tab[hidden] {
     gap: 12px;
     padding: 12px;
     background: var(--wpvfh-bg-light);
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     border: 1px solid var(--wpvfh-border);
     cursor: pointer;
     transition: all var(--wpvfh-transition);
@@ -1152,7 +1152,7 @@ button.wpvfh-tab[hidden] {
     gap: 3px !important;
     font-size: 11px !important;
     padding: 2px 6px !important;
-    border-radius: 4px !important;
+    border-radius: var(--wpvfh-radius) !important;
     background: var(--wpvfh-bg) !important;
     border: 1px solid var(--wpvfh-border) !important;
 }
@@ -1170,7 +1170,7 @@ button.wpvfh-tab[hidden] {
     gap: 2px !important;
     font-size: 10px !important;
     padding: 2px 5px !important;
-    border-radius: 3px !important;
+    border-radius: var(--wpvfh-radius) !important;
     background: var(--wpvfh-bg) !important;
     border: 1px solid var(--wpvfh-border) !important;
     color: var(--wpvfh-text-light) !important;
@@ -1223,7 +1223,7 @@ button.wpvfh-tab[hidden] {
     align-items: center;
     gap: 4px;
     padding: 2px 8px;
-    border-radius: 12px;
+    border-radius: var(--wpvfh-radius);
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
@@ -1271,7 +1271,7 @@ button.wpvfh-pin-action.wpvfh-pin-delete {
     border: none !important;
     border-width: 0 !important;
     border-style: none !important;
-    border-radius: var(--wpvfh-radius-sm) !important;
+    border-radius: var(--wpvfh-radius) !important;
     cursor: pointer !important;
     color: var(--wpvfh-text-light) !important;
     display: flex !important;
@@ -1380,7 +1380,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     width: 100% !important;
     padding: 8px 10px !important;
     border: 1px solid var(--wpvfh-border) !important;
-    border-radius: var(--wpvfh-radius-sm) !important;
+    border-radius: var(--wpvfh-radius) !important;
     background: var(--wpvfh-bg) !important;
     color: var(--wpvfh-text) !important;
     font-size: 13px !important;
@@ -1402,7 +1402,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     width: 100% !important;
     padding: 8px 10px !important;
     border: 1px solid var(--wpvfh-border) !important;
-    border-radius: var(--wpvfh-radius-sm) !important;
+    border-radius: var(--wpvfh-radius) !important;
     background: var(--wpvfh-bg) !important;
     color: var(--wpvfh-text) !important;
     font-size: 13px !important;
@@ -1442,7 +1442,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     align-items: center !important;
     gap: 4px !important;
     padding: 4px 10px !important;
-    border-radius: 20px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 12px !important;
     font-weight: 500 !important;
     white-space: nowrap !important;
@@ -1509,7 +1509,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     padding: 3px 8px !important;
     background: #f0f0f0 !important;
     color: #555 !important;
-    border-radius: 12px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 11px !important;
     font-weight: 500 !important;
 }
@@ -1527,7 +1527,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     padding: 4px 8px !important;
     background: #e8f4fc !important;
     color: #2980b9 !important;
-    border-radius: 14px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 12px !important;
     font-weight: 500 !important;
 }
@@ -1567,7 +1567,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     align-items: center !important;
     padding: 6px !important;
     border: 1px solid var(--wpvfh-border) !important;
-    border-radius: var(--wpvfh-radius-sm) !important;
+    border-radius: var(--wpvfh-radius) !important;
     background: var(--wpvfh-bg) !important;
     min-height: 38px !important;
 }
@@ -1610,7 +1610,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     font-size: 11px !important;
     font-weight: 500 !important;
     border: 1px solid currentColor !important;
-    border-radius: 12px !important;
+    border-radius: var(--wpvfh-radius) !important;
     background: transparent !important;
     cursor: pointer !important;
     transition: all 0.15s ease !important;
@@ -1671,7 +1671,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     display: inline-flex !important;
     align-items: center !important;
     padding: 2px 6px !important;
-    border-radius: 10px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 10px !important;
     font-weight: 500 !important;
     white-space: nowrap !important;
@@ -1752,7 +1752,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     width: 100%;
     padding: 12px;
     border: 1px solid var(--wpvfh-border);
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     font-family: inherit;
     font-size: 14px;
     line-height: 1.5;
@@ -1789,7 +1789,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
 .wpvfh-screenshot-preview {
     position: relative;
     border: 1px solid var(--wpvfh-border);
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     overflow: hidden;
     background: var(--wpvfh-bg-light);
 }
@@ -1819,7 +1819,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
     color: #fff !important;
     border: none !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 14px !important;
     font-weight: 500 !important;
     cursor: pointer !important;
@@ -1836,7 +1836,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
 .wpvfh-container .wpvfh-select-element-btn .wpvfh-optional-badge {
     background: rgba(255, 255, 255, 0.2) !important;
     padding: 2px 8px !important;
-    border-radius: 10px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 11px !important;
     font-weight: 400 !important;
 }
@@ -1848,7 +1848,7 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     padding: 12px 16px !important;
     background: #d4edda !important;
     border: 1px solid #28a745 !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #155724 !important;
     font-size: 14px !important;
 }
@@ -1916,7 +1916,7 @@ html body.elementor-default .wpvfh-panel .wpvfh-tool-btn,
     background: #fff !important;
     background-image: none !important;
     border: 2px solid #e9ecef !important;
-    border-radius: 10px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 13px !important;
     font-weight: 500 !important;
     color: #495057 !important;
@@ -1983,7 +1983,7 @@ html body.elementor-default .wpvfh-tool-btn.active,
 .wpvfh-media-section {
     padding: 12px;
     background: var(--wpvfh-bg-light);
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     margin-bottom: 12px;
 }
 
@@ -2001,7 +2001,7 @@ html body.elementor-default .wpvfh-tool-btn.active,
     padding: 12px 20px !important;
     background: #fff !important;
     border: 2px solid #e9ecef !important;
-    border-radius: 25px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 14px !important;
     font-weight: 600 !important;
     color: #495057 !important;
@@ -2064,7 +2064,7 @@ html body.elementor-default .wpvfh-tool-btn.active,
     margin-top: 12px;
     padding: 12px;
     background: var(--wpvfh-bg);
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
 }
 
 .wpvfh-audio-preview audio {
@@ -2076,7 +2076,7 @@ html body.elementor-default .wpvfh-tool-btn.active,
 .wpvfh-video-preview {
     position: relative;
     margin-top: 12px;
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     overflow: hidden;
 }
 
@@ -2091,7 +2091,7 @@ html body.elementor-default .wpvfh-tool-btn.active,
     margin-top: 12px;
     padding: 12px;
     background: var(--wpvfh-bg);
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     border-left: 3px solid var(--wpvfh-primary);
 }
 
@@ -2144,7 +2144,7 @@ html body.elementor-default .wpvfh-tool-btn.active,
     margin: 0;
     padding: 10px 12px;
     background: #e8f5e9;
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     font-size: 13px;
     color: #2e7d32;
 }
@@ -2182,7 +2182,7 @@ html body.elementor-default .wpvfh-panel .wpvfh-btn,
     gap: 8px !important;
     padding: 12px 24px !important;
     border: none !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -2330,7 +2330,7 @@ html body.elementor-default .wpvfh-btn-success,
     background-color: #27ae60 !important;
     background-image: linear-gradient(135deg, #27ae60 0%, #1e8449 100%) !important;
     border: none !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     color: #fff !important;
     font-size: 14px !important;
     font-weight: 600 !important;
@@ -2436,7 +2436,7 @@ html body.elementor-page .wpvfh-btn-success:hover:not(:disabled),
     padding: 8px 16px;
     background: var(--wpvfh-bg-light);
     border: 1px solid var(--wpvfh-border);
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     font-size: 13px;
     cursor: pointer;
     transition: all var(--wpvfh-transition);
@@ -2520,7 +2520,7 @@ body.wpvfh-annotation-mode * {
     padding: 8px 12px !important;
     background: #fff !important;
     border: 1px solid #dee2e6 !important;
-    border-radius: 6px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 13px !important;
     color: #495057 !important;
     cursor: pointer !important;
@@ -2549,7 +2549,7 @@ body.wpvfh-annotation-mode * {
 .wpvfh-detail-status .wpvfh-status-badge {
     display: inline-block !important;
     padding: 6px 14px !important;
-    border-radius: 20px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 13px !important;
     font-weight: 600 !important;
 }
@@ -2593,7 +2593,7 @@ body.wpvfh-annotation-mode * {
 .wpvfh-detail-comment {
     background: #f8f9fa !important;
     padding: 16px !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     margin-bottom: 16px !important;
     line-height: 1.6 !important;
     white-space: pre-wrap !important;
@@ -2605,7 +2605,7 @@ body.wpvfh-annotation-mode * {
 
 .wpvfh-detail-screenshot img {
     max-width: 100% !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     border: 1px solid #e9ecef !important;
 }
 
@@ -2631,7 +2631,7 @@ body.wpvfh-annotation-mode * {
 .wpvfh-reply-item {
     background: #f8f9fa !important;
     padding: 12px !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     border-left: 3px solid var(--wpvfh-primary) !important;
 }
 
@@ -2669,7 +2669,7 @@ body.wpvfh-annotation-mode * {
     width: 100% !important;
     padding: 10px 12px !important;
     border: 1px solid #dee2e6 !important;
-    border-radius: 6px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 14px !important;
     background: #fff !important;
     cursor: pointer !important;
@@ -2709,7 +2709,7 @@ body.wpvfh-annotation-mode * {
 
 .wpvfh-notification {
     padding: 12px 20px;
-    border-radius: var(--wpvfh-radius-sm);
+    border-radius: var(--wpvfh-radius);
     font-size: 14px;
     font-weight: 500;
     box-shadow: var(--wpvfh-shadow);
@@ -2963,7 +2963,7 @@ body.wpvfh-theme-light .wpvfh-panel {
         0 0 0 2px rgba(241, 196, 15, 0.8),
         0 0 20px rgba(241, 196, 15, 0.4),
         inset 0 0 0 1px rgba(241, 196, 15, 0.6) !important;
-    border-radius: 2px;
+    border-radius: var(--wpvfh-radius);
     transition: all 0.1s ease-out;
 }
 
@@ -2978,7 +2978,7 @@ body.wpvfh-theme-light .wpvfh-panel {
     font-size: 11px;
     font-weight: 600;
     font-family: 'SF Mono', Monaco, 'Fira Code', monospace;
-    border-radius: 3px 3px 0 0;
+    border-radius: var(--wpvfh-radius) 3px 0 0;
     white-space: nowrap;
     transform: translateY(2px);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
@@ -3004,7 +3004,7 @@ body.wpvfh-theme-light .wpvfh-panel {
         0 0 0 3px rgba(241, 196, 15, 0.5),
         0 0 30px rgba(241, 196, 15, 0.3),
         inset 0 0 15px rgba(241, 196, 15, 0.15) !important;
-    border-radius: 4px;
+    border-radius: var(--wpvfh-radius);
     animation: wpvfh-element-pulse 2s ease-in-out infinite;
 }
 
@@ -3016,7 +3016,7 @@ body.wpvfh-theme-light .wpvfh-panel {
     border: 2px solid #f1c40f !important;
     background: rgba(241, 196, 15, 0.05) !important;
     box-shadow: 0 0 0 2px rgba(241, 196, 15, 0.3) !important;
-    border-radius: 4px;
+    border-radius: var(--wpvfh-radius);
     transition: all 0.2s ease;
 }
 
@@ -3209,7 +3209,7 @@ body.wpvfh-inspector-mode * {
     padding: 12px 24px;
     background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
     color: #000;
-    border-radius: 50px;
+    border-radius: var(--wpvfh-radius);
     box-shadow: 0 4px 20px rgba(241, 196, 15, 0.4);
     font-size: 14px;
     font-weight: 600;
@@ -3236,7 +3236,7 @@ body.wpvfh-inspector-mode * {
     padding: 6px 14px;
     background: rgba(0, 0, 0, 0.2);
     border: none;
-    border-radius: 20px;
+    border-radius: var(--wpvfh-radius);
     color: #000;
     font-size: 13px;
     font-weight: 600;
@@ -3261,7 +3261,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     padding: 8px 12px;
     background: #fff;
     border: 1px solid #e9ecef;
-    border-radius: 6px;
+    border-radius: var(--wpvfh-radius);
     margin-top: 8px;
     font-size: 12px;
     color: #6c757d;
@@ -3272,7 +3272,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     font-size: 11px;
     background: #f8f9fa;
     padding: 2px 6px;
-    border-radius: 3px;
+    border-radius: var(--wpvfh-radius);
     color: #e74c3c;
 }
 
@@ -3382,7 +3382,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     gap: 6px !important;
     padding: 2px !important;
     border: 2px solid transparent !important;
-    border-radius: 5px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 11px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
@@ -3457,7 +3457,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     height: 18px !important;
     padding: 0 5px !important;
     background: currentColor !important;
-    border-radius: 9px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 9px !important;
     font-weight: 700 !important;
 }
@@ -3508,7 +3508,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     padding: 12px 16px;
     background: #fff;
     border: 1px solid #e9ecef;
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -3554,7 +3554,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     align-items: center;
     gap: 4px;
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: var(--wpvfh-radius);
     font-size: 12px;
     font-weight: 700;
 }
@@ -3589,7 +3589,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     align-items: center;
     gap: 12px;
     padding: 16px;
-    border-radius: 12px;
+    border-radius: var(--wpvfh-radius);
     margin-bottom: 12px;
 }
 
@@ -3650,14 +3650,14 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     flex: 1;
     height: 8px;
     background: #e9ecef;
-    border-radius: 4px;
+    border-radius: var(--wpvfh-radius);
     overflow: hidden;
 }
 
 .wpvfh-progress-fill {
     height: 100%;
     background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
-    border-radius: 4px;
+    border-radius: var(--wpvfh-radius);
     transition: width 0.3s ease;
 }
 
@@ -3673,7 +3673,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     width: 100%;
     padding: 14px 20px;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--wpvfh-radius);
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
@@ -3709,7 +3709,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     padding: 14px 20px;
     background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%);
     border: 2px solid #27ae60;
-    border-radius: 10px;
+    border-radius: var(--wpvfh-radius);
     color: #27ae60;
     font-weight: 700;
     font-size: 14px;
@@ -3733,7 +3733,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     justify-content: center;
     border: none;
     background: transparent;
-    border-radius: 6px;
+    border-radius: var(--wpvfh-radius);
     cursor: pointer;
     font-size: 16px;
     transition: all 0.2s ease;
@@ -3766,7 +3766,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     overflow-y: auto;
     background: #fff;
     border: 1px solid #e9ecef;
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     z-index: 1000;
 }
@@ -3814,7 +3814,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     padding: 2px 6px;
     background: rgba(52, 152, 219, 0.1);
     color: #3498db;
-    border-radius: 4px;
+    border-radius: var(--wpvfh-radius);
     font-weight: 600;
 }
 
@@ -3823,7 +3823,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     margin-top: 12px;
     border: 1px solid var(--wpvfh-border);
     padding: 10px;
-    border-radius: 5px;
+    border-radius: var(--wpvfh-radius);
     background: var(--wpvfh-bg-light);
     text-align: center;
 }
@@ -3842,7 +3842,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     padding: 8px 12px;
     background: #f8f9fa;
     border: 1px solid #e9ecef;
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     font-size: 12px;
 }
 
@@ -3888,7 +3888,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     padding: 8px 14px;
     background: #fff;
     border: 2px dashed #dee2e6;
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     color: #6c757d;
     font-size: 12px;
     font-weight: 600;
@@ -4000,7 +4000,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 .wpvfh-modal-content {
     position: relative;
     background: #fff;
-    border-radius: 16px;
+    border-radius: var(--wpvfh-radius);
     padding: 0px;
     max-width: 400px;
     width: 100%;
@@ -4096,7 +4096,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     padding: 6px 10px;
     background: #f8f9fa;
     border: 1px solid #e9ecef;
-    border-radius: 20px;
+    border-radius: var(--wpvfh-radius);
     font-size: 12px;
 }
 
@@ -4147,7 +4147,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     flex: 1;
     padding: 10px 14px;
     border: 1px solid #dee2e6;
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     font-size: 14px;
     transition: border-color 0.2s ease;
 }
@@ -4172,7 +4172,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     overflow-y: auto;
     background: #fff;
     border: 1px solid #e9ecef;
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     margin-top: 4px;
@@ -4201,7 +4201,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     overflow-y: auto;
     background: #fff;
     border: 1px solid #e9ecef;
-    border-radius: 12px;
+    border-radius: var(--wpvfh-radius);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
     z-index: 2147483647;
     min-width: 280px;
@@ -4239,7 +4239,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     background: var(--wpvfh-bg-light);
     border: 1px solid var(--wpvfh-border);
     margin-top: 16px;
-    border-radius: 5px;
+    border-radius: var(--wpvfh-radius);
 }
 
 .wpvfh-page-validation .wpvfh-validation-status {
@@ -4247,7 +4247,7 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
     align-items: center;
     gap: 12px;
     padding: 0px;
-    border-radius: 10px;
+    border-radius: var(--wpvfh-radius);
     margin-bottom: 12px;
     background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.05) 100%);
     border: 2px solid rgba(243, 156, 18, 0.3);
@@ -4283,7 +4283,7 @@ button.wpvfh-btn-validate {
     all: revert !important;
     width: 100% !important;
     padding: 14px 20px !important;
-    border-radius: 10px !important;
+    border-radius: var(--wpvfh-radius) !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -4355,7 +4355,7 @@ button#wpvfh-validate-page-btn {
 .wpvfh-attachments-label .wpvfh-optional-badge {
     background: #e9ecef;
     padding: 2px 8px;
-    border-radius: 10px;
+    border-radius: var(--wpvfh-radius);
     font-size: 10px;
     font-weight: 500;
     color: #6c757d;
@@ -4395,7 +4395,7 @@ button#wpvfh-validate-page-btn {
     padding: 8px 12px;
     background: #f8f9fa;
     border: 1px solid #e9ecef;
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     font-size: 12px;
 }
 
@@ -4517,13 +4517,13 @@ button#wpvfh-validate-page-btn {
     position: sticky;
     top: 0;
     z-index: 10;
-    border-radius: 5px;
+    border-radius: var(--wpvfh-radius);
 }
 
 .wpvfh-dropzone {
     flex: 1;
     padding: 12px 8px;
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     text-align: center;
     font-size: 12px;
     font-weight: 600;
@@ -4583,7 +4583,7 @@ button#wpvfh-validate-page-btn {
     font-weight: 600;
     margin: 0 0 8px 0;
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: var(--wpvfh-radius);
 }
 
 .wpvfh-priority-high {
@@ -4609,7 +4609,7 @@ button#wpvfh-validate-page-btn {
 .wpvfh-priority-list {
     min-height: 40px;
     border: 2px dashed var(--wpvfh-border);
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     padding: 8px;
     transition: all 0.2s ease;
 }
@@ -4657,7 +4657,7 @@ button#wpvfh-validate-page-btn {
     padding: 8px 12px !important;
     background: var(--wpvfh-bg-light) !important;
     border: 1px solid var(--wpvfh-border) !important;
-    border-radius: 6px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 12px !important;
     font-weight: 500 !important;
     color: var(--wpvfh-text-light) !important;
@@ -4710,7 +4710,7 @@ button#wpvfh-validate-page-btn {
     padding: 6px 12px !important;
     background: transparent !important;
     border: 1px solid var(--wpvfh-border) !important;
-    border-radius: 16px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 12px !important;
     font-weight: 500 !important;
     color: var(--wpvfh-text-light) !important;
@@ -4763,7 +4763,7 @@ button#wpvfh-validate-page-btn {
     position: sticky;
     top: 0;
     z-index: 10;
-    border-radius: 5px;
+    border-radius: var(--wpvfh-radius);
     margin: 12px;
     flex-wrap: wrap;
 }
@@ -4772,7 +4772,7 @@ button#wpvfh-validate-page-btn {
     flex: 1 1 auto;
     min-width: 80px;
     padding: 8px 6px;
-    border-radius: 6px;
+    border-radius: var(--wpvfh-radius);
     text-align: center;
     font-size: 11px;
     font-weight: 600;
@@ -4811,7 +4811,7 @@ button#wpvfh-validate-page-btn {
     font-weight: 600;
     margin: 0 0 8px 0;
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: var(--wpvfh-radius);
     background: color-mix(in srgb, var(--section-color, #95a5a6) 10%, transparent);
     color: var(--section-color, #95a5a6);
     border-left: 3px solid var(--section-color, #95a5a6);
@@ -4820,7 +4820,7 @@ button#wpvfh-validate-page-btn {
 .wpvfh-metadata-list {
     min-height: 40px;
     border: 2px dashed var(--wpvfh-border);
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     padding: 8px;
     transition: all 0.2s ease;
 }
@@ -4909,7 +4909,7 @@ button#wpvfh-validate-page-btn {
     color: var(--wpvfh-primary);
     background: rgba(52, 152, 219, 0.1);
     padding: 2px 6px;
-    border-radius: 4px;
+    border-radius: var(--wpvfh-radius);
 }
 
 /* =====================================================
@@ -4961,7 +4961,7 @@ button#wpvfh-validate-page-btn {
 
 .wpvfh-search-content {
     background: var(--wpvfh-bg);
-    border-radius: 12px;
+    border-radius: var(--wpvfh-radius);
     width: 90%;
     max-width: 500px;
     max-height: 80vh;
@@ -5000,7 +5000,7 @@ button#wpvfh-validate-page-btn {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border-radius: 6px !important;
+    border-radius: var(--wpvfh-radius) !important;
     transition: background 0.2s ease !important;
 }
 
@@ -5038,7 +5038,7 @@ button#wpvfh-validate-page-btn {
 .wpvfh-search-field select {
     padding: 10px 12px !important;
     border: 1px solid var(--wpvfh-border) !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 14px !important;
     background: var(--wpvfh-bg) !important;
     color: var(--wpvfh-text) !important;
@@ -5070,7 +5070,7 @@ button#wpvfh-validate-page-btn {
 .wpvfh-search-actions button {
     flex: 1;
     padding: 12px 16px !important;
-    border-radius: 8px !important;
+    border-radius: var(--wpvfh-radius) !important;
     font-size: 14px !important;
     font-weight: 600 !important;
     cursor: pointer !important;
@@ -5128,7 +5128,7 @@ button#wpvfh-validate-page-btn {
     color: var(--wpvfh-text-light);
     background: var(--wpvfh-bg-light);
     padding: 4px 8px;
-    border-radius: 12px;
+    border-radius: var(--wpvfh-radius);
 }
 
 .wpvfh-search-results-list {
@@ -5142,7 +5142,7 @@ button#wpvfh-validate-page-btn {
 .wpvfh-search-result-item {
     padding: 12px;
     background: var(--wpvfh-bg-light);
-    border-radius: 8px;
+    border-radius: var(--wpvfh-radius);
     cursor: pointer;
     transition: all 0.2s ease;
     border: 1px solid transparent;
@@ -5166,7 +5166,7 @@ button#wpvfh-validate-page-btn {
     color: var(--wpvfh-primary);
     background: rgba(52, 152, 219, 0.1);
     padding: 2px 6px;
-    border-radius: 4px;
+    border-radius: var(--wpvfh-radius);
 }
 
 .wpvfh-search-result-status {
