@@ -218,7 +218,7 @@ function wpvfh_enqueue_frontend_assets_for_admin() {
 	// CSS Frontend
 	wp_enqueue_style(
 		'wpvfh-frontend',
-		WPVFH_PLUGIN_URL . 'assets/css/frontend.css',
+		WPVFH_PLUGIN_URL . 'assets/css/feedback.css',
 		array(),
 		WPVFH_VERSION
 	);
@@ -226,7 +226,7 @@ function wpvfh_enqueue_frontend_assets_for_admin() {
 	// JS Frontend
 	wp_enqueue_script(
 		'wpvfh-frontend',
-		WPVFH_PLUGIN_URL . 'assets/js/frontend.js',
+		WPVFH_PLUGIN_URL . 'assets/js/feedback-widget.js',
 		array( 'jquery' ),
 		WPVFH_VERSION,
 		true
@@ -236,7 +236,7 @@ function wpvfh_enqueue_frontend_assets_for_admin() {
 	if ( wpvfh_is_screenshot_enabled() ) {
 		wp_enqueue_script(
 			'html2canvas',
-			WPVFH_PLUGIN_URL . 'assets/js/lib/html2canvas.min.js',
+			WPVFH_PLUGIN_URL . 'assets/vendor/html2canvas.min.js',
 			array(),
 			'1.4.1',
 			true
