@@ -88,6 +88,16 @@ trait WPVFH_Admin_Settings {
             )
         );
 
+        register_setting(
+            'wpvfh_general_settings',
+            'wpvfh_enable_admin',
+            array(
+                'type'              => 'boolean',
+                'sanitize_callback' => 'rest_sanitize_boolean',
+                'default'           => false,
+            )
+        );
+
         // ========================================
         // Onglet Graphisme
         // ========================================

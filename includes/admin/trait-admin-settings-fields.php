@@ -204,6 +204,25 @@ trait WPVFH_Admin_Settings_Fields {
     }
 
     /**
+     * Champ Activer sur le back-office
+     *
+     * @since 1.10.0
+     * @return void
+     */
+    public static function render_enable_admin_field() {
+        $value = WPVFH_Database::get_setting( 'wpvfh_enable_admin', false );
+        ?>
+        <label>
+            <input type="checkbox" name="wpvfh_enable_admin" value="1" <?php checked( $value, true ); ?>>
+            <?php esc_html_e( 'Activer le widget de feedback dans l\'administration WordPress', 'blazing-feedback' ); ?>
+        </label>
+        <p class="description">
+            <?php esc_html_e( 'Permet d\'utiliser le widget de feedback directement dans le back-office WordPress.', 'blazing-feedback' ); ?>
+        </p>
+        <?php
+    }
+
+    /**
      * Champ Action après ajout d'un feedback
      *
      * @since 1.9.0

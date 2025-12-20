@@ -54,6 +54,12 @@ trait WPVFH_Admin_Settings_Tabs_Small {
                         <?php self::render_post_feedback_action_field(); ?>
                     </td>
                 </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Back-office', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <?php self::render_enable_admin_field(); ?>
+                    </td>
+                </tr>
             </table>
         </div>
         <?php
