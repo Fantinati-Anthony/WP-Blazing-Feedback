@@ -126,7 +126,10 @@ body.wpvfh-panel-active .wpvfh-sidebar-overlay {
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15) !important;
 }
 
-.wpvfh-panel[data-panel-position="left"].wpvfh-panel-open {
+.wpvfh-panel[data-panel-position="left"].wpvfh-panel-open,
+html body .wpvfh-panel[data-panel-position="left"].wpvfh-panel-open,
+html body.elementor-page .wpvfh-panel[data-panel-position="left"].wpvfh-panel-open,
+html body.elementor-default .wpvfh-panel[data-panel-position="left"].wpvfh-panel-open {
     transform: translateX(0) !important;
 }
 
@@ -140,7 +143,13 @@ body.wpvfh-panel-active.wpvfh-panel-left {
     transition: margin 0.3s ease !important;
 }
 
-.wpvfh-panel.wpvfh-panel-open {
+.wpvfh-panel.wpvfh-panel-open,
+body .wpvfh-panel.wpvfh-panel-open,
+html body .wpvfh-panel.wpvfh-panel-open,
+.wpvfh-container .wpvfh-panel.wpvfh-panel-open,
+.elementor .wpvfh-panel.wpvfh-panel-open,
+html body.elementor-page .wpvfh-panel.wpvfh-panel-open,
+html body.elementor-default .wpvfh-panel.wpvfh-panel-open {
     transform: translateX(0) !important;
     visibility: visible !important;
     pointer-events: auto !important;
