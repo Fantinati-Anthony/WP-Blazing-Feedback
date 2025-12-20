@@ -120,7 +120,7 @@ class BZMI_Admin {
 		// Actions en retard
 		$overdue_actions = BZMI_Action::overdue();
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/dashboard.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/dashboard.php';
 	}
 
 	/**

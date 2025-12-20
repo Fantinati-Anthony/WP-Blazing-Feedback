@@ -133,35 +133,35 @@ class BZMI_Admin_ICAVAL {
 				$items = $result['items'];
 				$total = $result['total'];
 				$projects = BZMI_Project::all( array( 'orderby' => 'name', 'order' => 'ASC' ) );
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/informations-list.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/informations-list.php';
 				break;
 
 			case 'clarifications':
 				$result = BZMI_Clarification::paginate( $current_page, $per_page, $args );
 				$items = $result['items'];
 				$total = $result['total'];
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/clarifications-list.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/clarifications-list.php';
 				break;
 
 			case 'actions':
 				$result = BZMI_Action::paginate( $current_page, $per_page, $args );
 				$items = $result['items'];
 				$total = $result['total'];
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/actions-list.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/actions-list.php';
 				break;
 
 			case 'values':
 				$result = BZMI_Value::paginate( $current_page, $per_page, $args );
 				$items = $result['items'];
 				$total = $result['total'];
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/values-list.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/values-list.php';
 				break;
 
 			case 'apprenticeships':
 				$result = BZMI_Apprenticeship::paginate( $current_page, $per_page, $args );
 				$items = $result['items'];
 				$total = $result['total'];
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/apprenticeships-list.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/apprenticeships-list.php';
 				break;
 		}
 	}
@@ -183,7 +183,7 @@ class BZMI_Admin_ICAVAL {
 				$types = BZMI_Information::get_types();
 				$priorities = BZMI_Information::get_priorities();
 				$statuses = BZMI_Information::get_statuses();
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/informations-form.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/informations-form.php';
 				break;
 
 			case 'clarifications':
@@ -191,7 +191,7 @@ class BZMI_Admin_ICAVAL {
 				$information_id = isset( $_GET['information_id'] ) ? intval( $_GET['information_id'] ) : ( $item ? $item->information_id : 0 );
 				$informations = BZMI_Information::all( array( 'orderby' => 'created_at', 'order' => 'DESC' ) );
 				$statuses = BZMI_Clarification::get_statuses();
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/clarifications-form.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/clarifications-form.php';
 				break;
 
 			case 'actions':
@@ -202,7 +202,7 @@ class BZMI_Admin_ICAVAL {
 				$priorities = BZMI_Action::get_priorities();
 				$efforts = BZMI_Action::get_effort_estimates();
 				$statuses = BZMI_Action::get_statuses();
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/actions-form.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/actions-form.php';
 				break;
 
 			case 'values':
@@ -211,7 +211,7 @@ class BZMI_Admin_ICAVAL {
 				$actions = BZMI_Action::all( array( 'orderby' => 'created_at', 'order' => 'DESC' ) );
 				$value_types = BZMI_Value::get_value_types();
 				$statuses = BZMI_Value::get_statuses();
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/values-form.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/values-form.php';
 				break;
 
 			case 'apprenticeships':
@@ -219,7 +219,7 @@ class BZMI_Admin_ICAVAL {
 				$source_types = BZMI_Apprenticeship::get_source_types();
 				$lesson_types = BZMI_Apprenticeship::get_lesson_types();
 				$statuses = BZMI_Apprenticeship::get_statuses();
-				include BZMI_PLUGIN_DIR . 'templates/admin/icaval/apprenticeships-form.php';
+				include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/apprenticeships-form.php';
 				break;
 		}
 	}
@@ -239,7 +239,7 @@ class BZMI_Admin_ICAVAL {
 				if ( $item ) {
 					$clarifications = $item->clarifications();
 					$actions = $item->actions();
-					include BZMI_PLUGIN_DIR . 'templates/admin/icaval/informations-view.php';
+					include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/informations-view.php';
 				}
 				break;
 
@@ -247,7 +247,7 @@ class BZMI_Admin_ICAVAL {
 				$item = BZMI_Action::find( $id );
 				if ( $item ) {
 					$values = $item->values();
-					include BZMI_PLUGIN_DIR . 'templates/admin/icaval/actions-view.php';
+					include BZMI_PLUGIN_DIR . 'templates/minds/admin/icaval/actions-view.php';
 				}
 				break;
 

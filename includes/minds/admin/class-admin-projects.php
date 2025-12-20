@@ -81,7 +81,7 @@ class BZMI_Admin_Projects {
 		$portfolios = BZMI_Portfolio::all( array( 'orderby' => 'name', 'order' => 'ASC' ) );
 		$statuses = BZMI_Project::get_statuses();
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/projects-list.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/projects-list.php';
 	}
 
 	/**
@@ -110,7 +110,7 @@ class BZMI_Admin_Projects {
 		$priorities = BZMI_Project::get_priorities();
 		$is_new = ! $project_id;
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/projects-form.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/projects-form.php';
 	}
 
 	/**
@@ -136,7 +136,7 @@ class BZMI_Admin_Projects {
 		$icaval_stats = $project->get_icaval_stats();
 		$users = $project->users();
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/projects-view.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/projects-view.php';
 	}
 
 	/**

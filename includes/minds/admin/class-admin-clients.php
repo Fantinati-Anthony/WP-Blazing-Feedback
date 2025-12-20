@@ -85,7 +85,7 @@ class BZMI_Admin_Clients {
 
 		$statuses = BZMI_Client::get_statuses();
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/clients-list.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/clients-list.php';
 	}
 
 	/**
@@ -108,7 +108,7 @@ class BZMI_Admin_Clients {
 		$statuses = BZMI_Client::get_statuses();
 		$is_new = ! $client_id;
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/clients-form.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/clients-form.php';
 	}
 
 	/**
@@ -131,7 +131,7 @@ class BZMI_Admin_Clients {
 		$portfolios = $client->portfolios();
 		$stats = $client->get_stats();
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/clients-view.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/clients-view.php';
 	}
 
 	/**

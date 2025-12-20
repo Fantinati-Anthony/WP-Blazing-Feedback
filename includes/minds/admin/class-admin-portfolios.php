@@ -81,7 +81,7 @@ class BZMI_Admin_Portfolios {
 		$clients = BZMI_Client::all( array( 'orderby' => 'name', 'order' => 'ASC' ) );
 		$statuses = BZMI_Portfolio::get_statuses();
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/portfolios-list.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/portfolios-list.php';
 	}
 
 	/**
@@ -111,7 +111,7 @@ class BZMI_Admin_Portfolios {
 		$colors = BZMI_Portfolio::get_colors();
 		$is_new = ! $portfolio_id;
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/portfolios-form.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/portfolios-form.php';
 	}
 
 	/**
@@ -135,7 +135,7 @@ class BZMI_Admin_Portfolios {
 		$projects = $portfolio->projects();
 		$stats = $portfolio->get_stats();
 
-		include BZMI_PLUGIN_DIR . 'templates/admin/portfolios-view.php';
+		include BZMI_PLUGIN_DIR . 'templates/minds/admin/portfolios-view.php';
 	}
 
 	/**
