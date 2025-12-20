@@ -1204,3 +1204,192 @@ button#wpvfh-validate-page-btn {
     color: var(--wpvfh-text-light);
     font-size: 14px;
 }
+
+/* ==========================================================================
+   Styles spécifiques WordPress Admin (BO)
+   ========================================================================== */
+
+/* Search form inputs pour wp-admin */
+.wp-admin .wpvfh-search-field input,
+.wp-admin .wpvfh-search-field select,
+body.wp-admin .wpvfh-search-field input,
+body.wp-admin .wpvfh-search-field select,
+.wp-admin .wpvfh-panel input[type="text"],
+.wp-admin .wpvfh-panel input[type="number"],
+.wp-admin .wpvfh-panel input[type="date"],
+.wp-admin .wpvfh-panel select,
+body.wp-admin .wpvfh-panel input[type="text"],
+body.wp-admin .wpvfh-panel input[type="number"],
+body.wp-admin .wpvfh-panel input[type="date"],
+body.wp-admin .wpvfh-panel select {
+    padding: 10px 12px !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: var(--wpvfh-radius) !important;
+    font-size: 14px !important;
+    background: var(--wpvfh-bg) !important;
+    background-color: var(--wpvfh-bg) !important;
+    color: var(--wpvfh-text) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 40px !important;
+    line-height: 1.4 !important;
+    box-shadow: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+
+.wp-admin .wpvfh-search-field input:focus,
+.wp-admin .wpvfh-search-field select:focus,
+body.wp-admin .wpvfh-search-field input:focus,
+body.wp-admin .wpvfh-search-field select:focus,
+.wp-admin .wpvfh-panel input:focus,
+.wp-admin .wpvfh-panel select:focus,
+body.wp-admin .wpvfh-panel input:focus,
+body.wp-admin .wpvfh-panel select:focus {
+    outline: none !important;
+    border-color: var(--wpvfh-primary) !important;
+    box-shadow: 0 0 0 2px rgba(254, 81, 0, 0.2) !important;
+}
+
+.wp-admin .wpvfh-search-field input::placeholder,
+body.wp-admin .wpvfh-search-field input::placeholder,
+.wp-admin .wpvfh-panel input::placeholder,
+body.wp-admin .wpvfh-panel input::placeholder {
+    color: var(--wpvfh-text-light) !important;
+    opacity: 0.7 !important;
+}
+
+/* Labels du formulaire de recherche */
+.wp-admin .wpvfh-search-field label,
+body.wp-admin .wpvfh-search-field label {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text-light) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 4px !important;
+}
+
+/* Dropdown (select) styling */
+.wp-admin .wpvfh-dropdown,
+body.wp-admin .wpvfh-dropdown,
+.wp-admin .wpvfh-panel .wpvfh-dropdown,
+body.wp-admin .wpvfh-panel .wpvfh-dropdown {
+    width: 100% !important;
+    padding: 8px 10px !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: var(--wpvfh-radius) !important;
+    background: var(--wpvfh-bg) !important;
+    background-color: var(--wpvfh-bg) !important;
+    color: var(--wpvfh-text) !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+}
+
+/* Textarea styling */
+.wp-admin .wpvfh-textarea,
+body.wp-admin .wpvfh-textarea,
+.wp-admin .wpvfh-panel textarea,
+body.wp-admin .wpvfh-panel textarea {
+    width: 100% !important;
+    padding: 12px !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: var(--wpvfh-radius) !important;
+    font-family: inherit !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    resize: vertical !important;
+    background: var(--wpvfh-bg) !important;
+    background-color: var(--wpvfh-bg) !important;
+    color: var(--wpvfh-text) !important;
+    box-shadow: none !important;
+}
+
+/* Search content header */
+.wp-admin .wpvfh-search-header,
+body.wp-admin .wpvfh-search-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 16px !important;
+    background: var(--wpvfh-bg-light) !important;
+    border-bottom: 1px solid var(--wpvfh-border) !important;
+}
+
+.wp-admin .wpvfh-search-header h3,
+body.wp-admin .wpvfh-search-header h3 {
+    margin: 0 !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+/* Search close button */
+.wp-admin .wpvfh-search-close,
+body.wp-admin .wpvfh-search-close,
+.wp-admin button.wpvfh-search-close,
+body.wp-admin button.wpvfh-search-close {
+    background: transparent !important;
+    border: none !important;
+    font-size: 18px !important;
+    color: var(--wpvfh-text-light) !important;
+    cursor: pointer !important;
+    padding: 4px !important;
+    line-height: 1 !important;
+    min-height: auto !important;
+    min-width: auto !important;
+    box-shadow: none !important;
+}
+
+.wp-admin .wpvfh-search-close:hover,
+body.wp-admin .wpvfh-search-close:hover {
+    color: var(--wpvfh-text) !important;
+    background: transparent !important;
+}
+
+/* Search actions buttons */
+.wp-admin .wpvfh-search-actions button,
+body.wp-admin .wpvfh-search-actions button {
+    flex: 1 !important;
+    padding: 12px 16px !important;
+    border-radius: var(--wpvfh-radius) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    min-height: auto !important;
+    line-height: 1.4 !important;
+    box-shadow: none !important;
+}
+
+.wp-admin #wpvfh-search-submit,
+body.wp-admin #wpvfh-search-submit {
+    background: var(--wpvfh-primary) !important;
+    background-color: var(--wpvfh-primary) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.wp-admin #wpvfh-search-submit:hover,
+body.wp-admin #wpvfh-search-submit:hover {
+    background: #d94400 !important;
+    background-color: #d94400 !important;
+}
+
+.wp-admin #wpvfh-search-reset,
+body.wp-admin #wpvfh-search-reset {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--wpvfh-text) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+}
+
+.wp-admin #wpvfh-search-reset:hover,
+body.wp-admin #wpvfh-search-reset:hover {
+    background: var(--wpvfh-bg-light) !important;
+    background-color: var(--wpvfh-bg-light) !important;
+}
