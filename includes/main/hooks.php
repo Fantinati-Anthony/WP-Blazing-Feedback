@@ -26,6 +26,7 @@ function wpvfh_register_hooks() {
 	add_action( 'init', 'wpvfh_load_textdomain' );
 	add_action( 'wp_enqueue_scripts', 'wpvfh_enqueue_frontend_assets' );
 	add_action( 'admin_enqueue_scripts', 'wpvfh_enqueue_admin_assets' );
+	add_action( 'admin_enqueue_scripts', 'wpvfh_maybe_enqueue_admin_widget_assets' );
 
 	// Footer du site (widget de feedback)
 	add_action( 'wp_footer', 'wpvfh_render_feedback_widget' );
@@ -168,6 +169,28 @@ function wpvfh_sanitize_setting( $option_name, $type ) {
 }
 
 /**
+ * Charger les assets du widget admin si l'option est activée
+ * Doit être appelé via admin_enqueue_scripts (avant le footer)
+ *
+ * @since 2.0.1
+ * @return void
+ */
+function wpvfh_maybe_enqueue_admin_widget_assets() {
+	// Vérifier si l'option est activée
+	if ( ! WPVFH_Database::get_setting( 'wpvfh_enable_admin', false ) ) {
+		return;
+	}
+
+	// Vérifier les permissions
+	if ( ! wpvfh_can_user_see_feedback_widget() ) {
+		return;
+	}
+
+	// Charger les assets frontend dans l'admin
+	wpvfh_enqueue_frontend_assets_for_admin();
+}
+
+/**
  * Afficher le widget de feedback dans le footer admin
  *
  * @since 1.10.0
@@ -184,8 +207,7 @@ function wpvfh_render_admin_feedback_widget() {
 		return;
 	}
 
-	// Charger les assets frontend dans l'admin
-	wpvfh_enqueue_frontend_assets_for_admin();
+	// Les assets sont déjà chargés via wpvfh_maybe_enqueue_admin_widget_assets()
 
 	/**
 	 * Action avant le rendu du widget de feedback admin
