@@ -107,6 +107,7 @@ class BZMI_Admin_Projects {
 			$project->portfolio_id = intval( $_GET['portfolio_id'] );
 		}
 
+		$clients = BZMI_Client::all( array( 'orderby' => 'name', 'order' => 'ASC' ) );
 		$portfolios = BZMI_Portfolio::all( array( 'orderby' => 'name', 'order' => 'ASC' ) );
 		$statuses = BZMI_Project::get_statuses();
 		$priorities = BZMI_Project::get_priorities();
