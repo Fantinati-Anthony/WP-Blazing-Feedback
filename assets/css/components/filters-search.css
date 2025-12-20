@@ -1,25 +1,8 @@
 /**
  * Filtres par état, recherche, pages
- * 
- * Reference file for feedback.css lines 3271-3570
- * See main file: assets/css/feedback.css
- * 
+ *
  * @package Blazing_Feedback
  */
-
-/* 
- * This section includes:
- * - Start: Liste réorganisable
- * - End: Section Validation
- * - Lines: 3271 to 3570 (~300 lines)
- * 
- * To view this section, read feedback.css with:
- * offset=3271, limit=300
- */
-    padding: 2px 6px;
-    border-radius: var(--wpvfh-radius);
-    color: #e74c3c;
-}
 
 /* ==========================================================================
    Liste réorganisable (drag-and-drop)
@@ -385,4 +368,4 @@
 }
 
 .wpvfh-page-badge.no-feedbacks {
-    background: #f1f3f4;
+    background: #f1f3f4;}
