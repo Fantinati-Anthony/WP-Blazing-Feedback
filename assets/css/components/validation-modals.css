@@ -1,23 +1,8 @@
 /**
  * Validation de page, modals, invitations
- * 
- * Reference file for feedback.css lines 3571-4060
- * See main file: assets/css/feedback.css
- * 
+ *
  * @package Blazing_Feedback
  */
-
-/* 
- * This section includes:
- * - Start: Section Validation
- * - End: Onglet Priorité
- * - Lines: 3571 to 4060 (~490 lines)
- * 
- * To view this section, read feedback.css with:
- * offset=3571, limit=490
- */
-    color: #95a5a6;
-}
 
 /* ==========================================================================
    Section Validation de Page
@@ -504,4 +489,4 @@
     color: #fff !important;
 }
 
-.wpvfh-btn-danger:hover:not(:disabled) {
+.wpvfh-btn-danger:hover:not(:disabled) {}

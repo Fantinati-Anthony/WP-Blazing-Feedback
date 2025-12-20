@@ -1,22 +1,8 @@
 /**
  * Mode inspecteur DevTools, sélection éléments
- * 
- * Reference file for feedback.css lines 2901-3270
- * See main file: assets/css/feedback.css
- * 
+ *
  * @package Blazing_Feedback
  */
-
-/* 
- * This section includes:
- * - Start: Mode inspecteur
- * - End: Liste réorganisable
- * - Lines: 2901 to 3270 (~370 lines)
- * 
- * To view this section, read feedback.css with:
- * offset=2901, limit=370
- */
-}
 
 /* Réduire les animations si l'utilisateur le préfère */
 @media (prefers-reduced-motion: reduce) {
@@ -389,4 +375,4 @@ body.wpvfh-inspector-mode .wpvfh-pins-container {
 .wpvfh-selected-element-preview code {
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 11px;
-    background: #f8f9fa;
+    background: #f8f9fa;}
