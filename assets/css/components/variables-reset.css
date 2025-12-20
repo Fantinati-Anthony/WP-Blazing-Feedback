@@ -141,3 +141,23 @@ html body.elementor-default .wpvfh-hidden {
 .wpvfh-container *::after {
     box-sizing: border-box;
 }
+
+/* ==========================================================================
+   Override WordPress Admin styles pour bouton flottant et panel
+   ========================================================================== */
+
+/* Contrer le sélecteur générique "button" de WordPress admin */
+.wp-admin #wpvfh-toggle-btn,
+.wp-admin button.wpvfh-corner-btn,
+body.wp-admin #wpvfh-toggle-btn,
+body.wp-admin button.wpvfh-corner-btn,
+html body.wp-admin #wpvfh-toggle-btn,
+html body.wp-admin button.wpvfh-corner-btn {
+    position: fixed !important;
+}
+
+.wp-admin .wpvfh-panel,
+body.wp-admin .wpvfh-panel,
+html body.wp-admin .wpvfh-panel {
+    position: fixed !important;
+}
