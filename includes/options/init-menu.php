@@ -64,6 +64,7 @@ class WPVFH_Options_Manager {
         add_action( 'wp_ajax_wpvfh_delete_custom_group', array( __CLASS__, 'ajax_delete_custom_group' ) );
         add_action( 'wp_ajax_wpvfh_rename_custom_group', array( __CLASS__, 'ajax_rename_custom_group' ) );
         add_action( 'wp_ajax_wpvfh_save_group_settings', array( __CLASS__, 'ajax_save_group_settings' ) );
+        add_action( 'wp_ajax_wpvfh_save_groups_order', array( __CLASS__, 'ajax_save_groups_order' ) );
     }
 
     /**

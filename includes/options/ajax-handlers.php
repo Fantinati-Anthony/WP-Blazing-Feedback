@@ -213,6 +213,43 @@
     }
 
     /**
+     * AJAX: Sauvegarder l'ordre des groupes de métadonnées
+     *
+     * @since 1.9.0
+     * @return void
+     */
+    public static function ajax_save_groups_order() {
+        check_ajax_referer( 'wpvfh_options_nonce', 'nonce' );
+
+        if ( ! current_user_can( 'manage_feedback' ) ) {
+            wp_send_json_error( __( 'Permission refusée.', 'blazing-feedback' ) );
+        }
+
+        $order = isset( $_POST['order'] ) ? $_POST['order'] : array();
+
+        if ( empty( $order ) || ! is_array( $order ) ) {
+            wp_send_json_error( __( 'Données invalides.', 'blazing-feedback' ) );
+        }
+
+        // Construire le tableau slug => sort_order
+        $groups_order = array();
+        foreach ( $order as $index => $slug ) {
+            $slug = sanitize_key( $slug );
+            if ( ! empty( $slug ) ) {
+                $groups_order[ $slug ] = (int) $index;
+            }
+        }
+
+        if ( ! WPVFH_Database::save_groups_order( $groups_order ) ) {
+            wp_send_json_error( __( 'Erreur lors de la sauvegarde de l\'ordre.', 'blazing-feedback' ) );
+        }
+
+        wp_send_json_success( array(
+            'message' => __( 'Ordre enregistré.', 'blazing-feedback' ),
+        ) );
+    }
+
+    /**
      * Rendu de la page d'options
      *
      * @since 1.1.0

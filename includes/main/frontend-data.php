@@ -172,6 +172,10 @@ function wpvfh_get_frontend_data() {
  */
 function wpvfh_get_metadata_groups_for_frontend() {
 	$groups = array();
+	$groups_with_order = array();
+
+	// Récupérer l'ordre de tous les groupes
+	$all_settings = WPVFH_Database::get_all_group_settings_ordered();
 
 	// Groupes standards
 	$standard_groups = array( 'statuses', 'types', 'priorities', 'tags' );
@@ -184,17 +188,20 @@ function wpvfh_get_metadata_groups_for_frontend() {
 			continue;
 		}
 
-		$groups[ $slug ] = array(
-			'slug'     => $slug,
-			'name'     => wpvfh_get_group_label( $slug ),
-			'type'     => 'standard',
-			'settings' => array(
+		$sort_order = isset( $all_settings[ $slug ]['sort_order'] ) ? $all_settings[ $slug ]['sort_order'] : 99;
+
+		$groups_with_order[] = array(
+			'slug'       => $slug,
+			'name'       => wpvfh_get_group_label( $slug ),
+			'type'       => 'standard',
+			'sort_order' => $sort_order,
+			'settings'   => array(
 				'enabled'             => $settings['enabled'],
 				'required'            => $settings['required'],
 				'show_in_sidebar'     => $settings['show_in_sidebar'],
 				'hide_empty_sections' => $settings['hide_empty_sections'],
 			),
-			'items'    => WPVFH_Options_Manager::get_items_by_type( $slug ),
+			'items'      => WPVFH_Options_Manager::get_items_by_type( $slug ),
 		);
 	}
 
@@ -209,18 +216,31 @@ function wpvfh_get_metadata_groups_for_frontend() {
 			continue;
 		}
 
-		$groups[ $slug ] = array(
-			'slug'     => $slug,
-			'name'     => $group['name'],
-			'type'     => 'custom',
-			'settings' => array(
+		$sort_order = isset( $all_settings[ $slug ]['sort_order'] ) ? $all_settings[ $slug ]['sort_order'] : 99;
+
+		$groups_with_order[] = array(
+			'slug'       => $slug,
+			'name'       => $group['name'],
+			'type'       => 'custom',
+			'sort_order' => $sort_order,
+			'settings'   => array(
 				'enabled'             => $settings['enabled'],
 				'required'            => $settings['required'],
 				'show_in_sidebar'     => $settings['show_in_sidebar'],
 				'hide_empty_sections' => $settings['hide_empty_sections'],
 			),
-			'items'    => WPVFH_Options_Manager::get_custom_group_items( $slug ),
+			'items'      => WPVFH_Options_Manager::get_custom_group_items( $slug ),
 		);
+	}
+
+	// Trier par sort_order
+	usort( $groups_with_order, function( $a, $b ) {
+		return $a['sort_order'] - $b['sort_order'];
+	} );
+
+	// Reconstruire le tableau associatif avec l'ordre correct
+	foreach ( $groups_with_order as $group ) {
+		$groups[ $group['slug'] ] = $group;
 	}
 
 	return $groups;

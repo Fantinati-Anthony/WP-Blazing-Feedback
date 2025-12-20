@@ -19,13 +19,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait WPVFH_Options_Helpers_Trait {
 
     /**
-     * Obtenir tous les onglets (par défaut + personnalisés)
+     * Obtenir tous les onglets (par défaut + personnalisés) triés par sort_order
      *
      * @since 1.3.0
      * @return array
      */
     public static function get_all_tabs() {
-        $tabs = array(
+        // Tous les onglets avec leurs labels
+        $all_tabs = array(
             'statuses'   => __( 'Statuts', 'blazing-feedback' ),
             'types'      => __( 'Types de feedback', 'blazing-feedback' ),
             'priorities' => __( 'Niveaux de priorité', 'blazing-feedback' ),
@@ -35,10 +36,26 @@ trait WPVFH_Options_Helpers_Trait {
         // Ajouter les groupes personnalisés
         $custom_groups = self::get_custom_groups();
         foreach ( $custom_groups as $slug => $group ) {
-            $tabs[ $slug ] = $group['name'];
+            $all_tabs[ $slug ] = $group['name'];
         }
 
-        return $tabs;
+        // Récupérer l'ordre de tous les groupes
+        $all_settings = WPVFH_Database::get_all_group_settings_ordered();
+
+        // Construire un tableau slug => sort_order
+        $order_map = array();
+        foreach ( $all_settings as $slug => $settings ) {
+            $order_map[ $slug ] = isset( $settings['sort_order'] ) ? $settings['sort_order'] : 99;
+        }
+
+        // Trier les onglets par sort_order
+        uksort( $all_tabs, function( $a, $b ) use ( $order_map ) {
+            $order_a = isset( $order_map[ $a ] ) ? $order_map[ $a ] : 99;
+            $order_b = isset( $order_map[ $b ] ) ? $order_map[ $b ] : 99;
+            return $order_a - $order_b;
+        } );
+
+        return $all_tabs;
     }
 
     /**
