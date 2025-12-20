@@ -223,15 +223,6 @@ function wpvfh_enqueue_frontend_assets_for_admin() {
 		WPVFH_VERSION
 	);
 
-	// JS Frontend
-	wp_enqueue_script(
-		'wpvfh-frontend',
-		WPVFH_PLUGIN_URL . 'assets/js/feedback-widget.js',
-		array( 'jquery' ),
-		WPVFH_VERSION,
-		true
-	);
-
 	// html2canvas pour les captures d'écran
 	if ( wpvfh_is_screenshot_enabled() ) {
 		wp_enqueue_script(
@@ -242,6 +233,88 @@ function wpvfh_enqueue_frontend_assets_for_admin() {
 			true
 		);
 	}
+
+	// Screenshot handler
+	wp_enqueue_script(
+		'wpvfh-screenshot',
+		WPVFH_PLUGIN_URL . 'assets/js/screenshot.js',
+		array( 'html2canvas' ),
+		WPVFH_VERSION,
+		true
+	);
+
+	// Annotation system
+	wp_enqueue_script(
+		'wpvfh-annotation',
+		WPVFH_PLUGIN_URL . 'assets/js/annotation.js',
+		array( 'wpvfh-screenshot' ),
+		WPVFH_VERSION,
+		true
+	);
+
+	// Voice recorder
+	wp_enqueue_script(
+		'wpvfh-voice-recorder',
+		WPVFH_PLUGIN_URL . 'assets/js/voice-recorder.js',
+		array(),
+		WPVFH_VERSION,
+		true
+	);
+
+	// Screen recorder
+	wp_enqueue_script(
+		'wpvfh-screen-recorder',
+		WPVFH_PLUGIN_URL . 'assets/js/screen-recorder.js',
+		array(),
+		WPVFH_VERSION,
+		true
+	);
+
+	// Modules du widget (dans l'ordre de dépendance)
+	$widget_modules = array(
+		'tools',
+		'notifications',
+		'core',
+		'api',
+		'labels',
+		'tags',
+		'filters',
+		'screenshot',
+		'media',
+		'attachments',
+		'mentions',
+		'validation',
+		'form',
+		'list',
+		'pages',
+		'details',
+		'panel',
+		'search',
+		'events',
+		'participants',
+	);
+
+	$previous_handle = 'wpvfh-screen-recorder';
+	foreach ( $widget_modules as $module ) {
+		$handle = 'wpvfh-module-' . $module;
+		wp_enqueue_script(
+			$handle,
+			WPVFH_PLUGIN_URL . 'assets/js/modules/' . $module . '.js',
+			array( $previous_handle ),
+			WPVFH_VERSION,
+			true
+		);
+		$previous_handle = $handle;
+	}
+
+	// Widget principal (orchestrateur)
+	wp_enqueue_script(
+		'wpvfh-frontend',
+		WPVFH_PLUGIN_URL . 'assets/js/feedback-widget.js',
+		array( $previous_handle, 'wpvfh-annotation', 'wpvfh-voice-recorder', 'wp-i18n' ),
+		WPVFH_VERSION,
+		true
+	);
 
 	// Données localisées
 	wp_localize_script( 'wpvfh-frontend', 'wpvfhData', wpvfh_get_frontend_data() );
