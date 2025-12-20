@@ -672,3 +672,237 @@ html body.elementor-default .wpvfh-tool-btn.active,
     border-radius: var(--wpvfh-radius);
     margin-bottom: 12px;
 }
+
+/* ==========================================================================
+   Styles spécifiques WordPress Admin (BO) - Formulaire
+   ========================================================================== */
+
+/* Form dropdowns pour wp-admin */
+.wp-admin .wpvfh-form-dropdowns,
+body.wp-admin .wpvfh-form-dropdowns,
+.wp-admin .wpvfh-detail-dropdowns,
+body.wp-admin .wpvfh-detail-dropdowns {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    padding: 12px !important;
+    background: var(--wpvfh-bg-light) !important;
+    border-radius: var(--wpvfh-radius) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+}
+
+.wp-admin .wpvfh-dropdown-group label,
+body.wp-admin .wpvfh-dropdown-group label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: var(--wpvfh-text-light) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* Tags container */
+.wp-admin .wpvfh-tags-container,
+body.wp-admin .wpvfh-tags-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    align-items: center !important;
+    padding: 6px !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: var(--wpvfh-radius) !important;
+    background: var(--wpvfh-bg) !important;
+    min-height: 38px !important;
+}
+
+/* Tags input inline */
+.wp-admin .wpvfh-tags-input-inline,
+body.wp-admin .wpvfh-tags-input-inline {
+    flex: 1 !important;
+    min-width: 80px !important;
+    padding: 4px !important;
+    border: none !important;
+    background: transparent !important;
+    font-size: 13px !important;
+    outline: none !important;
+    color: var(--wpvfh-text) !important;
+}
+
+/* Predefined tags buttons */
+.wp-admin .wpvfh-predefined-tag-btn,
+body.wp-admin .wpvfh-predefined-tag-btn,
+.wp-admin button.wpvfh-predefined-tag-btn,
+body.wp-admin button.wpvfh-predefined-tag-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 3px 10px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    border: 1px solid currentColor !important;
+    border-radius: var(--wpvfh-radius) !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    opacity: 0.7 !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+}
+
+.wp-admin .wpvfh-predefined-tag-btn:hover,
+body.wp-admin .wpvfh-predefined-tag-btn:hover {
+    opacity: 1 !important;
+    background: transparent !important;
+}
+
+.wp-admin .wpvfh-predefined-tag-btn.selected,
+body.wp-admin .wpvfh-predefined-tag-btn.selected {
+    opacity: 1 !important;
+    font-weight: 600 !important;
+    background: currentColor !important;
+    color: white !important;
+}
+
+/* Tool buttons (Capture, Audio, Vidéo) */
+.wp-admin .wpvfh-tool-btn,
+body.wp-admin .wpvfh-tool-btn,
+.wp-admin button.wpvfh-tool-btn,
+body.wp-admin button.wpvfh-tool-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 10px 14px !important;
+    background: #fff !important;
+    background-color: #fff !important;
+    background-image: none !important;
+    border: 2px solid #e9ecef !important;
+    border-radius: var(--wpvfh-radius) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #495057 !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    min-height: auto !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+}
+
+.wp-admin .wpvfh-tool-btn:hover,
+body.wp-admin .wpvfh-tool-btn:hover {
+    background: #fff !important;
+    background-color: #fff !important;
+    border-color: var(--wpvfh-primary) !important;
+    color: var(--wpvfh-primary) !important;
+}
+
+.wp-admin .wpvfh-tool-btn.active,
+body.wp-admin .wpvfh-tool-btn.active {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+}
+
+/* Submit/Cancel buttons */
+.wp-admin .wpvfh-submit-btn,
+body.wp-admin .wpvfh-submit-btn,
+.wp-admin button.wpvfh-submit-btn,
+body.wp-admin button.wpvfh-submit-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 20px !important;
+    background: var(--wpvfh-primary) !important;
+    background-color: var(--wpvfh-primary) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: var(--wpvfh-radius) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+}
+
+.wp-admin .wpvfh-submit-btn:hover,
+body.wp-admin .wpvfh-submit-btn:hover {
+    background: #d94400 !important;
+    background-color: #d94400 !important;
+}
+
+.wp-admin .wpvfh-cancel-btn,
+body.wp-admin .wpvfh-cancel-btn,
+.wp-admin button.wpvfh-cancel-btn,
+body.wp-admin button.wpvfh-cancel-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 12px 20px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--wpvfh-text) !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: var(--wpvfh-radius) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+}
+
+.wp-admin .wpvfh-cancel-btn:hover,
+body.wp-admin .wpvfh-cancel-btn:hover {
+    background: var(--wpvfh-bg-light) !important;
+    background-color: var(--wpvfh-bg-light) !important;
+}
+
+/* File upload zone */
+.wp-admin .wpvfh-upload-zone,
+body.wp-admin .wpvfh-upload-zone {
+    border: 2px dashed var(--wpvfh-border) !important;
+    border-radius: var(--wpvfh-radius) !important;
+    padding: 20px !important;
+    text-align: center !important;
+    background: var(--wpvfh-bg-light) !important;
+    cursor: pointer !important;
+}
+
+.wp-admin .wpvfh-upload-zone:hover,
+body.wp-admin .wpvfh-upload-zone:hover {
+    border-color: var(--wpvfh-primary) !important;
+    background: rgba(254, 81, 0, 0.05) !important;
+}
+
+/* Priority radio buttons */
+.wp-admin .wpvfh-priority-options,
+body.wp-admin .wpvfh-priority-options {
+    display: flex !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+}
+
+.wp-admin .wpvfh-priority-option,
+body.wp-admin .wpvfh-priority-option {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 8px 12px !important;
+    border: 1px solid var(--wpvfh-border) !important;
+    border-radius: var(--wpvfh-radius) !important;
+    cursor: pointer !important;
+    font-size: 13px !important;
+    background: var(--wpvfh-bg) !important;
+}
+
+.wp-admin .wpvfh-priority-option:hover,
+body.wp-admin .wpvfh-priority-option:hover {
+    border-color: var(--wpvfh-primary) !important;
+}
+
+.wp-admin .wpvfh-priority-option.selected,
+body.wp-admin .wpvfh-priority-option.selected {
+    border-color: var(--wpvfh-primary) !important;
+    background: rgba(254, 81, 0, 0.1) !important;
+}
