@@ -12,6 +12,7 @@
    ========================================================================== */
 
 /* Spécificité maximale avec ID pour contrer les styles WordPress admin */
+/* NOTE: bottom/right/top/left sont définis en inline par PHP selon les options utilisateur */
 #wpvfh-toggle-btn,
 #wpvfh-toggle-btn.wpvfh-corner-btn,
 button#wpvfh-toggle-btn,
@@ -27,8 +28,6 @@ html body.elementor-default .wpvfh-corner-btn,
 body.wp-admin .wpvfh-corner-btn,
 html body.wp-admin .wpvfh-corner-btn {
     position: fixed !important;
-    bottom: 0 !important;
-    right: 0 !important;
     border: none !important;
     cursor: pointer !important;
     transition: all var(--wpvfh-transition) !important;
@@ -112,8 +111,6 @@ html body.wp-admin .wpvfh-corner-btn {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    margin-top: 12px !important;
-    margin-left: 12px !important;
 }
 
 .wpvfh-corner-icon {
@@ -165,8 +162,8 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
    Positions alternatives du bouton
    ========================================================================== */
 
-/* Position bottom-left */
-.wpvfh-corner-btn[data-position="bottom-left"] {
+/* Position bottom-left - bouton attaché uniquement */
+.wpvfh-btn-attached[data-position="bottom-left"] {
     right: auto !important;
     left: 0 !important;
     border-radius: 0 100% 0 0 !important;
@@ -174,7 +171,7 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     padding-left: 8px !important;
 }
 
-.wpvfh-corner-btn[data-position="bottom-left"] .wpvfh-corner-icon-wrapper {
+.wpvfh-btn-attached[data-position="bottom-left"] .wpvfh-corner-icon-wrapper {
     margin-left: 0 !important;
     margin-right: 12px !important;
 }
@@ -184,8 +181,8 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     left: -10px !important;
 }
 
-/* Position top-right */
-.wpvfh-corner-btn[data-position="top-right"] {
+/* Position top-right - bouton attaché uniquement */
+.wpvfh-btn-attached[data-position="top-right"] {
     bottom: auto !important;
     top: 0 !important;
     border-radius: 0 0 0 100% !important;
@@ -193,7 +190,7 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     padding-top: 8px !important;
 }
 
-.wpvfh-corner-btn[data-position="top-right"] .wpvfh-corner-icon-wrapper {
+.wpvfh-btn-attached[data-position="top-right"] .wpvfh-corner-icon-wrapper {
     margin-top: 0 !important;
     margin-bottom: 4px !important;
 }
@@ -203,8 +200,8 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     bottom: -8px !important;
 }
 
-/* Position top-left */
-.wpvfh-corner-btn[data-position="top-left"] {
+/* Position top-left - bouton attaché uniquement */
+.wpvfh-btn-attached[data-position="top-left"] {
     bottom: auto !important;
     top: 0 !important;
     right: auto !important;
@@ -216,7 +213,7 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     padding-left: 8px !important;
 }
 
-.wpvfh-corner-btn[data-position="top-left"] .wpvfh-corner-icon-wrapper {
+.wpvfh-btn-attached[data-position="top-left"] .wpvfh-corner-icon-wrapper {
     margin-left: 0 !important;
     margin-right: 12px !important;
     margin-top: 0 !important;
@@ -234,8 +231,8 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
    Positions centrales - demi-cercles
    ========================================================================== */
 
-/* Position top-center */
-.wpvfh-corner-btn[data-position="top-center"] {
+/* Position top-center - bouton attaché uniquement */
+.wpvfh-btn-attached[data-position="top-center"] {
     bottom: auto !important;
     top: 0 !important;
     right: auto !important;
@@ -249,12 +246,12 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     gap: 8px !important;
 }
 
-.wpvfh-corner-btn[data-position="top-center"]:hover {
+.wpvfh-btn-attached[data-position="top-center"]:hover {
     width: 110px !important;
     height: 55px !important;
 }
 
-.wpvfh-corner-btn[data-position="top-center"] .wpvfh-corner-icon-wrapper {
+.wpvfh-btn-attached[data-position="top-center"] .wpvfh-corner-icon-wrapper {
     margin: 0 !important;
 }
 
@@ -263,8 +260,8 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     bottom: -8px !important;
 }
 
-/* Position bottom-center */
-.wpvfh-corner-btn[data-position="bottom-center"] {
+/* Position bottom-center - bouton attaché uniquement */
+.wpvfh-btn-attached[data-position="bottom-center"] {
     top: auto !important;
     bottom: 0 !important;
     right: auto !important;
@@ -278,17 +275,17 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     gap: 8px !important;
 }
 
-.wpvfh-corner-btn[data-position="bottom-center"]:hover {
+.wpvfh-btn-attached[data-position="bottom-center"]:hover {
     width: 110px !important;
     height: 55px !important;
 }
 
-.wpvfh-corner-btn[data-position="bottom-center"] .wpvfh-corner-icon-wrapper {
+.wpvfh-btn-attached[data-position="bottom-center"] .wpvfh-corner-icon-wrapper {
     margin: 0 !important;
 }
 
-/* Position middle-left */
-.wpvfh-corner-btn[data-position="middle-left"] {
+/* Position middle-left - bouton attaché uniquement */
+.wpvfh-btn-attached[data-position="middle-left"] {
     bottom: auto !important;
     top: 50% !important;
     right: auto !important;
@@ -300,12 +297,12 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     padding: 0 0 0 8px !important;
 }
 
-.wpvfh-corner-btn[data-position="middle-left"]:hover {
+.wpvfh-btn-attached[data-position="middle-left"]:hover {
     width: 55px !important;
     height: 110px !important;
 }
 
-.wpvfh-corner-btn[data-position="middle-left"] .wpvfh-corner-icon-wrapper {
+.wpvfh-btn-attached[data-position="middle-left"] .wpvfh-corner-icon-wrapper {
     margin: 0 !important;
 }
 
@@ -314,8 +311,8 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     left: -10px !important;
 }
 
-/* Position middle-right */
-.wpvfh-corner-btn[data-position="middle-right"] {
+/* Position middle-right - bouton attaché uniquement */
+.wpvfh-btn-attached[data-position="middle-right"] {
     bottom: auto !important;
     top: 50% !important;
     left: auto !important;
@@ -327,11 +324,11 @@ body.wpvfh-panel-active .wpvfh-corner-btn {
     padding: 0 8px 0 0 !important;
 }
 
-.wpvfh-corner-btn[data-position="middle-right"]:hover {
+.wpvfh-btn-attached[data-position="middle-right"]:hover {
     width: 55px !important;
     height: 110px !important;
 }
 
-.wpvfh-corner-btn[data-position="middle-right"] .wpvfh-corner-icon-wrapper {
+.wpvfh-btn-attached[data-position="middle-right"] .wpvfh-corner-icon-wrapper {
     margin: 0 !important;
 }
