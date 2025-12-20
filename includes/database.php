@@ -21,7 +21,7 @@ class WPVFH_Database {
     /**
      * Database version
      */
-    const DB_VERSION = '1.2.0';
+    const DB_VERSION = '1.3.0';
 
     /**
      * Option name for database version
@@ -280,13 +280,15 @@ class WPVFH_Database {
             required tinyint(1) NOT NULL DEFAULT 0,
             show_in_sidebar tinyint(1) NOT NULL DEFAULT 1,
             hide_empty_sections tinyint(1) NOT NULL DEFAULT 0,
+            sort_order int(11) NOT NULL DEFAULT 0,
             allowed_roles text DEFAULT NULL,
             allowed_users text DEFAULT NULL,
             ai_prompt text DEFAULT NULL,
             created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
-            UNIQUE KEY group_slug (group_slug)
+            UNIQUE KEY group_slug (group_slug),
+            KEY sort_order (sort_order)
         ) $charset_collate;";
 
         dbDelta( $sql );
@@ -311,6 +313,108 @@ class WPVFH_Database {
         // Migration 1.1.0: Add is_treated column to metadata_types and set default values
         if ( version_compare( $from_version, '1.1.0', '<' ) ) {
             self::migrate_110_is_treated();
+        }
+
+        // Migration 1.2.0: Add hide_empty_sections column to group_settings
+        if ( version_compare( $from_version, '1.2.0', '<' ) ) {
+            self::migrate_120_hide_empty_sections();
+        }
+
+        // Migration 1.3.0: Add sort_order column to group_settings
+        if ( version_compare( $from_version, '1.3.0', '<' ) ) {
+            self::migrate_130_sort_order();
+        }
+    }
+
+    /**
+     * Migration 1.3.0: Add sort_order column to group_settings
+     *
+     * @since 1.3.0
+     */
+    private static function migrate_130_sort_order() {
+        global $wpdb;
+
+        $table_name = self::get_table_name( self::TABLE_GROUP_SETTINGS );
+
+        // Check if table exists
+        $table_exists = $wpdb->get_var(
+            $wpdb->prepare(
+                "SHOW TABLES LIKE %s",
+                $table_name
+            )
+        );
+
+        if ( ! $table_exists ) {
+            return;
+        }
+
+        // Check if column exists, if not add it
+        $column_exists = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'sort_order'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        if ( ! $column_exists ) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $wpdb->query( "ALTER TABLE $table_name ADD COLUMN sort_order int(11) NOT NULL DEFAULT 0 AFTER hide_empty_sections" );
+
+            // Set default order for standard groups
+            $default_order = array(
+                'statuses'   => 0,
+                'types'      => 1,
+                'priorities' => 2,
+                'tags'       => 3,
+            );
+
+            foreach ( $default_order as $slug => $order ) {
+                $wpdb->update(
+                    $table_name,
+                    array( 'sort_order' => $order ),
+                    array( 'group_slug' => $slug ),
+                    array( '%d' ),
+                    array( '%s' )
+                );
+            }
+        }
+    }
+
+    /**
+     * Migration 1.2.0: Add hide_empty_sections column to group_settings
+     *
+     * @since 1.2.0
+     */
+    private static function migrate_120_hide_empty_sections() {
+        global $wpdb;
+
+        $table_name = self::get_table_name( self::TABLE_GROUP_SETTINGS );
+
+        // Check if table exists
+        $table_exists = $wpdb->get_var(
+            $wpdb->prepare(
+                "SHOW TABLES LIKE %s",
+                $table_name
+            )
+        );
+
+        if ( ! $table_exists ) {
+            return;
+        }
+
+        // Check if column exists, if not add it
+        $column_exists = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = 'hide_empty_sections'",
+                DB_NAME,
+                $table_name
+            )
+        );
+
+        if ( ! $column_exists ) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $wpdb->query( "ALTER TABLE $table_name ADD COLUMN hide_empty_sections tinyint(1) NOT NULL DEFAULT 0 AFTER show_in_sidebar" );
         }
     }
 
@@ -1324,6 +1428,7 @@ class WPVFH_Database {
             'required'           => false,
             'show_in_sidebar'    => true,
             'hide_empty_sections'=> false,
+            'sort_order'         => 99,
             'allowed_roles'      => array(),
             'allowed_users'      => array(),
             'ai_prompt'          => '',
@@ -1346,6 +1451,7 @@ class WPVFH_Database {
             'required'            => (bool) $row->required,
             'show_in_sidebar'     => isset( $row->show_in_sidebar ) ? (bool) $row->show_in_sidebar : true,
             'hide_empty_sections' => isset( $row->hide_empty_sections ) ? (bool) $row->hide_empty_sections : false,
+            'sort_order'          => isset( $row->sort_order ) ? (int) $row->sort_order : 99,
             'allowed_roles'       => ! empty( $row->allowed_roles ) ? json_decode( $row->allowed_roles, true ) : array(),
             'allowed_users'       => ! empty( $row->allowed_users ) ? json_decode( $row->allowed_users, true ) : array(),
             'ai_prompt'           => $row->ai_prompt ?: '',
@@ -1416,6 +1522,84 @@ class WPVFH_Database {
         );
 
         return true;
+    }
+
+    /**
+     * Save the order of multiple groups
+     *
+     * @since 1.3.0
+     * @param array $order Array of group_slug => sort_order.
+     * @return bool True on success.
+     */
+    public static function save_groups_order( $order ) {
+        global $wpdb;
+
+        $table_name = self::get_table_name( self::TABLE_GROUP_SETTINGS );
+
+        foreach ( $order as $group_slug => $sort_order ) {
+            // Check if settings exist for this group
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $exists = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT id FROM $table_name WHERE group_slug = %s",
+                    $group_slug
+                )
+            );
+
+            if ( $exists ) {
+                // Update existing
+                $wpdb->update(
+                    $table_name,
+                    array( 'sort_order' => (int) $sort_order ),
+                    array( 'group_slug' => $group_slug ),
+                    array( '%d' ),
+                    array( '%s' )
+                );
+            } else {
+                // Insert new with just sort_order
+                $wpdb->insert(
+                    $table_name,
+                    array(
+                        'group_slug' => $group_slug,
+                        'sort_order' => (int) $sort_order,
+                    ),
+                    array( '%s', '%d' )
+                );
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get all group settings ordered by sort_order
+     *
+     * @since 1.3.0
+     * @return array Array of group_slug => settings.
+     */
+    public static function get_all_group_settings_ordered() {
+        global $wpdb;
+
+        $table_name = self::get_table_name( self::TABLE_GROUP_SETTINGS );
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $rows = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY sort_order ASC, id ASC" );
+
+        $result = array();
+        foreach ( $rows as $row ) {
+            $result[ $row->group_slug ] = array(
+                'enabled'             => (bool) $row->enabled,
+                'required'            => (bool) $row->required,
+                'show_in_sidebar'     => isset( $row->show_in_sidebar ) ? (bool) $row->show_in_sidebar : true,
+                'hide_empty_sections' => isset( $row->hide_empty_sections ) ? (bool) $row->hide_empty_sections : false,
+                'sort_order'          => isset( $row->sort_order ) ? (int) $row->sort_order : 99,
+                'allowed_roles'       => ! empty( $row->allowed_roles ) ? json_decode( $row->allowed_roles, true ) : array(),
+                'allowed_users'       => ! empty( $row->allowed_users ) ? json_decode( $row->allowed_users, true ) : array(),
+                'ai_prompt'           => $row->ai_prompt ?: '',
+            );
+        }
+
+        return $result;
     }
 
     // =========================================================================

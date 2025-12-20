@@ -631,6 +631,33 @@
     vertical-align: text-bottom;
 }
 
+/* Tab sorting (drag-drop) */
+.wpvfh-nav-tabs .nav-tab:not(.wpvfh-add-group-btn) {
+    cursor: grab;
+}
+
+.wpvfh-nav-tabs .nav-tab:not(.wpvfh-add-group-btn):active {
+    cursor: grabbing;
+}
+
+.wpvfh-tab-sortable-placeholder {
+    background: #e8f0fe;
+    border: 2px dashed #2271b1;
+    border-radius: 3px;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.wpvfh-tab-dragging {
+    opacity: 0.9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 100;
+}
+
+.ui-sortable-helper.nav-tab {
+    z-index: 10000 !important;
+}
+
 /* Modal */
 .wpvfh-modal {
     position: fixed;

@@ -14,57 +14,74 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Récupérer tous les groupes de métadonnées
 $metadata_groups = array();
 
-// Groupes standards
-$statuses_settings = WPVFH_Options_Manager::get_group_settings( 'statuses' );
-if ( $statuses_settings['enabled'] && $statuses_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'statuses' ) ) {
-	$metadata_groups['statuses'] = array(
-		'slug' => 'statuses',
+// Définition de tous les groupes possibles avec leurs infos
+$all_group_definitions = array(
+	'statuses' => array(
 		'name' => __( 'Statuts', 'blazing-feedback' ),
 		'icon' => '📊',
-		'items' => WPVFH_Options_Manager::get_statuses(),
-	);
-}
-
-$types_settings = WPVFH_Options_Manager::get_group_settings( 'types' );
-if ( $types_settings['enabled'] && $types_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'types' ) ) {
-	$metadata_groups['types'] = array(
-		'slug' => 'types',
+		'items_callback' => array( 'WPVFH_Options_Manager', 'get_statuses' ),
+	),
+	'types' => array(
 		'name' => __( 'Types', 'blazing-feedback' ),
 		'icon' => '🏷️',
-		'items' => WPVFH_Options_Manager::get_types(),
-	);
-}
-
-$priorities_settings = WPVFH_Options_Manager::get_group_settings( 'priorities' );
-if ( $priorities_settings['enabled'] && $priorities_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'priorities' ) ) {
-	$metadata_groups['priorities'] = array(
-		'slug' => 'priorities',
+		'items_callback' => array( 'WPVFH_Options_Manager', 'get_types' ),
+	),
+	'priorities' => array(
 		'name' => __( 'Priorités', 'blazing-feedback' ),
 		'icon' => '⚡',
-		'items' => WPVFH_Options_Manager::get_priorities(),
-	);
-}
-
-$tags_settings = WPVFH_Options_Manager::get_group_settings( 'tags' );
-if ( $tags_settings['enabled'] && $tags_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( 'tags' ) ) {
-	$metadata_groups['tags'] = array(
-		'slug' => 'tags',
+		'items_callback' => array( 'WPVFH_Options_Manager', 'get_priorities' ),
+	),
+	'tags' => array(
 		'name' => __( 'Tags', 'blazing-feedback' ),
 		'icon' => '🔖',
-		'items' => WPVFH_Options_Manager::get_predefined_tags(),
+		'items_callback' => array( 'WPVFH_Options_Manager', 'get_predefined_tags' ),
+	),
+);
+
+// Ajouter les groupes personnalisés à la liste
+$custom_groups = WPVFH_Options_Manager::get_custom_groups();
+foreach ( $custom_groups as $slug => $group ) {
+	$all_group_definitions[ $slug ] = array(
+		'name' => $group['name'],
+		'icon' => '📋',
+		'items_callback' => null, // Sera récupéré via get_custom_group_items
+		'is_custom' => true,
 	);
 }
 
-// Groupes personnalisés
-$custom_groups = WPVFH_Options_Manager::get_custom_groups();
-foreach ( $custom_groups as $slug => $group ) {
+// Récupérer l'ordre de tous les groupes
+$all_settings = WPVFH_Database::get_all_group_settings_ordered();
+
+// Construire un tableau slug => sort_order
+$order_map = array();
+foreach ( $all_settings as $slug => $settings ) {
+	$order_map[ $slug ] = isset( $settings['sort_order'] ) ? $settings['sort_order'] : 99;
+}
+
+// Trier les groupes par sort_order
+uksort( $all_group_definitions, function( $a, $b ) use ( $order_map ) {
+	$order_a = isset( $order_map[ $a ] ) ? $order_map[ $a ] : 99;
+	$order_b = isset( $order_map[ $b ] ) ? $order_map[ $b ] : 99;
+	return $order_a - $order_b;
+} );
+
+// Construire le tableau final des groupes visibles
+foreach ( $all_group_definitions as $slug => $definition ) {
 	$group_settings = WPVFH_Options_Manager::get_group_settings( $slug );
+
 	if ( $group_settings['enabled'] && $group_settings['show_in_sidebar'] && WPVFH_Options_Manager::user_can_access_group( $slug ) ) {
+		// Récupérer les items
+		if ( ! empty( $definition['is_custom'] ) ) {
+			$items = WPVFH_Options_Manager::get_custom_group_items( $slug );
+		} else {
+			$items = call_user_func( $definition['items_callback'] );
+		}
+
 		$metadata_groups[ $slug ] = array(
-			'slug' => $slug,
-			'name' => $group['name'],
-			'icon' => '📋',
-			'items' => WPVFH_Options_Manager::get_custom_group_items( $slug ),
+			'slug'  => $slug,
+			'name'  => $definition['name'],
+			'icon'  => $definition['icon'],
+			'items' => $items,
 		);
 	}
 }

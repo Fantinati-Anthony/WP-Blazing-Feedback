@@ -81,6 +81,11 @@ final class WP_Visual_Feedback_Hub {
 		// Database management (doit être chargé en premier)
 		require_once WPVFH_PLUGIN_DIR . 'includes/database.php';
 
+		// Vérifier et exécuter les migrations automatiquement si nécessaire
+		if ( WPVFH_Database::needs_update() ) {
+			WPVFH_Database::install();
+		}
+
 		// Fichiers du core
 		require_once WPVFH_PLUGIN_DIR . 'includes/permissions.php';
 		require_once WPVFH_PLUGIN_DIR . 'includes/roles.php';

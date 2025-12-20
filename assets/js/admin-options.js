@@ -17,6 +17,7 @@
         init: function() {
             this.bindEvents();
             this.initSortable();
+            this.initTabsSortable();
             this.initColorPickers();
         },
 
@@ -338,6 +339,58 @@
                 tolerance: 'pointer',
                 update: function(event, ui) {
                     self.saveOrder($(this));
+                }
+            });
+        },
+
+        /**
+         * Initialize tabs sortable (for metadata groups reordering)
+         */
+        initTabsSortable: function() {
+            var self = this;
+
+            $('.wpvfh-nav-tabs').sortable({
+                items: '.nav-tab:not(.wpvfh-add-group-btn)',
+                axis: 'x',
+                tolerance: 'pointer',
+                cursor: 'grab',
+                placeholder: 'wpvfh-tab-sortable-placeholder',
+                helper: function(e, el) {
+                    return el.clone().addClass('wpvfh-tab-dragging');
+                },
+                start: function(e, ui) {
+                    ui.placeholder.width(ui.item.outerWidth());
+                    ui.placeholder.height(ui.item.outerHeight());
+                },
+                update: function(event, ui) {
+                    self.saveTabsOrder();
+                }
+            });
+        },
+
+        /**
+         * Save tabs order via AJAX
+         */
+        saveTabsOrder: function() {
+            var order = [];
+
+            $('.wpvfh-nav-tabs .nav-tab:not(.wpvfh-add-group-btn)').each(function() {
+                var slug = $(this).data('tab');
+                if (slug) {
+                    order.push(slug);
+                }
+            });
+
+            $.post(wpvfhOptionsAdmin.ajaxUrl, {
+                action: 'wpvfh_save_groups_order',
+                nonce: wpvfhOptionsAdmin.nonce,
+                order: order
+            }).done(function(response) {
+                if (response.success) {
+                    // Optionally show a brief notification
+                    console.log('Tabs order saved');
+                } else {
+                    console.error('Error saving tabs order:', response.data);
                 }
             });
         },
