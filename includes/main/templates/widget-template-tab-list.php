@@ -13,6 +13,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <!-- Onglet: Liste des feedbacks -->
 <div id="wpvfh-tab-list" class="wpvfh-tab-content active">
+	<!-- Barre de progression -->
+	<div class="wpvfh-validation-progress" id="wpvfh-validation-status">
+		<div class="wpvfh-progress-bar">
+			<div class="wpvfh-progress-fill" id="wpvfh-progress-fill"></div>
+			<span class="wpvfh-progress-text" id="wpvfh-progress-text">0/0 traité</span>
+		</div>
+	</div>
+
 	<!-- Filtres par état -->
 	<div class="wpvfh-legend" id="wpvfh-filters">
 		<button type="button" class="wpvfh-filter-btn active" data-status="all">

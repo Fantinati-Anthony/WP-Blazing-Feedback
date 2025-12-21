@@ -29,6 +29,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	?>
 	<img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php esc_attr_e( 'Blazing Feedback', 'blazing-feedback' ); ?>" class="wpvfh-panel-logo">
 	<div class="wpvfh-header-actions">
+		<button type="button" id="wpvfh-visibility-btn" class="wpvfh-header-btn wpvfh-visibility-btn" title="<?php esc_attr_e( 'Afficher/masquer les points', 'blazing-feedback' ); ?>" data-visible="true">
+			<span class="wpvfh-icon-visible" aria-hidden="true">👁️</span>
+			<span class="wpvfh-icon-hidden" aria-hidden="true" hidden>🙈</span>
+		</button>
 		<button type="button" class="wpvfh-search-btn" id="wpvfh-search-btn" aria-label="<?php esc_attr_e( 'Rechercher', 'blazing-feedback' ); ?>" title="<?php esc_attr_e( 'Rechercher un feedback', 'blazing-feedback' ); ?>">
 			<span aria-hidden="true">🔍</span>
 		</button>
@@ -40,9 +44,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <!-- Onglets -->
 <div class="wpvfh-tabs">
-	<button type="button" class="wpvfh-tab" data-tab="new" id="wpvfh-tab-new-btn" hidden>
+	<button type="button" class="wpvfh-tab wpvfh-tab-add" data-tab="new" id="wpvfh-add-btn" title="<?php esc_attr_e( 'Nouveau feedback', 'blazing-feedback' ); ?>">
 		<span class="wpvfh-tab-icon" aria-hidden="true">➕</span>
-		<?php esc_html_e( 'Nouveau', 'blazing-feedback' ); ?>
 	</button>
 	<button type="button" class="wpvfh-tab active" data-tab="list">
 		<span class="wpvfh-tab-icon" aria-hidden="true">📋</span>

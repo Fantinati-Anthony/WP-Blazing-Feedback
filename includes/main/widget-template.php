@@ -50,28 +50,6 @@ $templates_dir = __DIR__ . '/templates/';
 			include $templates_dir . 'widget-template-tab-details.php';
 			?>
 		</div>
-
-		<!-- Section validation de page -->
-		<div id="wpvfh-page-validation" class="wpvfh-page-validation" hidden>
-			<div class="wpvfh-validation-progress" id="wpvfh-validation-status">
-				<div class="wpvfh-progress-bar">
-					<div class="wpvfh-progress-fill" id="wpvfh-progress-fill"></div>
-					<span class="wpvfh-progress-text" id="wpvfh-progress-text">0/0 traité</span>
-				</div>
-			</div>
-			<button type="button" id="wpvfh-validate-page-btn" class="wpvfh-btn wpvfh-btn-validate" disabled>
-				<span class="wpvfh-btn-emoji">✅</span>
-				<?php esc_html_e( 'Valider cette page', 'blazing-feedback' ); ?>
-			</button>
-			<p class="wpvfh-validation-hint" id="wpvfh-validation-hint">
-				<?php esc_html_e( 'Tous les points doivent être résolus ou rejetés avant validation.', 'blazing-feedback' ); ?>
-			</p>
-		</div>
-
-		<?php
-		// Footer
-		include $templates_dir . 'widget-template-footer.php';
-		?>
 	</div>
 
 	<?php

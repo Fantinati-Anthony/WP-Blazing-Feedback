@@ -322,6 +322,31 @@ body.wp-admin .wpvfh-close-btn:hover {
     background: transparent !important;
 }
 
+/* Bouton Visibility (oeil) dans le header */
+.wpvfh-visibility-btn,
+.wpvfh-header-btn,
+.wp-admin .wpvfh-visibility-btn,
+body.wp-admin .wpvfh-visibility-btn {
+    background: transparent !important;
+    border: none !important;
+    padding: 4px 8px !important;
+    cursor: pointer !important;
+    font-size: 18px !important;
+    line-height: 1 !important;
+    opacity: 0.7 !important;
+    transition: opacity 0.2s ease !important;
+    min-height: auto !important;
+    min-width: auto !important;
+    box-shadow: none !important;
+}
+
+.wpvfh-visibility-btn:hover,
+.wp-admin .wpvfh-visibility-btn:hover,
+body.wp-admin .wpvfh-visibility-btn:hover {
+    opacity: 1 !important;
+    background: transparent !important;
+}
+
 /* ==========================================================================
    Onglets (Tabs)
    ========================================================================== */
@@ -475,4 +500,35 @@ button.wpvfh-tab[hidden] {
     padding: 2px 8px !important;
     border-radius: var(--wpvfh-radius) !important;
     margin-left: 4px !important;
+}
+
+/* Bouton Nouveau (+ dans les tabs) */
+.wpvfh-tab.wpvfh-tab-add,
+.wpvfh-container .wpvfh-tab.wpvfh-tab-add,
+.wpvfh-panel .wpvfh-tab.wpvfh-tab-add,
+html body .wpvfh-tab.wpvfh-tab-add,
+.wp-admin .wpvfh-tab.wpvfh-tab-add,
+body.wp-admin .wpvfh-tab.wpvfh-tab-add {
+    flex: 0 0 auto !important;
+    background: var(--wpvfh-primary) !important;
+    background-color: var(--wpvfh-primary) !important;
+    color: #fff !important;
+    border-bottom: 3px solid var(--wpvfh-primary) !important;
+    padding: 14px 16px !important;
+}
+
+.wpvfh-tab.wpvfh-tab-add:hover,
+.wpvfh-container .wpvfh-tab.wpvfh-tab-add:hover,
+.wpvfh-panel .wpvfh-tab.wpvfh-tab-add:hover,
+html body .wpvfh-tab.wpvfh-tab-add:hover,
+.wp-admin .wpvfh-tab.wpvfh-tab-add:hover,
+body.wp-admin .wpvfh-tab.wpvfh-tab-add:hover {
+    background: #e04500 !important;
+    background-color: #e04500 !important;
+    color: #fff !important;
+    border-bottom: 3px solid #e04500 !important;
+}
+
+.wpvfh-tab.wpvfh-tab-add .wpvfh-tab-icon {
+    font-size: 18px !important;
 }
