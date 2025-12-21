@@ -98,9 +98,7 @@
         switchTab: function(tabName) {
             if (this.widget.elements.tabs && this.widget.elements.tabs.length > 0) {
                 this.widget.elements.tabs.forEach(tab => {
-                    if (tab.dataset.tab === 'new') {
-                        tab.hidden = (tabName !== 'new');
-                    }
+                    // Le bouton + (new) est toujours visible, pas besoin de le cacher
                     if (tab.dataset.tab === 'details') {
                         const showDetailsTab = (tabName === 'details' && this.widget.state.currentFeedbackId);
                         tab.hidden = !showDetailsTab;
