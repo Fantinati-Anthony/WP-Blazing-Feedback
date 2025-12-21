@@ -41,8 +41,8 @@
          * Mettre à jour la section de validation
          */
         updateValidationSection: function() {
-            const section = this.widget.elements.pageValidation;
-            if (!section) return;
+            // Utiliser validationStatus (wpvfh-validation-status) au lieu de pageValidation
+            const section = this.widget.elements.validationStatus;
 
             const feedbacks = this.widget.state.currentFeedbacks || [];
             const totalCount = feedbacks.length;
@@ -50,9 +50,6 @@
             // Utiliser la liste des statuts traités depuis la config
             const resolvedCount = feedbacks.filter(f => this.treatedStatuses.includes(f.status)).length;
             const allResolved = totalCount > 0 && resolvedCount === totalCount;
-
-            section.hidden = totalCount === 0;
-            if (totalCount === 0) return;
 
             // Update progress bar
             const progressFill = document.getElementById('wpvfh-progress-fill');
@@ -67,25 +64,19 @@
                 progressText.textContent = `${resolvedCount}/${totalCount} traité`;
             }
 
-            if (allResolved) {
-                section.classList.remove('pending');
-                section.classList.add('ready');
-            } else {
-                section.classList.remove('ready');
-                section.classList.add('pending');
+            if (section) {
+                if (allResolved) {
+                    section.classList.remove('pending');
+                    section.classList.add('ready');
+                } else {
+                    section.classList.remove('ready');
+                    section.classList.add('pending');
+                }
             }
 
             if (this.widget.elements.validatePageBtn) {
                 const canValidate = allResolved || this.widget.config.canManage;
                 this.widget.elements.validatePageBtn.disabled = !canValidate;
-            }
-
-            if (this.widget.elements.validationHint) {
-                if (!allResolved) {
-                    this.widget.elements.validationHint.textContent = 'Tous les points doivent être résolus ou rejetés avant validation.';
-                } else {
-                    this.widget.elements.validationHint.textContent = '';
-                }
             }
         },
 
@@ -112,8 +103,11 @@
                     this.widget.elements.validateModal.hidden = true;
                 }
 
-                this.widget.elements.pageValidation.classList.remove('ready', 'pending');
-                this.widget.elements.pageValidation.classList.add('validated');
+                const section = this.widget.elements.validationStatus;
+                if (section) {
+                    section.classList.remove('ready', 'pending');
+                    section.classList.add('validated');
+                }
 
                 // Update progress bar to show complete
                 const progressFill = document.getElementById('wpvfh-progress-fill');
