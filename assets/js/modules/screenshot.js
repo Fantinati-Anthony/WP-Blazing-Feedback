@@ -24,7 +24,11 @@
                 this.widget.modules.notifications.show(this.widget.config.i18n?.loadingMessage || 'Capture en cours...', 'info');
 
                 const dataUrl = await window.BlazingScreenshot.capture();
-                const resizedDataUrl = await window.BlazingScreenshot.resize(dataUrl, 1200, 900);
+
+                // Use screen resolution for better quality
+                const maxWidth = Math.min(window.screen.width * (window.devicePixelRatio || 1), 2560);
+                const maxHeight = Math.min(window.screen.height * (window.devicePixelRatio || 1), 1600);
+                const resizedDataUrl = await window.BlazingScreenshot.resize(dataUrl, maxWidth, maxHeight);
 
                 // Ouvrir l'éditeur d'annotation
                 if (window.BlazingScreenshotEditor) {

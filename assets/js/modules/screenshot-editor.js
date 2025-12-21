@@ -128,26 +128,33 @@
             img.onload = () => {
                 this.originalImage = img;
 
-                // Adapter le canvas à la taille de l'image (max 800x600)
-                const maxWidth = Math.min(800, window.innerWidth - 80);
-                const maxHeight = Math.min(600, window.innerHeight - 250);
+                // Get container dimensions for responsive canvas sizing
+                const container = document.querySelector('.wpvfh-editor-canvas-container');
+                const containerWidth = container ? container.clientWidth - 32 : window.innerWidth - 60;
+                const containerHeight = container ? container.clientHeight - 32 : window.innerHeight - 200;
 
-                let width = img.width;
-                let height = img.height;
+                // Use full image resolution, scaled to fit container
+                let displayWidth = img.width;
+                let displayHeight = img.height;
 
-                if (width > maxWidth) {
-                    height = (maxWidth / width) * height;
-                    width = maxWidth;
-                }
-                if (height > maxHeight) {
-                    width = (maxHeight / height) * width;
-                    height = maxHeight;
-                }
+                // Scale to fit container while maintaining aspect ratio
+                const scaleX = containerWidth / displayWidth;
+                const scaleY = containerHeight / displayHeight;
+                const scale = Math.min(scaleX, scaleY, 1); // Don't upscale
 
-                this.canvas.width = width;
-                this.canvas.height = height;
+                displayWidth = Math.floor(img.width * scale);
+                displayHeight = Math.floor(img.height * scale);
 
-                this.ctx.drawImage(img, 0, 0, width, height);
+                // Set canvas to display size (we'll draw at original resolution)
+                this.canvas.width = img.width;
+                this.canvas.height = img.height;
+
+                // Set display size via CSS
+                this.canvas.style.width = displayWidth + 'px';
+                this.canvas.style.height = displayHeight + 'px';
+
+                // Draw at full resolution
+                this.ctx.drawImage(img, 0, 0, img.width, img.height);
                 this.saveState();
             };
             img.src = imageDataUrl;
@@ -419,7 +426,7 @@
         clearAll: function() {
             if (this.originalImage) {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.ctx.drawImage(this.originalImage, 0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.drawImage(this.originalImage, 0, 0, this.originalImage.width, this.originalImage.height);
                 this.saveState();
             }
         }
