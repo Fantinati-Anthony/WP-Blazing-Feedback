@@ -85,26 +85,41 @@
                 const isCurrent = page.url === currentUrl;
                 const title = page.title || this.extractPageTitle(page.url);
                 const shortUrl = this.shortenUrl(page.url);
+                const resolved = page.resolved || 0;
+                const total = page.count || 0;
+                const percent = total > 0 ? Math.round((resolved / total) * 100) : 0;
+                const canValidate = total > 0 && resolved === total;
 
                 return `
-                    <div class="wpvfh-page-item ${isCurrent ? 'current' : ''}" data-url="${tools.escapeHtml(page.url)}">
-                        <span class="wpvfh-page-icon">${page.validated ? '✅' : '📄'}</span>
-                        <div class="wpvfh-page-info">
-                            <div class="wpvfh-page-title">${tools.escapeHtml(title)}</div>
-                            <div class="wpvfh-page-url">${tools.escapeHtml(shortUrl)}</div>
+                    <div class="wpvfh-page-item ${isCurrent ? 'current' : ''} ${page.validated ? 'validated' : ''}" data-url="${tools.escapeHtml(page.url)}">
+                        <div class="wpvfh-page-main">
+                            <div class="wpvfh-page-info">
+                                <div class="wpvfh-page-title">${tools.escapeHtml(title)}</div>
+                                <div class="wpvfh-page-url">${tools.escapeHtml(shortUrl)}</div>
+                            </div>
+                            <button type="button" class="wpvfh-page-validate-btn ${page.validated ? 'is-validated' : ''}"
+                                data-url="${tools.escapeHtml(page.url)}"
+                                title="${page.validated ? 'Retirer la validation' : 'Valider cette page'}"
+                                ${!canValidate && !page.validated ? 'disabled' : ''}>
+                                ${page.validated ? '✅' : '☑️'}
+                            </button>
                         </div>
-                        <span class="wpvfh-page-badge ${page.validated ? 'validated' : 'has-feedbacks'}">
-                            ${page.validated ? '✓' : page.count || 0}
-                        </span>
+                        <div class="wpvfh-page-progress">
+                            <div class="wpvfh-page-progress-bar">
+                                <div class="wpvfh-page-progress-fill" style="width: ${percent}%"></div>
+                            </div>
+                            <span class="wpvfh-page-progress-text">${resolved}/${total}</span>
+                        </div>
                     </div>
                 `;
             }).join('');
 
             el.pagesList.innerHTML = html;
 
-            // Ajouter les événements
-            el.pagesList.querySelectorAll('.wpvfh-page-item').forEach(item => {
-                item.addEventListener('click', () => {
+            // Ajouter les événements pour navigation
+            el.pagesList.querySelectorAll('.wpvfh-page-info').forEach(info => {
+                info.addEventListener('click', () => {
+                    const item = info.closest('.wpvfh-page-item');
                     const url = item.dataset.url;
                     if (url && url !== currentUrl) {
                         window.location.href = url;
@@ -114,6 +129,46 @@
                     }
                 });
             });
+
+            // Ajouter les événements pour validation
+            el.pagesList.querySelectorAll('.wpvfh-page-validate-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const url = btn.dataset.url;
+                    const isValidated = btn.classList.contains('is-validated');
+                    this.togglePageValidation(url, !isValidated);
+                });
+            });
+        },
+
+        /**
+         * Toggle la validation d'une page
+         */
+        togglePageValidation: async function(url, validate) {
+            try {
+                await this.widget.modules.api.request('POST', 'validate-page', {
+                    url: url,
+                    validated: validate
+                });
+
+                // Mettre à jour l'état local
+                const page = this.widget.state.allPages.find(p => p.url === url);
+                if (page) {
+                    page.validated = validate;
+                }
+
+                // Re-render la liste
+                this.updatePagesStats();
+                this.renderPagesList();
+
+                this.widget.modules.notifications.show(
+                    validate ? 'Page validée' : 'Validation retirée',
+                    'success'
+                );
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur validation page:', error);
+                this.widget.modules.notifications.show('Erreur lors de la validation', 'error');
+            }
         },
 
         /**
