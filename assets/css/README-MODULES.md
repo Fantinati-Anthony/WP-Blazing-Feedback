@@ -10,7 +10,6 @@ Le fichier CSS monolithique `feedback.css` (5202 lignes, 133 KB) a été scindé
 assets/css/
 ├── feedback.css                  # Point d'entrée (15 lignes) - Import du loader
 ├── feedback-loader.css           # Loader qui importe tous les modules
-├── feedback-old.css              # Backup de l'ancien fichier (5202 lignes)
 └── components/                   # Modules CSS (14 fichiers)
     ├── variables-reset.css       # Variables + Reset WordPress/Elementor
     ├── buttons-actions.css       # Tous les boutons et actions
@@ -205,7 +204,6 @@ assets/css/
 - ✅ Aucun changement de comportement
 - ✅ Tous les styles préservés
 - ✅ Compatible tous navigateurs (IE11+)
-- ✅ Backup disponible (feedback-old.css)
 
 ## Statistiques
 
@@ -221,7 +219,6 @@ assets/css/
 1. **Ordre de chargement**: L'ordre des imports dans `feedback-loader.css` est crucial pour éviter les conflits CSS
 2. **Variables globales**: Toutes les variables CSS sont dans `variables-reset.css` et doivent être chargées en premier
 3. **Thèmes**: Le fichier `themes.css` doit être chargé en dernier pour override les styles si nécessaire
-4. **Backup**: L'ancien fichier est sauvegardé dans `feedback-old.css` pour référence
 
 ## Prochaines étapes possibles
 

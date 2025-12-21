@@ -112,8 +112,6 @@ this.widget.modules.panel.openPanel('details');
 
 ### Migration depuis l'Ancien Système
 
-L'ancien fichier monolithique (4268 lignes) a été conservé dans `feedback-widget.js.backup` pour référence.
-
 Le nouveau système maintient la même API publique via l'orchestrateur :
 
 ```javascript
