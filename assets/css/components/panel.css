@@ -510,25 +510,11 @@ html body .wpvfh-tab.wpvfh-tab-add,
 .wp-admin .wpvfh-tab.wpvfh-tab-add,
 body.wp-admin .wpvfh-tab.wpvfh-tab-add {
     flex: 0 0 auto !important;
-    background: var(--wpvfh-primary) !important;
-    background-color: var(--wpvfh-primary) !important;
-    color: #fff !important;
-    border-bottom: 3px solid var(--wpvfh-primary) !important;
     padding: 14px 16px !important;
 }
 
-.wpvfh-tab.wpvfh-tab-add:hover,
-.wpvfh-container .wpvfh-tab.wpvfh-tab-add:hover,
-.wpvfh-panel .wpvfh-tab.wpvfh-tab-add:hover,
-html body .wpvfh-tab.wpvfh-tab-add:hover,
-.wp-admin .wpvfh-tab.wpvfh-tab-add:hover,
-body.wp-admin .wpvfh-tab.wpvfh-tab-add:hover {
-    background: #e04500 !important;
-    background-color: #e04500 !important;
-    color: #fff !important;
-    border-bottom: 3px solid #e04500 !important;
-}
-
-.wpvfh-tab.wpvfh-tab-add .wpvfh-tab-icon {
-    font-size: 18px !important;
+.wpvfh-tab.wpvfh-tab-add .wpvfh-icon-plus {
+    font-size: 22px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
 }
