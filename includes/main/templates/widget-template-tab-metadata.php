@@ -112,11 +112,6 @@ foreach ( $all_group_definitions as $slug => $definition ) {
 			$items = $group['items'];
 		?>
 		<div id="wpvfh-metadata-<?php echo esc_attr( $group_slug ); ?>" class="wpvfh-metadata-subtab-content <?php echo $first ? 'active' : ''; ?>" data-group="<?php echo esc_attr( $group_slug ); ?>">
-			<!-- Titre du groupe de métadonnées -->
-			<h3 class="wpvfh-metadata-group-title">
-				<span class="wpvfh-metadata-group-icon"><?php echo esc_html( $group['icon'] ); ?></span>
-				<?php echo esc_html( $group['name'] ); ?>
-			</h3>
 			<!-- Zones de dépôt sticky -->
 			<div class="wpvfh-metadata-dropzones" data-group="<?php echo esc_attr( $group_slug ); ?>">
 				<?php foreach ( $items as $item ) : ?>
