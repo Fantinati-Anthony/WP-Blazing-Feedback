@@ -515,6 +515,7 @@ body.wp-admin .wpvfh-tab.wpvfh-tab-add {
 
 .wpvfh-tab.wpvfh-tab-add .wpvfh-icon-plus {
     font-size: 22px !important;
-    font-weight: 400 !important;
+    font-weight: 900 !important;
     line-height: 1 !important;
+    color: var(--wpvfh-primary) !important;
 }
