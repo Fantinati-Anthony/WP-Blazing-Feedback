@@ -248,3 +248,179 @@ html body .wpvfh-pin-action.wpvfh-pin-delete:hover,
     margin: 0;
     font-size: 14px;
 }
+
+/* ==========================================================================
+   Carte Feedback Compacte (2 colonnes)
+   ========================================================================== */
+
+.wpvfh-pin-item.wpvfh-pin-compact {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--wpvfh-pin-item-bg);
+    border-radius: var(--wpvfh-radius);
+    border: 1px solid var(--wpvfh-pin-item-border);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.wpvfh-pin-item.wpvfh-pin-compact:hover {
+    background: var(--wpvfh-pin-item-bg-hover);
+    border-color: var(--wpvfh-pin-item-border-hover);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Colonne gauche - Contenu principal */
+.wpvfh-card-left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Header : ID + Badges */
+.wpvfh-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.wpvfh-card-id {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--wpvfh-primary);
+    background: color-mix(in srgb, var(--wpvfh-primary) 10%, transparent);
+    padding: 2px 6px;
+    border-radius: var(--wpvfh-radius);
+}
+
+.wpvfh-card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: var(--wpvfh-radius);
+    background: color-mix(in srgb, var(--badge-color, #6c757d) 12%, transparent);
+    color: var(--badge-color, #6c757d);
+    white-space: nowrap;
+}
+
+/* Commentaire - 3 lignes max */
+.wpvfh-card-comment {
+    margin: 0;
+    font-size: 13px;
+    color: var(--wpvfh-pin-item-text);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Footer : Tags + Meta */
+.wpvfh-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.wpvfh-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.wpvfh-card-tag {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 1px 5px;
+    border-radius: var(--wpvfh-radius);
+    background: color-mix(in srgb, var(--tag-color, #2980b9) 12%, transparent);
+    color: var(--tag-color, #2980b9);
+}
+
+.wpvfh-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--wpvfh-text-light);
+}
+
+.wpvfh-card-author {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--wpvfh-primary) 0%, color-mix(in srgb, var(--wpvfh-primary) 80%, #000) 100%);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.wpvfh-card-date {
+    color: var(--wpvfh-text-light);
+}
+
+/* Colonne droite - Actions */
+.wpvfh-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.wpvfh-card-indicator {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.wpvfh-card-edit {
+    all: unset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--wpvfh-radius);
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0.5;
+    transition: all 0.15s ease;
+}
+
+.wpvfh-pin-item.wpvfh-pin-compact:hover .wpvfh-card-edit {
+    opacity: 1;
+    background: var(--wpvfh-bg-light);
+}
+
+.wpvfh-card-edit:hover {
+    background: var(--wpvfh-primary) !important;
+    transform: scale(1.1);
+}
+
+/* Fallback pour navigateurs sans color-mix */
+@supports not (color: color-mix(in srgb, red 50%, blue)) {
+    .wpvfh-card-id {
+        background: rgba(254, 81, 0, 0.1);
+    }
+    .wpvfh-card-badge {
+        background: rgba(108, 117, 125, 0.12);
+    }
+    .wpvfh-card-tag {
+        background: rgba(41, 128, 185, 0.12);
+    }
+    .wpvfh-card-author {
+        background: var(--wpvfh-primary);
+    }
+}

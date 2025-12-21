@@ -11,13 +11,116 @@
             this.widget = widget;
         },
 
+        /**
+         * Formater une date en format relatif
+         */
+        formatRelativeDate: function(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000);
+
+            if (diff < 60) return 'à l\'instant';
+            if (diff < 3600) return Math.floor(diff / 60) + 'min';
+            if (diff < 86400) return Math.floor(diff / 3600) + 'h';
+            if (diff < 604800) return Math.floor(diff / 86400) + 'j';
+            return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+        },
+
+        /**
+         * Obtenir les initiales d'un nom
+         */
+        getInitials: function(name) {
+            if (!name) return '?';
+            const parts = name.trim().split(/\s+/);
+            if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        },
+
+        /**
+         * Générer le HTML d'une carte feedback compacte
+         */
+        generatePinItemHtml: function(feedback, isDraggable = false) {
+            const labels = this.widget.modules.labels;
+            const tools = this.widget.modules.tools;
+
+            // Données de base
+            const status = feedback.status || 'new';
+            const statusLabel = labels.getStatusLabel(status);
+            const statusColor = labels.getStatusColor(status);
+            const statusEmoji = labels.getStatusEmoji(status);
+
+            const priority = feedback.priority || 'none';
+            const priorityLabel = labels.getPriorityLabel(priority);
+            const priorityColor = labels.getPriorityColor(priority);
+            const priorityEmoji = labels.getPriorityEmoji(priority);
+
+            const type = feedback.feedback_type || '';
+            const typeLabel = labels.getTypeLabel(type);
+            const typeEmoji = labels.getTypeEmoji(type);
+            const typeConfig = labels.getTypeConfig(type);
+            const typeColor = typeConfig?.color || '#6c757d';
+
+            // Auteur
+            const authorName = feedback.author?.name || 'Anonyme';
+            const initials = this.getInitials(authorName);
+
+            // Date relative
+            const relativeDate = this.formatRelativeDate(feedback.date);
+
+            // Tags (max 3)
+            const tagsStr = feedback.tags || '';
+            const tagList = tagsStr.split(',').map(t => t.trim()).filter(t => t).slice(0, 3);
+            const tagsModule = this.widget.modules.tags;
+
+            // Indicateurs
+            const hasScreenshot = feedback.screenshot_id > 0;
+            const repliesCount = feedback.replies?.length || 0;
+
+            // Génération HTML
+            const draggableAttr = isDraggable ? 'draggable="true"' : '';
+            const metadataClass = isDraggable ? ' wpvfh-metadata-item' : '';
+
+            let tagsHtml = '';
+            if (tagList.length > 0) {
+                tagsHtml = tagList.map(tag => {
+                    const tagColor = tagsModule?.getPredefinedTagColor?.(tag) || '#2980b9';
+                    return `<span class="wpvfh-card-tag" style="--tag-color: ${tagColor};">#${tools.escapeHtml(tag)}</span>`;
+                }).join('');
+            }
+
+            return `
+                <div class="wpvfh-pin-item wpvfh-pin-compact${metadataClass}" ${draggableAttr} data-feedback-id="${feedback.id}">
+                    <div class="wpvfh-card-left">
+                        <div class="wpvfh-card-header">
+                            <span class="wpvfh-card-id">#${feedback.id}</span>
+                            <span class="wpvfh-card-badge" style="--badge-color: ${statusColor};">${statusEmoji} ${statusLabel}</span>
+                            ${priority && priority !== 'none' ? `<span class="wpvfh-card-badge" style="--badge-color: ${priorityColor};">${priorityEmoji} ${priorityLabel}</span>` : ''}
+                            ${type ? `<span class="wpvfh-card-badge" style="--badge-color: ${typeColor};">${typeEmoji} ${typeLabel}</span>` : ''}
+                        </div>
+                        <p class="wpvfh-card-comment">${tools.escapeHtml(feedback.comment || '')}</p>
+                        <div class="wpvfh-card-footer">
+                            <div class="wpvfh-card-tags">${tagsHtml}</div>
+                            <div class="wpvfh-card-meta">
+                                <span class="wpvfh-card-author" title="${tools.escapeHtml(authorName)}">${initials}</span>
+                                <span class="wpvfh-card-date">${relativeDate}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wpvfh-card-right">
+                        ${hasScreenshot ? '<span class="wpvfh-card-indicator" title="Screenshot">📷</span>' : ''}
+                        ${repliesCount > 0 ? `<span class="wpvfh-card-indicator" title="${repliesCount} réponse(s)">💬${repliesCount}</span>` : ''}
+                        <button type="button" class="wpvfh-card-edit" title="Modifier">✏️</button>
+                    </div>
+                </div>
+            `;
+        },
+
         renderPinsList: function() {
             const pinsList = this.widget.elements.pinsList;
             if (!pinsList) return;
 
             const feedbacks = this.widget.modules.filters.getFilteredFeedbacks();
-            const labels = this.widget.modules.labels;
-            const tools = this.widget.modules.tools;
 
             if (this.widget.elements.pinsCount) {
                 this.widget.elements.pinsCount.textContent = feedbacks.length > 0 ? `(${feedbacks.length})` : '';
@@ -30,34 +133,13 @@
 
             if (feedbacks.length === 0) return;
 
-            const html = feedbacks.map((feedback, index) => {
-                const status = feedback.status || 'new';
-                const statusLabel = labels.getStatusLabel(status);
-                const statusColor = labels.getStatusColor(status);
-                const statusEmoji = labels.getStatusEmoji(status);
-                const date = feedback.date ? new Date(feedback.date).toLocaleDateString() : '';
-                const pinNumber = feedback._displayOrder || (index + 1);
-
-                return `
-                    <div class="wpvfh-pin-item" data-feedback-id="${feedback.id}">
-                        <div class="wpvfh-pin-content">
-                            <div class="wpvfh-pin-header">
-                                <span class="wpvfh-pin-id">#${feedback.id}</span>
-                            </div>
-                            <p class="wpvfh-pin-text">${tools.escapeHtml(feedback.comment || '')}</p>
-                            <div class="wpvfh-pin-meta">
-                                <span class="wpvfh-pin-status" style="color: ${statusColor};">${statusEmoji} ${statusLabel}</span>
-                            </div>
-                            ${labels.generateFeedbackLabelsHtml(feedback)}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
+            const html = feedbacks.map(feedback => this.generatePinItemHtml(feedback, false)).join('');
             pinsList.innerHTML = html;
 
+            // Event listeners
             pinsList.querySelectorAll('.wpvfh-pin-item').forEach(item => {
-                item.addEventListener('click', () => {
+                item.addEventListener('click', (e) => {
+                    // Si clic sur le bouton edit, ouvrir les détails
                     const feedbackId = parseInt(item.dataset.feedbackId, 10);
                     const feedback = this.widget.state.currentFeedbacks.find(f => f.id === feedbackId);
                     if (feedback && this.widget.modules.details) {
@@ -132,28 +214,7 @@
                     const listEl = document.getElementById(`wpvfh-metadata-${groupSlug}-${value}-list`);
                     if (!listEl) return;
 
-                    const html = groupedFeedbacks[value].map(feedback => {
-                        const status = feedback.status || 'new';
-                        const statusColor = labels.getStatusColor(status);
-                        const statusEmoji = labels.getStatusEmoji(status);
-                        const statusLabel = labels.getStatusLabel(status);
-
-                        return `
-                            <div class="wpvfh-pin-item wpvfh-metadata-item" draggable="true" data-feedback-id="${feedback.id}">
-                                <div class="wpvfh-pin-content">
-                                    <div class="wpvfh-pin-header">
-                                        <span class="wpvfh-pin-id">#${feedback.id}</span>
-                                    </div>
-                                    <p class="wpvfh-pin-text">${tools.escapeHtml(feedback.comment || '')}</p>
-                                    <div class="wpvfh-pin-meta">
-                                        <span class="wpvfh-pin-status" style="color: ${statusColor};">${statusEmoji} ${statusLabel}</span>
-                                    </div>
-                                    ${labels.generateFeedbackLabelsHtml(feedback)}
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-
+                    const html = groupedFeedbacks[value].map(feedback => this.generatePinItemHtml(feedback, true)).join('');
                     listEl.innerHTML = html;
 
                     // Ajouter les événements de clic
