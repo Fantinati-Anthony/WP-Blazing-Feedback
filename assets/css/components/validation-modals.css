@@ -70,33 +70,42 @@
 }
 
 .wpvfh-validation-progress {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     margin-bottom: 12px;
 }
 
 .wpvfh-progress-bar {
-    flex: 1;
-    height: 8px;
+    position: relative;
+    width: 100%;
+    height: 24px;
     background: #e9ecef;
     border-radius: var(--wpvfh-radius);
     overflow: hidden;
 }
 
 .wpvfh-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
     height: 100%;
+    width: 0%;
     background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
     border-radius: var(--wpvfh-radius);
     transition: width 0.3s ease;
 }
 
 .wpvfh-progress-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 12px;
-    font-weight: 600;
-    color: #6c757d;
-    min-width: 60px;
-    text-align: right;
+    font-weight: 700;
+    color: #495057;
+    z-index: 1;
 }
 
 .wpvfh-validate-btn {

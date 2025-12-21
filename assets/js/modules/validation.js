@@ -26,17 +26,23 @@
             section.hidden = totalCount === 0;
             if (totalCount === 0) return;
 
-            const statusIcon = this.widget.elements.validationStatus?.querySelector('.wpvfh-validation-icon');
-            const statusText = this.widget.elements.validationStatus?.querySelector('.wpvfh-validation-text');
+            // Update progress bar
+            const progressFill = document.getElementById('wpvfh-progress-fill');
+            const progressText = document.getElementById('wpvfh-progress-text');
+
+            if (progressFill) {
+                const percentage = totalCount > 0 ? (resolvedCount / totalCount) * 100 : 0;
+                progressFill.style.width = percentage + '%';
+            }
+
+            if (progressText) {
+                progressText.textContent = `${resolvedCount}/${totalCount} traité`;
+            }
 
             if (allResolved) {
-                if (statusIcon) statusIcon.textContent = '✅';
-                if (statusText) statusText.textContent = 'Tous les points ont été traités';
                 section.classList.remove('pending');
                 section.classList.add('ready');
             } else {
-                if (statusIcon) statusIcon.textContent = '⏳';
-                if (statusText) statusText.textContent = `${resolvedCount}/${totalCount} points traités`;
                 section.classList.remove('ready');
                 section.classList.add('pending');
             }
@@ -81,10 +87,11 @@
                 this.widget.elements.pageValidation.classList.remove('ready', 'pending');
                 this.widget.elements.pageValidation.classList.add('validated');
 
-                const statusIcon = this.widget.elements.validationStatus?.querySelector('.wpvfh-validation-icon');
-                const statusText = this.widget.elements.validationStatus?.querySelector('.wpvfh-validation-text');
-                if (statusIcon) statusIcon.textContent = '🎉';
-                if (statusText) statusText.textContent = 'Page validée';
+                // Update progress bar to show complete
+                const progressFill = document.getElementById('wpvfh-progress-fill');
+                const progressText = document.getElementById('wpvfh-progress-text');
+                if (progressFill) progressFill.style.width = '100%';
+                if (progressText) progressText.textContent = '✅ Page validée';
 
                 if (this.widget.elements.validatePageBtn) {
                     this.widget.elements.validatePageBtn.hidden = true;

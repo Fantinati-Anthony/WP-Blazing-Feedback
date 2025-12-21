@@ -36,9 +36,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<!-- Section validation de page -->
 	<div id="wpvfh-page-validation" class="wpvfh-page-validation" hidden>
-		<div class="wpvfh-validation-status" id="wpvfh-validation-status">
-			<span class="wpvfh-validation-icon">⏳</span>
-			<span class="wpvfh-validation-text"><?php esc_html_e( 'Points en attente de résolution', 'blazing-feedback' ); ?></span>
+		<div class="wpvfh-validation-progress" id="wpvfh-validation-status">
+			<div class="wpvfh-progress-bar">
+				<div class="wpvfh-progress-fill" id="wpvfh-progress-fill"></div>
+				<span class="wpvfh-progress-text" id="wpvfh-progress-text">0/0 traité</span>
+			</div>
 		</div>
 		<button type="button" id="wpvfh-validate-page-btn" class="wpvfh-btn wpvfh-btn-validate" disabled>
 			<span class="wpvfh-btn-emoji">✅</span>
