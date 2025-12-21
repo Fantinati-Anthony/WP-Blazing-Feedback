@@ -27,6 +27,7 @@
 @import url('components/notifications.css');
 @import url('components/validation-modals.css');
 @import url('components/metadata-tabs.css');
+@import url('components/screenshot-editor.css');
 
 /* Thèmes et responsive (doit être chargé en dernier) */
 @import url('components/themes.css');

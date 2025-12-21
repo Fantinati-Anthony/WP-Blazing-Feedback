@@ -26,17 +26,33 @@
                 const dataUrl = await window.BlazingScreenshot.capture();
                 const resizedDataUrl = await window.BlazingScreenshot.resize(dataUrl, 1200, 900);
 
-                this.widget.state.screenshotData = resizedDataUrl;
-
-                if (this.widget.elements.screenshotData) {
-                    this.widget.elements.screenshotData.value = resizedDataUrl;
+                // Ouvrir l'éditeur d'annotation
+                if (window.BlazingScreenshotEditor) {
+                    window.BlazingScreenshotEditor.open(resizedDataUrl, (editedDataUrl) => {
+                        this.applyScreenshot(editedDataUrl);
+                    });
+                } else {
+                    // Fallback si l'éditeur n'est pas disponible
+                    this.applyScreenshot(resizedDataUrl);
                 }
-
-                this.showScreenshotPreview(resizedDataUrl);
             } catch (error) {
                 console.error('[Blazing Feedback] Erreur de capture:', error);
                 this.widget.modules.notifications.show('Erreur lors de la capture', 'error');
             }
+        },
+
+        /**
+         * Appliquer le screenshot (après édition ou directement)
+         */
+        applyScreenshot: function(dataUrl) {
+            this.widget.state.screenshotData = dataUrl;
+
+            if (this.widget.elements.screenshotData) {
+                this.widget.elements.screenshotData.value = dataUrl;
+            }
+
+            this.showScreenshotPreview(dataUrl);
+            this.widget.modules.notifications.show('Capture enregistrée', 'success');
         },
 
         /**

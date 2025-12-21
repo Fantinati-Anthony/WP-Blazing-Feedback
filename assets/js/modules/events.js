@@ -342,6 +342,8 @@
             if (el.selectElementBtn) {
                 el.selectElementBtn.addEventListener('click', () => {
                     if (window.BlazingAnnotation) {
+                        // Flag to preserve form data during element selection
+                        w.state.isSelectingElement = true;
                         w.modules.panel.closePanel();
                         window.BlazingAnnotation.startInspector();
                     }
@@ -371,6 +373,9 @@
             document.addEventListener('blazing-feedback:element-selected', (e) => {
                 const { element, data } = e.detail;
                 if (!element || !data) return;
+
+                // Reset selecting flag
+                w.state.isSelectingElement = false;
 
                 // Stocker la position
                 w.state.pinPosition = data;
@@ -421,6 +426,9 @@
 
             // Événement: inspecteur arrêté (sans sélection)
             document.addEventListener('blazing-feedback:inspector-stopped', () => {
+                // Reset selecting flag
+                w.state.isSelectingElement = false;
+
                 // Rouvrir le panel si fermé sans sélection
                 if (!w.state.isOpen && !window.BlazingAnnotation?.hasSelection()) {
                     w.modules.panel.openPanel('new');
