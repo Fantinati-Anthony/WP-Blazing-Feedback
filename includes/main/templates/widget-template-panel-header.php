@@ -45,7 +45,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <!-- Onglets -->
 <div class="wpvfh-tabs">
 	<button type="button" class="wpvfh-tab wpvfh-tab-add" data-tab="new" id="wpvfh-add-btn" title="<?php esc_attr_e( 'Nouveau feedback', 'blazing-feedback' ); ?>">
-		<span class="wpvfh-tab-icon" aria-hidden="true">➕</span>
+		<span class="wpvfh-tab-icon wpvfh-icon-plus" aria-hidden="true">+</span>
 	</button>
 	<button type="button" class="wpvfh-tab active" data-tab="list">
 		<span class="wpvfh-tab-icon" aria-hidden="true">📋</span>
