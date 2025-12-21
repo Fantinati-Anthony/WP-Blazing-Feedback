@@ -189,9 +189,8 @@
 .wpvfh-page-validation {
     padding: 16px;
     background: var(--wpvfh-bg-light);
-    border: 1px solid var(--wpvfh-border);
-    margin-top: 16px;
-    border-radius: var(--wpvfh-radius);
+    border-top: 1px solid var(--wpvfh-border);
+    flex-shrink: 0;
 }
 
 .wpvfh-page-validation .wpvfh-validation-status {
