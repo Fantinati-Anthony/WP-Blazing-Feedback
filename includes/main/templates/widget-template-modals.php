@@ -158,3 +158,61 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</div>
 </div>
+
+<!-- Modal éditeur de capture d'écran -->
+<div id="wpvfh-screenshot-editor" class="wpvfh-modal wpvfh-screenshot-editor-modal" hidden>
+	<div class="wpvfh-modal-overlay"></div>
+	<div class="wpvfh-modal-content wpvfh-editor-content">
+		<div class="wpvfh-editor-header">
+			<h3 class="wpvfh-modal-title">✏️ <?php esc_html_e( 'Annoter la capture', 'blazing-feedback' ); ?></h3>
+			<button type="button" class="wpvfh-editor-close" id="wpvfh-editor-close">&times;</button>
+		</div>
+		<div class="wpvfh-editor-toolbar">
+			<div class="wpvfh-editor-tools">
+				<button type="button" class="wpvfh-editor-tool active" data-tool="pen" title="<?php esc_attr_e( 'Crayon', 'blazing-feedback' ); ?>">
+					<span>✏️</span>
+				</button>
+				<button type="button" class="wpvfh-editor-tool" data-tool="line" title="<?php esc_attr_e( 'Ligne', 'blazing-feedback' ); ?>">
+					<span>📏</span>
+				</button>
+				<button type="button" class="wpvfh-editor-tool" data-tool="arrow" title="<?php esc_attr_e( 'Flèche', 'blazing-feedback' ); ?>">
+					<span>➡️</span>
+				</button>
+				<button type="button" class="wpvfh-editor-tool" data-tool="rect" title="<?php esc_attr_e( 'Rectangle', 'blazing-feedback' ); ?>">
+					<span>⬜</span>
+				</button>
+				<button type="button" class="wpvfh-editor-tool" data-tool="circle" title="<?php esc_attr_e( 'Cercle', 'blazing-feedback' ); ?>">
+					<span>⭕</span>
+				</button>
+				<button type="button" class="wpvfh-editor-tool" data-tool="text" title="<?php esc_attr_e( 'Texte', 'blazing-feedback' ); ?>">
+					<span>T</span>
+				</button>
+			</div>
+			<div class="wpvfh-editor-options">
+				<input type="color" id="wpvfh-editor-color" value="#e74c3c" title="<?php esc_attr_e( 'Couleur', 'blazing-feedback' ); ?>">
+				<select id="wpvfh-editor-size" title="<?php esc_attr_e( 'Épaisseur', 'blazing-feedback' ); ?>">
+					<option value="2">Fine</option>
+					<option value="4" selected>Normal</option>
+					<option value="8">Épaisse</option>
+				</select>
+				<button type="button" class="wpvfh-editor-undo" id="wpvfh-editor-undo" title="<?php esc_attr_e( 'Annuler', 'blazing-feedback' ); ?>">
+					<span>↩️</span>
+				</button>
+				<button type="button" class="wpvfh-editor-clear" id="wpvfh-editor-clear" title="<?php esc_attr_e( 'Effacer tout', 'blazing-feedback' ); ?>">
+					<span>🗑️</span>
+				</button>
+			</div>
+		</div>
+		<div class="wpvfh-editor-canvas-container">
+			<canvas id="wpvfh-editor-canvas"></canvas>
+		</div>
+		<div class="wpvfh-editor-actions">
+			<button type="button" class="wpvfh-btn wpvfh-btn-secondary" id="wpvfh-editor-cancel">
+				<?php esc_html_e( 'Annuler', 'blazing-feedback' ); ?>
+			</button>
+			<button type="button" class="wpvfh-btn wpvfh-btn-primary" id="wpvfh-editor-save">
+				<?php esc_html_e( 'Enregistrer', 'blazing-feedback' ); ?>
+			</button>
+		</div>
+	</div>
+</div>
