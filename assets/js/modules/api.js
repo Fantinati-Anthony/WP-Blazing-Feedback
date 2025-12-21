@@ -87,6 +87,21 @@
                     }
 
                     this.updateFeedbackCounts(response.length);
+
+                    // Mettre à jour les compteurs de filtres
+                    if (this.widget.modules.filters) {
+                        this.widget.modules.filters.updateFilterCounts();
+                    }
+
+                    // Mettre à jour la barre de progression
+                    if (this.widget.modules.validation) {
+                        this.widget.modules.validation.updateValidationSection();
+                    }
+
+                    // Rendre la liste des feedbacks
+                    if (this.widget.modules.list) {
+                        this.widget.modules.list.renderPinsList();
+                    }
                 }
             } catch (error) {
                 console.error('[Blazing Feedback] Erreur chargement feedbacks:', error);
