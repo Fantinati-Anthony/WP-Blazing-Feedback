@@ -504,6 +504,234 @@
         },
 
         /**
+         * Capturer la page complète avec défilement
+         * @param {Object} options - Options personnalisées
+         * @returns {Promise<string>} Data URL de l'image complète
+         */
+        captureFullPage: async function(options = {}) {
+            // Empêcher les captures simultanées
+            if (this.state.isCapturing) {
+                return Promise.reject(new Error('Capture déjà en cours'));
+            }
+
+            this.state.isCapturing = true;
+
+            // Configuration
+            const config = {
+                scrollDelay: options.scrollDelay || 300,      // Délai après chaque scroll (ms)
+                overlap: options.overlap || 50,                // Chevauchement entre captures (px)
+                maxHeight: options.maxHeight || 30000,         // Hauteur max pour éviter les problèmes mémoire
+                quality: options.quality || 0.92,
+                ...options
+            };
+
+            // Sauvegarder l'état initial
+            const originalScrollX = window.scrollX || window.pageXOffset;
+            const originalScrollY = window.scrollY || window.pageYOffset;
+            const originalOverflow = document.body.style.overflow;
+            const originalHtmlOverflow = document.documentElement.style.overflow;
+
+            try {
+                // Masquer le widget
+                this.hideWidget();
+
+                // Émettre événement de début
+                this.emitEvent('fullpage-capture-start', {});
+
+                // Dimensions
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                const pageWidth = Math.max(
+                    document.body.scrollWidth,
+                    document.documentElement.scrollWidth,
+                    document.body.offsetWidth,
+                    document.documentElement.offsetWidth,
+                    viewportWidth
+                );
+                const pageHeight = Math.min(
+                    Math.max(
+                        document.body.scrollHeight,
+                        document.documentElement.scrollHeight,
+                        document.body.offsetHeight,
+                        document.documentElement.offsetHeight
+                    ),
+                    config.maxHeight
+                );
+
+                console.log(`[Blazing Feedback] Capture pleine page: ${pageWidth}x${pageHeight}`);
+
+                // Calculer le nombre de captures nécessaires
+                const stepHeight = viewportHeight - config.overlap;
+                const numCaptures = Math.ceil(pageHeight / stepHeight);
+                const captures = [];
+
+                // Options html2canvas pour chaque capture
+                const captureOptions = {
+                    ...this.defaultOptions,
+                    width: viewportWidth,
+                    height: viewportHeight,
+                    windowWidth: viewportWidth,
+                    windowHeight: viewportHeight,
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0,
+                    ignoreElements: (element) => {
+                        if (element.id && element.id.startsWith('wpvfh-')) return true;
+                        if (element.hasAttribute && element.hasAttribute('data-blazing-ignore')) return true;
+                        // Ignorer les éléments fixed/sticky pour éviter les duplications
+                        const style = window.getComputedStyle(element);
+                        if (style.position === 'fixed' || style.position === 'sticky') {
+                            element.setAttribute('data-blazing-was-fixed', style.position);
+                            return true;
+                        }
+                        return false;
+                    }
+                };
+
+                // Capturer chaque section
+                for (let i = 0; i < numCaptures; i++) {
+                    const scrollY = i * stepHeight;
+                    const isLastCapture = (i === numCaptures - 1);
+
+                    // Calculer la hauteur réelle pour cette capture
+                    let captureHeight = viewportHeight;
+                    if (isLastCapture) {
+                        const remainingHeight = pageHeight - scrollY;
+                        captureHeight = Math.min(remainingHeight, viewportHeight);
+                    }
+
+                    // Scroller à la position
+                    window.scrollTo(0, scrollY);
+
+                    // Attendre le rendu (images lazy-loaded, animations, etc.)
+                    await this.waitForRender(config.scrollDelay);
+
+                    // Émettre progression
+                    this.emitEvent('fullpage-capture-progress', {
+                        current: i + 1,
+                        total: numCaptures,
+                        percent: Math.round(((i + 1) / numCaptures) * 100)
+                    });
+
+                    // Capturer cette section
+                    const canvas = await html2canvas(document.body, {
+                        ...captureOptions,
+                        height: captureHeight
+                    });
+
+                    captures.push({
+                        canvas: canvas,
+                        y: scrollY,
+                        height: captureHeight
+                    });
+
+                    console.log(`[Blazing Feedback] Capture ${i + 1}/${numCaptures} à Y=${scrollY}`);
+                }
+
+                // Créer le canvas final et concaténer les captures
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = pageWidth;
+                finalCanvas.height = pageHeight;
+                const ctx = finalCanvas.getContext('2d');
+
+                // Fond blanc
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+
+                // Dessiner chaque capture à sa position
+                for (let i = 0; i < captures.length; i++) {
+                    const capture = captures[i];
+                    const yPos = i * stepHeight;
+
+                    // Pour la dernière capture, ajuster la position si nécessaire
+                    if (i === captures.length - 1) {
+                        const remainingSpace = pageHeight - yPos;
+                        if (capture.height < viewportHeight) {
+                            // Dessiner uniquement la partie nécessaire
+                            ctx.drawImage(
+                                capture.canvas,
+                                0, 0, capture.canvas.width, capture.height,
+                                0, yPos, pageWidth, capture.height
+                            );
+                        } else {
+                            ctx.drawImage(capture.canvas, 0, yPos);
+                        }
+                    } else {
+                        ctx.drawImage(capture.canvas, 0, yPos);
+                    }
+                }
+
+                // Capturer les éléments fixed séparément et les ajouter en overlay
+                await this.captureFixedElements(ctx, pageWidth, pageHeight);
+
+                // Convertir en data URL
+                const dataUrl = finalCanvas.toDataURL('image/png', config.quality);
+
+                // Stocker la capture
+                this.state.lastCapture = dataUrl;
+                this.state.lastCaptureTime = Date.now();
+
+                // Émettre succès
+                this.emitEvent('fullpage-capture-success', {
+                    dataUrl,
+                    width: pageWidth,
+                    height: pageHeight,
+                    captures: numCaptures
+                });
+
+                console.log(`[Blazing Feedback] Capture pleine page terminée: ${this.formatSize(this.getSize(dataUrl))}`);
+
+                return dataUrl;
+
+            } catch (error) {
+                console.error('[Blazing Feedback] Erreur capture pleine page:', error);
+                this.emitEvent('fullpage-capture-error', { error: error.message });
+                throw error;
+
+            } finally {
+                // Restaurer l'état initial
+                window.scrollTo(originalScrollX, originalScrollY);
+                document.body.style.overflow = originalOverflow;
+                document.documentElement.style.overflow = originalHtmlOverflow;
+
+                // Restaurer les éléments fixed
+                document.querySelectorAll('[data-blazing-was-fixed]').forEach(el => {
+                    el.removeAttribute('data-blazing-was-fixed');
+                });
+
+                this.showWidget();
+                this.state.isCapturing = false;
+            }
+        },
+
+        /**
+         * Attendre le rendu de la page
+         * @param {number} delay - Délai en ms
+         * @returns {Promise<void>}
+         */
+        waitForRender: function(delay) {
+            return new Promise(resolve => {
+                // Utiliser requestAnimationFrame pour s'assurer que le rendu est fait
+                requestAnimationFrame(() => {
+                    setTimeout(resolve, delay);
+                });
+            });
+        },
+
+        /**
+         * Capturer et ajouter les éléments fixed en overlay
+         * @param {CanvasRenderingContext2D} ctx - Contexte du canvas
+         * @param {number} pageWidth - Largeur de la page
+         * @param {number} pageHeight - Hauteur de la page
+         */
+        captureFixedElements: async function(ctx, pageWidth, pageHeight) {
+            // Cette fonction peut être étendue pour capturer les headers/footers fixed
+            // et les dessiner en position appropriée sur l'image finale
+            // Pour l'instant, on les ignore car ils créent des duplications
+        },
+
+        /**
          * Redimensionner une image base64
          * @param {string} dataUrl - Image en base64
          * @param {number} maxWidth - Largeur maximale
