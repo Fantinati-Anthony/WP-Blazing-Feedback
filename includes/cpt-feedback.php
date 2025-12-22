@@ -133,7 +133,7 @@ class WPVFH_CPT_Feedback {
             'public'              => false,
             'publicly_queryable'  => false,
             'show_ui'             => true,
-            'show_in_menu'        => 'wpvfh-dashboard',
+            'show_in_menu'        => 'blazing-minds',
             'query_var'           => false,
             'rewrite'             => false,
             'capability_type'     => array( 'feedback', 'feedbacks' ),

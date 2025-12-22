@@ -25,6 +25,8 @@ class BZMI_Admin {
 	 * @return void
 	 */
 	public static function register_menu() {
+		global $menu, $submenu;
+
 		// Menu principal
 		add_menu_page(
 			__( 'Blazing Minds', 'blazing-minds' ),
@@ -36,7 +38,7 @@ class BZMI_Admin {
 			25
 		);
 
-		// Tableau de bord
+		// Tableau de bord (remplace le titre auto-généré)
 		add_submenu_page(
 			'blazing-minds',
 			__( 'Tableau de bord', 'blazing-minds' ),
@@ -46,14 +48,52 @@ class BZMI_Admin {
 			array( __CLASS__, 'render_dashboard' )
 		);
 
+		// ═══════════════════════════════════════════════════════════
+		// SECTION: STRATÉGIE
+		// ═══════════════════════════════════════════════════════════
+
+		// Séparateur Stratégie
+		add_submenu_page(
+			'blazing-minds',
+			'',
+			'<span class="bzmi-menu-separator">── ' . __( 'Stratégie', 'blazing-minds' ) . ' ──</span>',
+			'bzmi_view_reports',
+			'#bzmi-separator-strategy',
+			'__return_false'
+		);
+
 		// Clients
 		add_submenu_page(
 			'blazing-minds',
 			__( 'Clients', 'blazing-minds' ),
 			__( 'Clients', 'blazing-minds' ),
 			'bzmi_manage_clients',
-			'blazing-minds-clients',
+			'bzmi-clients',
 			array( 'BZMI_Admin_Clients', 'render_page' )
+		);
+
+		// Fondations
+		add_submenu_page(
+			'blazing-minds',
+			__( 'Fondations', 'blazing-minds' ),
+			__( 'Fondations', 'blazing-minds' ),
+			'bzmi_manage_foundations',
+			'bzmi-foundations',
+			array( 'BZMI_Admin_Foundations', 'render_page' )
+		);
+
+		// ═══════════════════════════════════════════════════════════
+		// SECTION: PRODUCTION
+		// ═══════════════════════════════════════════════════════════
+
+		// Séparateur Production
+		add_submenu_page(
+			'blazing-minds',
+			'',
+			'<span class="bzmi-menu-separator">── ' . __( 'Production', 'blazing-minds' ) . ' ──</span>',
+			'bzmi_view_reports',
+			'#bzmi-separator-production',
+			'__return_false'
 		);
 
 		// Portefeuilles
@@ -62,7 +102,7 @@ class BZMI_Admin {
 			__( 'Portefeuilles', 'blazing-minds' ),
 			__( 'Portefeuilles', 'blazing-minds' ),
 			'bzmi_manage_portfolios',
-			'blazing-minds-portfolios',
+			'bzmi-portfolios',
 			array( 'BZMI_Admin_Portfolios', 'render_page' )
 		);
 
@@ -72,18 +112,59 @@ class BZMI_Admin {
 			__( 'Projets', 'blazing-minds' ),
 			__( 'Projets', 'blazing-minds' ),
 			'bzmi_manage_projects',
-			'blazing-minds-projects',
+			'bzmi-projects',
 			array( 'BZMI_Admin_Projects', 'render_page' )
 		);
 
-		// ICAVAL (cycle complet)
+		// Cycle ICAVAL
 		add_submenu_page(
 			'blazing-minds',
 			__( 'Cycle ICAVAL', 'blazing-minds' ),
 			__( 'Cycle ICAVAL', 'blazing-minds' ),
 			'bzmi_manage_icaval',
-			'blazing-minds-icaval',
+			'bzmi-icaval',
 			array( 'BZMI_Admin_ICAVAL', 'render_page' )
+		);
+
+		// ═══════════════════════════════════════════════════════════
+		// SECTION: COLLECTE
+		// ═══════════════════════════════════════════════════════════
+
+		// Séparateur Collecte
+		add_submenu_page(
+			'blazing-minds',
+			'',
+			'<span class="bzmi-menu-separator">── ' . __( 'Collecte', 'blazing-minds' ) . ' ──</span>',
+			'edit_feedbacks',
+			'#bzmi-separator-collect',
+			'__return_false'
+		);
+
+		// Note: Le CPT feedback s'ajoute automatiquement ici
+		// avec show_in_menu => 'blazing-minds'
+
+		// Métadatas
+		add_submenu_page(
+			'blazing-minds',
+			__( 'Métadatas', 'blazing-minds' ),
+			__( 'Métadatas', 'blazing-minds' ),
+			'manage_feedback',
+			'bzmi-metadata',
+			array( 'WPVFH_Options_Manager', 'render_options_page' )
+		);
+
+		// ═══════════════════════════════════════════════════════════
+		// SECTION: SYSTÈME
+		// ═══════════════════════════════════════════════════════════
+
+		// Séparateur Système
+		add_submenu_page(
+			'blazing-minds',
+			'',
+			'<span class="bzmi-menu-separator">── ' . __( 'Système', 'blazing-minds' ) . ' ──</span>',
+			'bzmi_manage_settings',
+			'#bzmi-separator-system',
+			'__return_false'
 		);
 
 		// Réglages
@@ -92,9 +173,54 @@ class BZMI_Admin {
 			__( 'Réglages', 'blazing-minds' ),
 			__( 'Réglages', 'blazing-minds' ),
 			'bzmi_manage_settings',
-			'blazing-minds-settings',
+			'bzmi-settings',
 			array( 'BZMI_Admin_Settings', 'render_page' )
 		);
+
+		// Ajouter les styles pour les séparateurs
+		add_action( 'admin_head', array( __CLASS__, 'menu_separator_styles' ) );
+	}
+
+	/**
+	 * Styles CSS pour les séparateurs de menu
+	 *
+	 * @return void
+	 */
+	public static function menu_separator_styles() {
+		?>
+		<style>
+			/* Séparateurs de menu */
+			#adminmenu .bzmi-menu-separator {
+				display: block;
+				padding: 5px 0;
+				color: #a7aaad;
+				font-size: 11px;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+				pointer-events: none;
+				border-top: 1px solid rgba(255,255,255,0.1);
+				margin-top: 5px;
+			}
+			#adminmenu li a[href^="#bzmi-separator"] {
+				cursor: default !important;
+				pointer-events: none !important;
+			}
+			#adminmenu li a[href^="#bzmi-separator"]:hover {
+				background: transparent !important;
+				color: #a7aaad !important;
+			}
+			/* Highlight menu actif */
+			#adminmenu .wp-submenu a.current {
+				color: #fff !important;
+				font-weight: 600;
+			}
+			/* Icônes personnalisées */
+			#adminmenu .toplevel_page_blazing-minds .wp-menu-image:before {
+				content: "\f339";
+			}
+		</style>
+		<?php
 	}
 
 	/**

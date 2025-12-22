@@ -83,9 +83,8 @@ function bzmi_register_foundations_hooks() {
 	// REST API
 	add_action( 'rest_api_init', array( 'BZMI_REST_Foundations', 'register_routes' ) );
 
-	// Admin
+	// Admin (le menu est maintenant enregistré dans BZMI_Admin::register_menu)
 	if ( is_admin() ) {
-		add_action( 'admin_menu', array( 'BZMI_Admin_Foundations', 'register_menu' ), 21 );
 		add_action( 'admin_enqueue_scripts', 'bzmi_enqueue_foundations_admin_assets' );
 	}
 }

@@ -248,36 +248,140 @@ class BZMI_Client extends BZMI_Model_Base {
 			$total_budget += (float) $project->budget;
 		}
 
+		// Statistiques des fondations
+		$foundations_count      = $this->foundations_count();
+		$active_foundations     = count( $this->active_foundations() );
+		$production_foundations = count( $this->foundations( array( 'status' => 'production' ) ) );
+
 		return array(
-			'portfolios_count'    => count( $portfolios ),
-			'projects_count'      => count( $projects ),
-			'active_projects'     => $active_projects,
-			'completed_projects'  => $completed_projects,
-			'total_budget'        => $total_budget,
+			'portfolios_count'       => count( $portfolios ),
+			'projects_count'         => count( $projects ),
+			'active_projects'        => $active_projects,
+			'completed_projects'     => $completed_projects,
+			'total_budget'           => $total_budget,
+			'foundations_count'      => $foundations_count,
+			'active_foundations'     => $active_foundations,
+			'production_foundations' => $production_foundations,
 		);
 	}
 
 	/**
-	 * Obtenir la fondation du client
+	 * Obtenir toutes les fondations du client
 	 *
 	 * @since 2.0.0
-	 * @return BZMI_Foundation|null
+	 * @param array $args Arguments optionnels (status, orderby, order, limit).
+	 * @return array Array de BZMI_Foundation
 	 */
-	public function foundation() {
+	public function foundations( $args = array() ) {
 		if ( ! class_exists( 'BZMI_Foundation' ) ) {
-			return null;
+			return array();
 		}
-		return BZMI_Foundation::find_by_client( $this->id );
+		return BZMI_Foundation::get_by_client( $this->id, $args );
 	}
 
 	/**
-	 * Vérifier si le client a une fondation
+	 * Obtenir les fondations actives du client
+	 *
+	 * @since 2.0.0
+	 * @return array Array de BZMI_Foundation avec statuts actifs
+	 */
+	public function active_foundations() {
+		if ( ! class_exists( 'BZMI_Foundation' ) ) {
+			return array();
+		}
+		return BZMI_Foundation::get_active_by_client( $this->id );
+	}
+
+	/**
+	 * Obtenir la fondation en production du client
+	 *
+	 * @since 2.0.0
+	 * @return BZMI_Foundation|null La première fondation en production
+	 */
+	public function production_foundation() {
+		$foundations = $this->foundations( array( 'status' => 'production' ) );
+		return ! empty( $foundations ) ? $foundations[0] : null;
+	}
+
+	/**
+	 * Obtenir une fondation par son ID
+	 *
+	 * @since 2.0.0
+	 * @param int $foundation_id ID de la fondation.
+	 * @return BZMI_Foundation|null
+	 */
+	public function get_foundation( $foundation_id ) {
+		if ( ! class_exists( 'BZMI_Foundation' ) ) {
+			return null;
+		}
+		$foundation = BZMI_Foundation::find( $foundation_id );
+		if ( $foundation && (int) $foundation->client_id === (int) $this->id ) {
+			return $foundation;
+		}
+		return null;
+	}
+
+	/**
+	 * Créer une nouvelle fondation pour le client
+	 *
+	 * @since 2.0.0
+	 * @param string $name   Nom de la fondation.
+	 * @param string $status Statut initial (default: draft).
+	 * @return BZMI_Foundation|null
+	 */
+	public function create_foundation( $name = '', $status = 'draft' ) {
+		if ( ! class_exists( 'BZMI_Foundation' ) ) {
+			return null;
+		}
+		if ( empty( $name ) ) {
+			$count = count( $this->foundations() );
+			$name  = sprintf( '%s - Fondation %d', $this->name, $count + 1 );
+		}
+		return BZMI_Foundation::create_for_client( $this->id, $name, $status );
+	}
+
+	/**
+	 * Vérifier si le client a des fondations
 	 *
 	 * @since 2.0.0
 	 * @return bool
 	 */
-	public function has_foundation() {
-		return null !== $this->foundation();
+	public function has_foundations() {
+		return count( $this->foundations() ) > 0;
+	}
+
+	/**
+	 * Obtenir le nombre de fondations
+	 *
+	 * @since 2.0.0
+	 * @return int
+	 */
+	public function foundations_count() {
+		if ( ! class_exists( 'BZMI_Foundation' ) ) {
+			return 0;
+		}
+		return BZMI_Foundation::count( array( 'client_id' => $this->id ) );
+	}
+
+	/**
+	 * Obtenir le nombre de fondations par statut
+	 *
+	 * @since 2.0.0
+	 * @return array Tableau associatif status => count
+	 */
+	public function foundations_count_by_status() {
+		$counts     = array();
+		$foundations = $this->foundations();
+
+		foreach ( $foundations as $foundation ) {
+			$status = $foundation->status ?: 'draft';
+			if ( ! isset( $counts[ $status ] ) ) {
+				$counts[ $status ] = 0;
+			}
+			$counts[ $status ]++;
+		}
+
+		return $counts;
 	}
 
 	/**

@@ -51,9 +51,30 @@ class BZMI_Foundation extends BZMI_Model_Base {
 	 * @var array
 	 */
 	const STATUSES = array(
-		'draft'    => 'Brouillon',
-		'active'   => 'Actif',
-		'archived' => 'Archivé',
+		'draft'       => 'Brouillon',
+		'analysis'    => 'Analyse',
+		'in_progress' => 'En cours',
+		'review'      => 'En révision',
+		'production'  => 'Production',
+		'on_hold'     => 'En pause',
+		'abandoned'   => 'Abandonné',
+		'archived'    => 'Archivé',
+	);
+
+	/**
+	 * Couleurs des statuts
+	 *
+	 * @var array
+	 */
+	const STATUS_COLORS = array(
+		'draft'       => '#9ca3af',
+		'analysis'    => '#3b82f6',
+		'in_progress' => '#f59e0b',
+		'review'      => '#8b5cf6',
+		'production'  => '#10b981',
+		'on_hold'     => '#eab308',
+		'abandoned'   => '#ef4444',
+		'archived'    => '#6b7280',
 	);
 
 	/**
@@ -97,24 +118,148 @@ class BZMI_Foundation extends BZMI_Model_Base {
 	}
 
 	/**
-	 * Obtenir ou créer une fondation pour un client
+	 * Trouver une fondation par client (retourne la première)
 	 *
+	 * @deprecated Utiliser get_by_client() pour obtenir toutes les fondations
 	 * @param int $client_id ID du client.
-	 * @return BZMI_Foundation
+	 * @return BZMI_Foundation|null
 	 */
-	public static function get_or_create_for_client( $client_id ) {
-		$foundation = static::first_where( array( 'client_id' => $client_id ) );
+	public static function find_by_client( $client_id ) {
+		return static::first_where( array( 'client_id' => $client_id ) );
+	}
 
-		if ( ! $foundation ) {
-			$client = BZMI_Client::find( $client_id );
-			$foundation = static::create( array(
-				'client_id' => $client_id,
-				'name'      => $client ? $client->name . ' - Fondation' : 'Nouvelle Fondation',
-				'status'    => 'draft',
-			) );
+	/**
+	 * Obtenir toutes les fondations d'un client
+	 *
+	 * @param int   $client_id ID du client.
+	 * @param array $args      Arguments supplémentaires (status, orderby, order).
+	 * @return array
+	 */
+	public static function get_by_client( $client_id, $args = array() ) {
+		$defaults = array(
+			'where'   => array( 'client_id' => $client_id ),
+			'orderby' => 'created_at',
+			'order'   => 'DESC',
+		);
+
+		// Filtrer par statut si spécifié
+		if ( ! empty( $args['status'] ) ) {
+			$defaults['where']['status'] = $args['status'];
 		}
 
-		return $foundation;
+		return static::all( array_merge( $defaults, $args ) );
+	}
+
+	/**
+	 * Obtenir les fondations actives d'un client (en production ou en cours)
+	 *
+	 * @param int $client_id ID du client.
+	 * @return array
+	 */
+	public static function get_active_by_client( $client_id ) {
+		global $wpdb;
+
+		$table = BZMI_Database::get_table_name( static::$table );
+		$active_statuses = array( 'in_progress', 'review', 'production' );
+		$placeholders = implode( ',', array_fill( 0, count( $active_statuses ), '%s' ) );
+
+		$sql = $wpdb->prepare(
+			"SELECT * FROM {$table} WHERE client_id = %d AND status IN ({$placeholders}) ORDER BY created_at DESC",
+			array_merge( array( $client_id ), $active_statuses )
+		);
+
+		$rows = $wpdb->get_results( $sql, ARRAY_A );
+		$models = array();
+
+		foreach ( $rows as $row ) {
+			$models[] = new static( $row );
+		}
+
+		return $models;
+	}
+
+	/**
+	 * Créer une nouvelle fondation pour un client
+	 *
+	 * @param int    $client_id ID du client.
+	 * @param string $name      Nom de la fondation.
+	 * @param string $status    Statut initial.
+	 * @return BZMI_Foundation
+	 */
+	public static function create_for_client( $client_id, $name = '', $status = 'draft' ) {
+		$client = BZMI_Client::find( $client_id );
+
+		if ( empty( $name ) ) {
+			$count = static::count( array( 'client_id' => $client_id ) );
+			$name = $client ? $client->name . ' - Fondation ' . ( $count + 1 ) : 'Nouvelle Fondation';
+		}
+
+		return static::create( array(
+			'client_id'  => $client_id,
+			'name'       => $name,
+			'status'     => $status,
+			'created_by' => get_current_user_id(),
+		) );
+	}
+
+	/**
+	 * Obtenir le libellé du statut
+	 *
+	 * @return string
+	 */
+	public function get_status_label() {
+		return self::STATUSES[ $this->status ] ?? $this->status;
+	}
+
+	/**
+	 * Obtenir la couleur du statut
+	 *
+	 * @return string
+	 */
+	public function get_status_color() {
+		return self::STATUS_COLORS[ $this->status ] ?? '#9ca3af';
+	}
+
+	/**
+	 * Vérifier si la fondation est active (utilisable)
+	 *
+	 * @return bool
+	 */
+	public function is_active() {
+		return in_array( $this->status, array( 'in_progress', 'review', 'production' ), true );
+	}
+
+	/**
+	 * Vérifier si la fondation est en production
+	 *
+	 * @return bool
+	 */
+	public function is_in_production() {
+		return 'production' === $this->status;
+	}
+
+	/**
+	 * Vérifier si la fondation est modifiable
+	 *
+	 * @return bool
+	 */
+	public function is_editable() {
+		return ! in_array( $this->status, array( 'abandoned', 'archived' ), true );
+	}
+
+	/**
+	 * Changer le statut de la fondation
+	 *
+	 * @param string $new_status Nouveau statut.
+	 * @return bool
+	 */
+	public function change_status( $new_status ) {
+		if ( ! isset( self::STATUSES[ $new_status ] ) ) {
+			return false;
+		}
+
+		$this->status = $new_status;
+		return $this->save();
 	}
 
 	/**
