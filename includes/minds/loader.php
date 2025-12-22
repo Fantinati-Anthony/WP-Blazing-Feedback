@@ -64,6 +64,12 @@ function wpvfh_load_minds_modules() {
 		require_once $minds_dir . 'admin/class-admin-icaval.php';
 		require_once $minds_dir . 'admin/class-admin-settings.php';
 	}
+
+	// Charger le module Foundations
+	$foundations_loader = WPVFH_PLUGIN_DIR . 'includes/foundations/loader.php';
+	if ( file_exists( $foundations_loader ) ) {
+		require_once $foundations_loader;
+	}
 }
 
 /**
@@ -81,6 +87,8 @@ function wpvfh_init_minds() {
 	if ( version_compare( $current_version, BZMI_DB_VERSION, '<' ) ) {
 		BZMI_Migrations::run();
 	}
+
+	// Note: Le module Foundations s'initialise automatiquement via ses propres hooks plugins_loaded
 }
 
 /**
@@ -258,6 +266,10 @@ function wpvfh_create_minds_roles() {
 		'bzmi_manage_settings'     => true,
 		'bzmi_view_reports'        => true,
 		'bzmi_use_ai'              => true,
+		// Fondations (v2.0.0)
+		'bzmi_manage_foundations'  => true,
+		'bzmi_edit_foundations'    => true,
+		'bzmi_delete_foundations'  => true,
 	);
 
 	$admin = get_role( 'administrator' );
@@ -278,4 +290,9 @@ register_activation_hook( WPVFH_PLUGIN_DIR . 'blazing-feedback.php', function() 
 	BZMI_Migrations::run();
 	BZMI_Database::set_default_settings();
 	wpvfh_create_minds_roles();
+
+	// Migrations Foundations (v2.0.0)
+	if ( class_exists( 'BZMI_Foundations_Migrations' ) ) {
+		BZMI_Foundations_Migrations::run();
+	}
 } );

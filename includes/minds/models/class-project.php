@@ -33,6 +33,7 @@ class BZMI_Project extends BZMI_Model_Base {
 	 */
 	protected static $fillable = array(
 		'portfolio_id',
+		'foundation_id',
 		'name',
 		'description',
 		'start_date',
@@ -374,5 +375,110 @@ class BZMI_Project extends BZMI_Model_Base {
 	 */
 	public static function active() {
 		return static::where( array( 'status' => array( 'active', 'in_progress' ) ) );
+	}
+
+	/**
+	 * Obtenir la fondation associée au projet
+	 *
+	 * @since 2.0.0
+	 * @return BZMI_Foundation|null
+	 */
+	public function foundation() {
+		if ( ! class_exists( 'BZMI_Foundation' ) ) {
+			return null;
+		}
+
+		// D'abord vérifier si une fondation est directement liée
+		if ( $this->foundation_id ) {
+			return BZMI_Foundation::find( $this->foundation_id );
+		}
+
+		// Sinon, chercher via le client
+		$client = $this->client();
+		if ( $client ) {
+			return $client->foundation();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Vérifier si le projet a une fondation
+	 *
+	 * @since 2.0.0
+	 * @return bool
+	 */
+	public function has_foundation() {
+		return null !== $this->foundation();
+	}
+
+	/**
+	 * Obtenir le contexte IA pour ce projet
+	 *
+	 * Combine les informations de la fondation avec les données du projet
+	 * pour fournir un contexte riche à l'IA.
+	 *
+	 * @since 2.0.0
+	 * @return array
+	 */
+	public function get_ai_context() {
+		$context = array(
+			'project' => array(
+				'id'          => $this->id,
+				'name'        => $this->name,
+				'description' => $this->description,
+				'status'      => $this->status,
+				'priority'    => $this->priority,
+				'progress'    => $this->progress,
+				'budget'      => $this->budget,
+				'start_date'  => $this->start_date,
+				'end_date'    => $this->end_date,
+			),
+		);
+
+		// Ajouter le contexte client
+		$client = $this->client();
+		if ( $client ) {
+			$context['client'] = array(
+				'id'           => $client->id,
+				'name'         => $client->name,
+				'company'      => $client->company,
+				'company_mode' => $client->company_mode,
+			);
+		}
+
+		// Ajouter le contexte de la fondation
+		$foundation = $this->foundation();
+		if ( $foundation ) {
+			$context['foundation'] = $foundation->get_ai_context();
+		}
+
+		// Ajouter les statistiques ICAVAL
+		$context['icaval'] = $this->get_icaval_stats();
+
+		return $context;
+	}
+
+	/**
+	 * Lier une fondation au projet
+	 *
+	 * @since 2.0.0
+	 * @param int $foundation_id ID de la fondation.
+	 * @return bool
+	 */
+	public function link_foundation( $foundation_id ) {
+		$this->foundation_id = $foundation_id;
+		return $this->save();
+	}
+
+	/**
+	 * Délier la fondation du projet
+	 *
+	 * @since 2.0.0
+	 * @return bool
+	 */
+	public function unlink_foundation() {
+		$this->foundation_id = null;
+		return $this->save();
 	}
 }

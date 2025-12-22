@@ -41,7 +41,18 @@ class BZMI_Client extends BZMI_Model_Base {
 		'notes',
 		'metadata',
 		'status',
+		'company_mode',
 		'created_by',
+	);
+
+	/**
+	 * Modes d'entreprise disponibles
+	 *
+	 * @since 2.0.0
+	 */
+	const COMPANY_MODES = array(
+		'creation' => 'Création',
+		'existing' => 'Existante',
 	);
 
 	/**
@@ -244,5 +255,49 @@ class BZMI_Client extends BZMI_Model_Base {
 			'completed_projects'  => $completed_projects,
 			'total_budget'        => $total_budget,
 		);
+	}
+
+	/**
+	 * Obtenir la fondation du client
+	 *
+	 * @since 2.0.0
+	 * @return BZMI_Foundation|null
+	 */
+	public function foundation() {
+		if ( ! class_exists( 'BZMI_Foundation' ) ) {
+			return null;
+		}
+		return BZMI_Foundation::find_by_client( $this->id );
+	}
+
+	/**
+	 * Vérifier si le client a une fondation
+	 *
+	 * @since 2.0.0
+	 * @return bool
+	 */
+	public function has_foundation() {
+		return null !== $this->foundation();
+	}
+
+	/**
+	 * Obtenir le mode d'entreprise formaté
+	 *
+	 * @since 2.0.0
+	 * @return string
+	 */
+	public function get_company_mode_label() {
+		$mode = $this->company_mode ?: 'existing';
+		return self::COMPANY_MODES[ $mode ] ?? $mode;
+	}
+
+	/**
+	 * Vérifier si le client est en mode création
+	 *
+	 * @since 2.0.0
+	 * @return bool
+	 */
+	public function is_creation_mode() {
+		return 'creation' === $this->company_mode;
 	}
 }
