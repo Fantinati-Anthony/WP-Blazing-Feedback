@@ -33,7 +33,7 @@ trait WPVFH_Admin_Menu {
 			'wpvfh-dashboard',
 			array( __CLASS__, 'render_dashboard_page' ),
 			'dashicons-format-chat',
-			30
+			3 // Juste après Dashboard (position 2)
 		);
 
 		// Sous-page - Dashboard (redirection pour remplacer le titre auto)
