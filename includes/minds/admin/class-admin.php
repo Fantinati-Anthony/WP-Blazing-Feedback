@@ -27,7 +27,7 @@ class BZMI_Admin {
 	public static function register_menu() {
 		global $menu, $submenu;
 
-		// Menu principal
+		// Menu principal - Position 2 = juste après le Dashboard
 		add_menu_page(
 			__( 'Blazing Minds', 'blazing-minds' ),
 			__( 'Blazing Minds', 'blazing-minds' ),
@@ -35,7 +35,7 @@ class BZMI_Admin {
 			'blazing-minds',
 			array( __CLASS__, 'render_dashboard' ),
 			'dashicons-lightbulb',
-			25
+			2
 		);
 
 		// Tableau de bord (remplace le titre auto-généré)
@@ -46,20 +46,6 @@ class BZMI_Admin {
 			'bzmi_view_reports',
 			'blazing-minds',
 			array( __CLASS__, 'render_dashboard' )
-		);
-
-		// ═══════════════════════════════════════════════════════════
-		// SECTION: STRATÉGIE
-		// ═══════════════════════════════════════════════════════════
-
-		// Séparateur Stratégie
-		add_submenu_page(
-			'blazing-minds',
-			'',
-			'<span class="bzmi-menu-separator">── ' . __( 'Stratégie', 'blazing-minds' ) . ' ──</span>',
-			'bzmi_view_reports',
-			'#bzmi-separator-strategy',
-			'__return_false'
 		);
 
 		// Clients
@@ -80,20 +66,6 @@ class BZMI_Admin {
 			'bzmi_manage_foundations',
 			'bzmi-foundations',
 			array( 'BZMI_Admin_Foundations', 'render_page' )
-		);
-
-		// ═══════════════════════════════════════════════════════════
-		// SECTION: PRODUCTION
-		// ═══════════════════════════════════════════════════════════
-
-		// Séparateur Production
-		add_submenu_page(
-			'blazing-minds',
-			'',
-			'<span class="bzmi-menu-separator">── ' . __( 'Production', 'blazing-minds' ) . ' ──</span>',
-			'bzmi_view_reports',
-			'#bzmi-separator-production',
-			'__return_false'
 		);
 
 		// Portefeuilles
@@ -126,20 +98,6 @@ class BZMI_Admin {
 			array( 'BZMI_Admin_ICAVAL', 'render_page' )
 		);
 
-		// ═══════════════════════════════════════════════════════════
-		// SECTION: COLLECTE
-		// ═══════════════════════════════════════════════════════════
-
-		// Séparateur Collecte
-		add_submenu_page(
-			'blazing-minds',
-			'',
-			'<span class="bzmi-menu-separator">── ' . __( 'Collecte', 'blazing-minds' ) . ' ──</span>',
-			'edit_feedbacks',
-			'#bzmi-separator-collect',
-			'__return_false'
-		);
-
 		// Note: Le CPT feedback s'ajoute automatiquement ici
 		// avec show_in_menu => 'blazing-minds'
 
@@ -153,20 +111,6 @@ class BZMI_Admin {
 			array( 'WPVFH_Options_Manager', 'render_options_page' )
 		);
 
-		// ═══════════════════════════════════════════════════════════
-		// SECTION: SYSTÈME
-		// ═══════════════════════════════════════════════════════════
-
-		// Séparateur Système
-		add_submenu_page(
-			'blazing-minds',
-			'',
-			'<span class="bzmi-menu-separator">── ' . __( 'Système', 'blazing-minds' ) . ' ──</span>',
-			'bzmi_manage_settings',
-			'#bzmi-separator-system',
-			'__return_false'
-		);
-
 		// Réglages
 		add_submenu_page(
 			'blazing-minds',
@@ -176,51 +120,6 @@ class BZMI_Admin {
 			'bzmi-settings',
 			array( 'BZMI_Admin_Settings', 'render_page' )
 		);
-
-		// Ajouter les styles pour les séparateurs
-		add_action( 'admin_head', array( __CLASS__, 'menu_separator_styles' ) );
-	}
-
-	/**
-	 * Styles CSS pour les séparateurs de menu
-	 *
-	 * @return void
-	 */
-	public static function menu_separator_styles() {
-		?>
-		<style>
-			/* Séparateurs de menu */
-			#adminmenu .bzmi-menu-separator {
-				display: block;
-				padding: 5px 0;
-				color: #a7aaad;
-				font-size: 11px;
-				font-weight: 600;
-				text-transform: uppercase;
-				letter-spacing: 0.5px;
-				pointer-events: none;
-				border-top: 1px solid rgba(255,255,255,0.1);
-				margin-top: 5px;
-			}
-			#adminmenu li a[href^="#bzmi-separator"] {
-				cursor: default !important;
-				pointer-events: none !important;
-			}
-			#adminmenu li a[href^="#bzmi-separator"]:hover {
-				background: transparent !important;
-				color: #a7aaad !important;
-			}
-			/* Highlight menu actif */
-			#adminmenu .wp-submenu a.current {
-				color: #fff !important;
-				font-weight: 600;
-			}
-			/* Icônes personnalisées */
-			#adminmenu .toplevel_page_blazing-minds .wp-menu-image:before {
-				content: "\f339";
-			}
-		</style>
-		<?php
 	}
 
 	/**

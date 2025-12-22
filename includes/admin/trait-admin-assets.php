@@ -22,15 +22,18 @@ trait WPVFH_Admin_Assets {
 	 * Charger les styles admin
 	 *
 	 * @since 1.0.0
+	 * @since 2.1.0 Support des pages bzmi-* (menu unifié)
 	 * @param string $hook Page actuelle
 	 * @return void
 	 */
 	public static function enqueue_admin_styles( $hook ) {
 		$screen = get_current_screen();
 
-		// Vérifier si on est sur une page du plugin
+		// Vérifier si on est sur une page du plugin (WPVFH ou BZMI)
 		$is_plugin_page = (
 			strpos( $hook, 'wpvfh' ) !== false ||
+			strpos( $hook, 'bzmi' ) !== false ||
+			strpos( $hook, 'blazing-minds' ) !== false ||
 			( $screen && $screen->post_type === 'visual_feedback' )
 		);
 
@@ -46,8 +49,8 @@ trait WPVFH_Admin_Assets {
 			WPVFH_VERSION
 		);
 
-		// Charger admin-options.css aussi pour les pages métadatas
-		if ( strpos( $hook, 'wpvfh-options' ) !== false ) {
+		// Charger admin-options.css pour les pages métadatas (wpvfh-options ou bzmi-metadata)
+		if ( strpos( $hook, 'wpvfh-options' ) !== false || strpos( $hook, 'bzmi-metadata' ) !== false ) {
 			wp_enqueue_style(
 				'wpvfh-admin-options',
 				WPVFH_PLUGIN_URL . 'assets/css/admin-options.css',
@@ -56,8 +59,8 @@ trait WPVFH_Admin_Assets {
 			);
 		}
 
-		// Charger la bibliothèque de médias sur la page des paramètres
-		if ( strpos( $hook, 'wpvfh-settings' ) !== false ) {
+		// Charger la bibliothèque de médias sur les pages des paramètres
+		if ( strpos( $hook, 'wpvfh-settings' ) !== false || strpos( $hook, 'bzmi-settings' ) !== false ) {
 			wp_enqueue_media();
 		}
 	}

@@ -59,11 +59,22 @@ trait WPVFH_Options_Init_Trait {
      * Charger les scripts admin
      *
      * @since 1.1.0
+     * @since 2.1.0 Support du menu unifié bzmi-metadata
      * @param string $hook Page hook
      * @return void
      */
     public static function enqueue_admin_scripts( $hook ) {
-        if ( 'feedbacks_page_wpvfh-options' !== $hook ) {
+        // Supporter les deux hooks : ancien (wpvfh-options) et nouveau (bzmi-metadata)
+        $valid_hooks = array(
+            'feedbacks_page_wpvfh-options',
+            'toplevel_page_blazing-minds_page_bzmi-metadata',
+            'blazing-minds_page_bzmi-metadata',
+        );
+
+        // Vérifier si le hook contient bzmi-metadata (plus flexible)
+        $is_metadata_page = in_array( $hook, $valid_hooks, true ) || strpos( $hook, 'bzmi-metadata' ) !== false;
+
+        if ( ! $is_metadata_page ) {
             return;
         }
 
@@ -92,6 +103,7 @@ trait WPVFH_Options_Init_Trait {
         wp_localize_script( 'wpvfh-options-admin', 'wpvfhOptionsAdmin', array(
             'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
             'adminUrl'      => admin_url( 'admin.php' ),
+            'pageSlug'      => 'bzmi-metadata',
             'nonce'         => wp_create_nonce( 'wpvfh_options_nonce' ),
             'roles'         => $roles,
             'defaultGroups' => self::$default_groups,

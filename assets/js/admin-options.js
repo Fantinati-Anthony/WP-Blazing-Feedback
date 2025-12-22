@@ -793,7 +793,7 @@
 
                 if (response.success) {
                     // Reload the page to show the new tab
-                    window.location.href = wpvfhOptionsAdmin.adminUrl + '?page=wpvfh-options&tab=' + response.data.slug;
+                    window.location.href = wpvfhOptionsAdmin.adminUrl + '?page=' + (wpvfhOptionsAdmin.pageSlug || 'bzmi-metadata') + '&tab=' + response.data.slug;
                 } else {
                     alert(response.data || wpvfhOptionsAdmin.i18n.error);
                 }
@@ -820,7 +820,7 @@
             }, function(response) {
                 if (response.success) {
                     // Redirect to statuses tab
-                    window.location.href = wpvfhOptionsAdmin.adminUrl + '?page=wpvfh-options&tab=statuses';
+                    window.location.href = wpvfhOptionsAdmin.adminUrl + '?page=' + (wpvfhOptionsAdmin.pageSlug || 'bzmi-metadata') + '&tab=statuses';
                 } else {
                     alert(response.data || wpvfhOptionsAdmin.i18n.error);
                 }

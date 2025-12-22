@@ -86,7 +86,7 @@
 
         wp_send_json_success( array(
             'group'       => $group,
-            'redirect_url' => admin_url( 'admin.php?page=wpvfh-options&tab=' . $group['slug'] ),
+            'redirect_url' => admin_url( 'admin.php?page=bzmi-metadata&tab=' . $group['slug'] ),
         ) );
     }
 
@@ -118,7 +118,7 @@
         }
 
         wp_send_json_success( array(
-            'redirect_url' => admin_url( 'admin.php?page=wpvfh-options&tab=statuses' ),
+            'redirect_url' => admin_url( 'admin.php?page=bzmi-metadata&tab=statuses' ),
         ) );
     }
 
@@ -281,7 +281,7 @@
 
             <nav class="nav-tab-wrapper wpvfh-nav-tabs">
                 <?php foreach ( $tabs as $tab_id => $tab_label ) : ?>
-                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-options&tab=' . $tab_id ) ); ?>"
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=bzmi-metadata&tab=' . $tab_id ) ); ?>"
                        class="nav-tab <?php echo $current_tab === $tab_id ? 'nav-tab-active' : ''; ?>"
                        data-tab="<?php echo esc_attr( $tab_id ); ?>"
                        data-deletable="<?php echo ! self::is_default_group( $tab_id ) ? 'true' : 'false'; ?>">
