@@ -5,7 +5,7 @@ Tags: feedback, visual feedback, annotations, bug reporting, screenshot, collabo
 Requires at least: 6.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 2.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,22 @@ Oui, le plugin peut être activé par site ou globalement sur un réseau multisi
 6. Page de paramètres
 
 == Changelog ==
+
+= 2.1.0 =
+* Nouvelle fonctionnalité : Capture pleine page avec défilement automatique
+* Menu dropdown sur le bouton capture avec choix viewport/page entière
+* Concaténation automatique des captures pour pages longues
+* Notifications de progression pendant la capture
+* Gestion des éléments fixed/sticky pour éviter les duplications
+
+= 2.0.0 =
+* Refonte majeure avec module Blazing Minds (CPPICAVAL™)
+* Gestion de clients, portfolios et projets
+* Cycle d'apprentissage ICAVAL (Information → Clarification → Action → Valeur → Apprentissage)
+* Intégration IA pour génération de clarifications
+* Nouveau design des cartes feedback
+* Architecture modulaire JavaScript (19 modules)
+* Amélioration des performances
 
 = 1.0.0 =
 * Version initiale
