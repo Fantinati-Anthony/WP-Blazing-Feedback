@@ -119,7 +119,20 @@
                             return;
                         }
 
-                        // Pour les autres outils (screenshot, voice, video)
+                        // Pour screenshot, on toggle le dropdown menu
+                        if (tool === 'screenshot') {
+                            const dropdown = btn.closest('.wpvfh-tool-dropdown');
+                            if (dropdown) {
+                                // Fermer les autres dropdowns
+                                document.querySelectorAll('.wpvfh-tool-dropdown.open').forEach(d => {
+                                    if (d !== dropdown) d.classList.remove('open');
+                                });
+                                dropdown.classList.toggle('open');
+                            }
+                            return;
+                        }
+
+                        // Pour les autres outils (voice, video)
                         el.toolButtons.forEach(b => {
                             if (b.dataset.tool !== 'files' && b.dataset.tool !== 'links') {
                                 b.classList.remove('active');
@@ -129,10 +142,7 @@
                         if (el.voiceSection) el.voiceSection.hidden = true;
                         if (el.videoSection) el.videoSection.hidden = true;
 
-                        if (tool === 'screenshot') {
-                            btn.classList.add('active');
-                            w.modules.screenshot.captureScreenshot();
-                        } else if (tool === 'voice') {
+                        if (tool === 'voice') {
                             btn.classList.add('active');
                             if (el.voiceSection) el.voiceSection.hidden = false;
                         } else if (tool === 'video') {
@@ -142,6 +152,36 @@
                     });
                 });
             }
+
+            // Dropdown menu items pour capture d'écran
+            document.querySelectorAll('.wpvfh-dropdown-item[data-action]').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const action = item.dataset.action;
+                    const dropdown = item.closest('.wpvfh-tool-dropdown');
+
+                    // Fermer le dropdown
+                    if (dropdown) dropdown.classList.remove('open');
+
+                    // Exécuter l'action
+                    if (action === 'screenshot-viewport') {
+                        w.modules.screenshot.captureScreenshot();
+                    } else if (action === 'screenshot-fullpage') {
+                        w.modules.screenshot.captureFullPage();
+                    }
+                });
+            });
+
+            // Fermer les dropdowns en cliquant ailleurs
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.wpvfh-tool-dropdown')) {
+                    document.querySelectorAll('.wpvfh-tool-dropdown.open').forEach(d => {
+                        d.classList.remove('open');
+                    });
+                }
+            });
 
             // Enregistrement vocal
             if (el.voiceRecordBtn) {

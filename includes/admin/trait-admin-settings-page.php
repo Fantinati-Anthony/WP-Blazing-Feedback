@@ -113,30 +113,6 @@ trait WPVFH_Admin_Settings_Page {
                 <?php self::render_tab_danger(); ?>
             </div>
         </div>
-
-        <style>
-            .wpvfh-settings-wrap { max-width: 1200px; }
-            .wpvfh-nav-tabs { margin-bottom: 20px; }
-            .wpvfh-nav-tabs .nav-tab { display: inline-flex; align-items: center; gap: 5px; }
-            .wpvfh-nav-tabs .dashicons { font-size: 16px; width: 16px; height: 16px; }
-            .wpvfh-tab-content { display: none; background: #fff; padding: 20px; border: 1px solid #c3c4c7; border-top: none; }
-            .wpvfh-tab-content.active { display: block; }
-            .wpvfh-settings-section { margin-bottom: 30px; }
-            .wpvfh-settings-section h2 { font-size: 1.3em; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
-            .wpvfh-settings-row { display: flex; margin-bottom: 15px; align-items: flex-start; }
-            .wpvfh-settings-row label { flex: 0 0 200px; font-weight: 500; padding-top: 5px; }
-            .wpvfh-settings-row .wpvfh-field { flex: 1; }
-            .wpvfh-settings-row .description { color: #666; font-size: 13px; margin-top: 5px; }
-            .wpvfh-preview-container { display: flex; gap: 30px; margin-top: 20px; }
-            .wpvfh-preview-settings { flex: 1; }
-            .wpvfh-preview-widget { flex: 0 0 400px; position: sticky; top: 50px; }
-            .wpvfh-preview-box { background: #f0f0f1; border-radius: 8px; padding: 20px; min-height: 300px; position: relative; }
-            .wpvfh-color-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            @media (max-width: 1200px) {
-                .wpvfh-preview-container { flex-direction: column; }
-                .wpvfh-preview-widget { flex: none; position: static; }
-            }
-        </style>
         <?php
     }
 }

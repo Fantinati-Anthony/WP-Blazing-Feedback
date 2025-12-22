@@ -37,10 +37,23 @@ $tags_settings     = WPVFH_Options_Manager::get_group_settings( 'tags' );
 
 	<!-- Barre d'outils média -->
 	<div class="wpvfh-media-toolbar">
-		<button type="button" class="wpvfh-tool-btn wpvfh-tool-screenshot" data-tool="screenshot" title="<?php esc_attr_e( 'Capture d\'écran', 'blazing-feedback' ); ?>">
-			<span class="wpvfh-tool-emoji">📸</span>
-			<span><?php esc_html_e( 'Capture', 'blazing-feedback' ); ?></span>
-		</button>
+		<div class="wpvfh-tool-dropdown">
+			<button type="button" class="wpvfh-tool-btn wpvfh-tool-screenshot" data-tool="screenshot" title="<?php esc_attr_e( 'Capture d\'écran', 'blazing-feedback' ); ?>">
+				<span class="wpvfh-tool-emoji">📸</span>
+				<span><?php esc_html_e( 'Capture', 'blazing-feedback' ); ?></span>
+				<span class="wpvfh-dropdown-arrow">▾</span>
+			</button>
+			<div class="wpvfh-dropdown-menu" id="wpvfh-screenshot-menu">
+				<button type="button" class="wpvfh-dropdown-item" data-action="screenshot-viewport">
+					<span class="wpvfh-dropdown-icon">🖼️</span>
+					<span class="wpvfh-dropdown-text"><?php esc_html_e( 'Capture visible', 'blazing-feedback' ); ?></span>
+				</button>
+				<button type="button" class="wpvfh-dropdown-item" data-action="screenshot-fullpage">
+					<span class="wpvfh-dropdown-icon">📜</span>
+					<span class="wpvfh-dropdown-text"><?php esc_html_e( 'Page entière', 'blazing-feedback' ); ?></span>
+				</button>
+			</div>
+		</div>
 		<button type="button" class="wpvfh-tool-btn wpvfh-tool-voice" data-tool="voice" title="<?php esc_attr_e( 'Message vocal', 'blazing-feedback' ); ?>">
 			<span class="wpvfh-tool-emoji">🎤</span>
 			<span><?php esc_html_e( 'Audio', 'blazing-feedback' ); ?></span>
