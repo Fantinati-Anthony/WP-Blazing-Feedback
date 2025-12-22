@@ -265,4 +265,166 @@ trait WPVFH_Admin_Settings_Tabs_Small {
         </div>
         <?php
     }
+
+    /**
+     * Rendu de l'onglet ICAVAL
+     *
+     * @since 2.1.0
+     * @return void
+     */
+    public static function render_tab_icaval() {
+        $auto_advance = class_exists( 'BZMI_Database' ) ? BZMI_Database::get_setting( 'icaval_auto_advance', false ) : false;
+        $require_validation = class_exists( 'BZMI_Database' ) ? BZMI_Database::get_setting( 'icaval_require_validation', true ) : true;
+        $notify_stakeholders = class_exists( 'BZMI_Database' ) ? BZMI_Database::get_setting( 'icaval_notify_stakeholders', true ) : true;
+        ?>
+        <div class="wpvfh-settings-section">
+            <h2><?php esc_html_e( 'Workflow ICAVAL', 'blazing-feedback' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Le cycle ICAVAL transforme les informations en apprentissages : Information → Clarification → Action → Valeur → Apprentissage', 'blazing-feedback' ); ?></p>
+
+            <!-- Diagramme du workflow -->
+            <div class="bzmi-workflow-diagram" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 30px; background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%); border-radius: 8px; margin: 20px 0;">
+                <div style="background: #fff; border: 2px solid #3498db; border-radius: 50%; width: 70px; height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #3498db; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    I<br><small style="font-size: 8px; text-transform: uppercase; font-weight: normal;">Info</small>
+                </div>
+                <div style="font-size: 24px; color: #3498db;">→</div>
+                <div style="background: #fff; border: 2px solid #9b59b6; border-radius: 50%; width: 70px; height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #9b59b6; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    C<br><small style="font-size: 8px; text-transform: uppercase; font-weight: normal;">Clarif</small>
+                </div>
+                <div style="font-size: 24px; color: #9b59b6;">→</div>
+                <div style="background: #fff; border: 2px solid #e67e22; border-radius: 50%; width: 70px; height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #e67e22; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    A<br><small style="font-size: 8px; text-transform: uppercase; font-weight: normal;">Action</small>
+                </div>
+                <div style="font-size: 24px; color: #e67e22;">→</div>
+                <div style="background: #fff; border: 2px solid #27ae60; border-radius: 50%; width: 70px; height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #27ae60; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    V<br><small style="font-size: 8px; text-transform: uppercase; font-weight: normal;">Valeur</small>
+                </div>
+                <div style="font-size: 24px; color: #27ae60;">→</div>
+                <div style="background: #fff; border: 2px solid #e74c3c; border-radius: 50%; width: 70px; height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #e74c3c; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    AL<br><small style="font-size: 7px; text-transform: uppercase; font-weight: normal;">Appr.</small>
+                </div>
+            </div>
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Avancement automatique', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="bzmi_icaval_auto_advance" value="1" <?php checked( $auto_advance, true ); ?>>
+                            <?php esc_html_e( 'Avancer automatiquement à l\'étape suivante quand les conditions sont remplies', 'blazing-feedback' ); ?>
+                        </label>
+                        <p class="description">
+                            <?php esc_html_e( 'Ex: passer de Clarification à Action quand toutes les clarifications sont résolues.', 'blazing-feedback' ); ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Validation requise', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="bzmi_icaval_require_validation" value="1" <?php checked( $require_validation, true ); ?>>
+                            <?php esc_html_e( 'Exiger une validation manuelle avant chaque changement d\'étape', 'blazing-feedback' ); ?>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Notifications', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="bzmi_icaval_notify_stakeholders" value="1" <?php checked( $notify_stakeholders, true ); ?>>
+                            <?php esc_html_e( 'Notifier les parties prenantes lors des changements d\'étape', 'blazing-feedback' ); ?>
+                        </label>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <?php
+    }
+
+    /**
+     * Rendu de l'onglet Intégrations
+     *
+     * @since 2.1.0
+     * @return void
+     */
+    public static function render_tab_integrations() {
+        $bf_sync = class_exists( 'BZMI_Database' ) ? BZMI_Database::get_setting( 'blazing_feedback_sync', true ) : true;
+        $bf_auto_import = class_exists( 'BZMI_Database' ) ? BZMI_Database::get_setting( 'blazing_feedback_auto_import', true ) : true;
+        $bf_default_project = class_exists( 'BZMI_Database' ) ? BZMI_Database::get_setting( 'blazing_feedback_default_project', 0 ) : 0;
+
+        // Récupérer les projets si la classe existe
+        $projects = array();
+        if ( class_exists( 'BZMI_Project' ) ) {
+            $projects = BZMI_Project::all( array( 'orderby' => 'name', 'order' => 'ASC' ) );
+        }
+        ?>
+        <div class="wpvfh-settings-section">
+            <h2><?php esc_html_e( 'Intégrations', 'blazing-feedback' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Configurez les connexions entre Blazing Feedback et Blazing Minds.', 'blazing-feedback' ); ?></p>
+
+            <h3 style="display: flex; align-items: center; gap: 8px; margin-top: 25px;">
+                <span class="dashicons dashicons-format-chat" style="color: #FE5100;"></span>
+                <?php esc_html_e( 'Blazing Feedback ↔ Blazing Minds', 'blazing-feedback' ); ?>
+            </h3>
+
+            <table class="form-table">
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Synchronisation', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="bzmi_blazing_feedback_sync" value="1" <?php checked( $bf_sync, true ); ?>>
+                            <?php esc_html_e( 'Activer la synchronisation entre Feedback et Minds', 'blazing-feedback' ); ?>
+                        </label>
+                        <p class="description">
+                            <?php esc_html_e( 'Les feedbacks peuvent être transformés en Informations dans le cycle ICAVAL.', 'blazing-feedback' ); ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><?php esc_html_e( 'Import automatique', 'blazing-feedback' ); ?></th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="bzmi_blazing_feedback_auto_import" value="1" <?php checked( $bf_auto_import, true ); ?>>
+                            <?php esc_html_e( 'Importer automatiquement les nouveaux feedbacks comme Informations', 'blazing-feedback' ); ?>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="bzmi_blazing_feedback_default_project"><?php esc_html_e( 'Projet par défaut', 'blazing-feedback' ); ?></label>
+                    </th>
+                    <td>
+                        <select id="bzmi_blazing_feedback_default_project" name="bzmi_blazing_feedback_default_project">
+                            <option value="0"><?php esc_html_e( '-- Sélectionner un projet --', 'blazing-feedback' ); ?></option>
+                            <?php foreach ( $projects as $project ) : ?>
+                                <option value="<?php echo esc_attr( $project->id ); ?>" <?php selected( $bf_default_project, $project->id ); ?>>
+                                    <?php echo esc_html( $project->name ); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <p class="description">
+                            <?php esc_html_e( 'Projet où les feedbacks seront importés par défaut.', 'blazing-feedback' ); ?>
+                        </p>
+                    </td>
+                </tr>
+            </table>
+
+            <h3 style="display: flex; align-items: center; gap: 8px; margin-top: 30px;">
+                <span class="dashicons dashicons-admin-plugins" style="color: #666;"></span>
+                <?php esc_html_e( 'Autres sources d\'informations', 'blazing-feedback' ); ?>
+            </h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; border-left: 4px solid #3498db;">
+                <p style="margin: 0; color: #666;">
+                    <span class="dashicons dashicons-info" style="color: #3498db;"></span>
+                    <?php esc_html_e( 'D\'autres intégrations seront disponibles dans les prochaines versions :', 'blazing-feedback' ); ?>
+                </p>
+                <ul style="margin: 10px 0 0 20px; color: #888;">
+                    <li><?php esc_html_e( 'Extension Chrome pour capturer des feedbacks', 'blazing-feedback' ); ?></li>
+                    <li><?php esc_html_e( 'Application mobile', 'blazing-feedback' ); ?></li>
+                    <li><?php esc_html_e( 'Webhooks API', 'blazing-feedback' ); ?></li>
+                    <li><?php esc_html_e( 'Import depuis Jira, Trello, Asana...', 'blazing-feedback' ); ?></li>
+                </ul>
+            </div>
+        </div>
+        <?php
+    }
 }

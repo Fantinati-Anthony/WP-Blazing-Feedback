@@ -86,14 +86,14 @@ class BZMI_Admin {
 			array( 'BZMI_Admin_ICAVAL', 'render_page' )
 		);
 
-		// Réglages
+		// Réglages - redirige vers les réglages unifiés de Blazing Feedback
 		add_submenu_page(
 			'blazing-minds',
 			__( 'Réglages', 'blazing-minds' ),
 			__( 'Réglages', 'blazing-minds' ),
-			'bzmi_manage_settings',
-			'blazing-minds-settings',
-			array( 'BZMI_Admin_Settings', 'render_page' )
+			'manage_feedback',
+			'wpvfh-settings',
+			null // Pas de callback, utilise la page existante
 		);
 	}
 

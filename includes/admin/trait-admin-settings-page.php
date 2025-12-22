@@ -37,7 +37,7 @@ trait WPVFH_Admin_Settings_Page {
         $message = isset( $_GET['message'] ) ? sanitize_key( $_GET['message'] ) : '';
         ?>
         <div class="wrap wpvfh-settings-wrap">
-            <h1><?php esc_html_e( 'Blazing Feedback - Paramètres', 'blazing-feedback' ); ?></h1>
+            <h1><?php esc_html_e( 'Blazing Suite - Paramètres', 'blazing-feedback' ); ?></h1>
 
             <?php if ( $message ) :
                 $messages = array(
@@ -73,6 +73,16 @@ trait WPVFH_Admin_Settings_Page {
                     <span class="dashicons dashicons-welcome-learn-more"></span>
                     <?php esc_html_e( 'IA', 'blazing-feedback' ); ?>
                 </a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-settings&tab=icaval' ) ); ?>"
+                   class="nav-tab <?php echo 'icaval' === $active_tab ? 'nav-tab-active' : ''; ?>">
+                    <span class="dashicons dashicons-randomize"></span>
+                    <?php esc_html_e( 'ICAVAL', 'blazing-feedback' ); ?>
+                </a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-settings&tab=integrations' ) ); ?>"
+                   class="nav-tab <?php echo 'integrations' === $active_tab ? 'nav-tab-active' : ''; ?>">
+                    <span class="dashicons dashicons-admin-plugins"></span>
+                    <?php esc_html_e( 'Intégrations', 'blazing-feedback' ); ?>
+                </a>
                 <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger' ) ); ?>"
                    class="nav-tab <?php echo 'danger' === $active_tab ? 'nav-tab-active' : ''; ?>" style="color: #dc3545;">
                     <span class="dashicons dashicons-warning"></span>
@@ -101,6 +111,16 @@ trait WPVFH_Admin_Settings_Page {
                 <!-- Onglet IA -->
                 <div class="wpvfh-tab-content <?php echo 'ai' === $active_tab ? 'active' : ''; ?>" id="tab-ai">
                     <?php self::render_tab_ai(); ?>
+                </div>
+
+                <!-- Onglet ICAVAL -->
+                <div class="wpvfh-tab-content <?php echo 'icaval' === $active_tab ? 'active' : ''; ?>" id="tab-icaval">
+                    <?php self::render_tab_icaval(); ?>
+                </div>
+
+                <!-- Onglet Intégrations -->
+                <div class="wpvfh-tab-content <?php echo 'integrations' === $active_tab ? 'active' : ''; ?>" id="tab-integrations">
+                    <?php self::render_tab_integrations(); ?>
                 </div>
 
                 <?php if ( 'danger' !== $active_tab ) : ?>
