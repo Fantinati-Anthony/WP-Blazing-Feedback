@@ -154,18 +154,18 @@ class BZMI_Admin_Foundations {
 	 * Afficher le formulaire de nouvelle fondation
 	 *
 	 * @since 2.0.0
+	 * @since 2.1.0 Support de plusieurs fondations par client
 	 * @return void
 	 */
 	public static function render_new_foundation() {
-		// Récupérer les clients sans fondation
+		// Récupérer tous les clients avec le nombre de fondations
 		$all_clients = BZMI_Client::all();
-		$clients_without_foundation = array();
+		$clients_with_count = array();
 
 		foreach ( $all_clients as $client ) {
-			$existing = BZMI_Foundation::first_where( array( 'client_id' => $client->id ) );
-			if ( ! $existing ) {
-				$clients_without_foundation[] = $client;
-			}
+			$foundation_count = BZMI_Foundation::count( array( 'client_id' => $client->id ) );
+			$client->foundation_count = $foundation_count;
+			$clients_with_count[] = $client;
 		}
 
 		include WPVFH_PLUGIN_DIR . 'templates/minds/admin/foundations/new.php';

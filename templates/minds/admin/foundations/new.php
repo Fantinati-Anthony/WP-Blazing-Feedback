@@ -5,8 +5,9 @@
  * @package Blazing_Minds
  * @subpackage Foundations
  * @since 2.0.0
+ * @since 2.1.0 Support de plusieurs fondations par client
  *
- * @var array $clients_without_foundation Clients sans fondation
+ * @var array $clients_with_count Tous les clients avec leur nombre de fondations
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,19 +28,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php esc_html_e( 'Nouvelle fondation', 'blazing-feedback' ); ?>
 			</h1>
 			<p class="bzmi-page-description">
-				<?php esc_html_e( 'Créez une fondation de marque pour un client. Chaque client ne peut avoir qu\'une seule fondation.', 'blazing-feedback' ); ?>
+				<?php esc_html_e( 'Créez une fondation de marque pour un client. Un client peut avoir plusieurs fondations.', 'blazing-feedback' ); ?>
 			</p>
 		</div>
 	</div>
 
-	<?php if ( empty( $clients_without_foundation ) ) : ?>
+	<?php if ( empty( $clients_with_count ) ) : ?>
 		<div class="bzmi-empty-state">
 			<div class="bzmi-empty-state__icon">
 				<span class="dashicons dashicons-warning"></span>
 			</div>
 			<h2><?php esc_html_e( 'Aucun client disponible', 'blazing-feedback' ); ?></h2>
-			<p><?php esc_html_e( 'Tous vos clients ont déjà une fondation, ou vous n\'avez pas encore créé de client.', 'blazing-feedback' ); ?></p>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=blazing-minds&action=new_client' ) ); ?>" class="button button-primary button-hero">
+			<p><?php esc_html_e( 'Vous devez d\'abord créer un client pour pouvoir lui associer une fondation.', 'blazing-feedback' ); ?></p>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=bzmi-clients&action=new' ) ); ?>" class="button button-primary button-hero">
 				<?php esc_html_e( 'Créer un client', 'blazing-feedback' ); ?>
 			</a>
 		</div>
@@ -54,8 +55,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</h2>
 
 					<div class="bzmi-client-select-grid">
-						<?php foreach ( $clients_without_foundation as $client ) :
+						<?php foreach ( $clients_with_count as $client ) :
 							$mode = $client->company_mode ?? 'existing';
+							$count = $client->foundation_count ?? 0;
 						?>
 							<label class="bzmi-client-option">
 								<input type="radio" name="client_id" value="<?php echo esc_attr( $client->id ); ?>" required>
@@ -68,6 +70,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<?php if ( $client->company ) : ?>
 											<span class="bzmi-client-option__company"><?php echo esc_html( $client->company ); ?></span>
 										<?php endif; ?>
+										<?php if ( $count > 0 ) : ?>
+											<span class="bzmi-client-option__foundations">
+												<?php
+												printf(
+													esc_html( _n( '%d fondation existante', '%d fondations existantes', $count, 'blazing-feedback' ) ),
+													$count
+												);
+												?>
+											</span>
+										<?php endif; ?>
 									</div>
 									<span class="bzmi-badge bzmi-badge--<?php echo esc_attr( $mode ); ?> bzmi-badge--small">
 										<?php echo 'creation' === $mode ? esc_html__( 'Création', 'blazing-feedback' ) : esc_html__( 'Existante', 'blazing-feedback' ); ?>
@@ -75,6 +87,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 								</div>
 							</label>
 						<?php endforeach; ?>
+					</div>
+				</div>
+
+				<div class="bzmi-form-section">
+					<h2 class="bzmi-form-section__title">
+						<?php esc_html_e( 'Détails de la fondation', 'blazing-feedback' ); ?>
+					</h2>
+
+					<div class="bzmi-form-group">
+						<label for="foundation_name" class="bzmi-form-label">
+							<?php esc_html_e( 'Nom de la fondation', 'blazing-feedback' ); ?>
+							<span class="bzmi-optional"><?php esc_html_e( '(optionnel)', 'blazing-feedback' ); ?></span>
+						</label>
+						<input type="text" id="foundation_name" name="name" class="bzmi-input regular-text"
+							   placeholder="<?php esc_attr_e( 'Ex: Fondation principale, Marque secondaire...', 'blazing-feedback' ); ?>">
+						<p class="bzmi-form-help">
+							<?php esc_html_e( 'Si vide, un nom sera généré automatiquement.', 'blazing-feedback' ); ?>
+						</p>
 					</div>
 				</div>
 
@@ -116,6 +146,7 @@ jQuery(document).ready(function($) {
 		var $form = $(this);
 		var $submit = $form.find('[type="submit"]');
 		var clientId = $form.find('[name="client_id"]:checked').val();
+		var foundationName = $form.find('[name="name"]').val();
 
 		if (!clientId) {
 			alert('<?php echo esc_js( __( 'Veuillez sélectionner un client.', 'blazing-feedback' ) ); ?>');
@@ -124,10 +155,15 @@ jQuery(document).ready(function($) {
 
 		$submit.prop('disabled', true).addClass('is-loading');
 
+		var data = { client_id: parseInt(clientId) };
+		if (foundationName) {
+			data.name = foundationName;
+		}
+
 		wp.apiFetch({
 			path: '/blazing-minds/v1/foundations',
 			method: 'POST',
-			data: { client_id: parseInt(clientId) }
+			data: data
 		}).then(function(response) {
 			window.location.href = '<?php echo esc_url( admin_url( 'admin.php?page=bzmi-foundations&action=edit&id=' ) ); ?>' + response.id;
 		}).catch(function(error) {

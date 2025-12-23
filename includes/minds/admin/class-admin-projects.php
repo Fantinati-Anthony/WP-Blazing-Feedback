@@ -109,6 +109,7 @@ class BZMI_Admin_Projects {
 
 		$clients = BZMI_Client::all( array( 'orderby' => 'name', 'order' => 'ASC' ) );
 		$portfolios = BZMI_Portfolio::all( array( 'orderby' => 'name', 'order' => 'ASC' ) );
+		$foundations = BZMI_Foundation::all( array( 'orderby' => 'name', 'order' => 'ASC' ) );
 		$statuses = BZMI_Project::get_statuses();
 		$priorities = BZMI_Project::get_priorities();
 		$is_new = ! $project_id;
@@ -162,15 +163,16 @@ class BZMI_Admin_Projects {
 		}
 
 		$project->fill( array(
-			'portfolio_id' => isset( $_POST['portfolio_id'] ) ? intval( $_POST['portfolio_id'] ) : 0,
-			'name'         => isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '',
-			'description'  => isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '',
-			'start_date'   => isset( $_POST['start_date'] ) ? sanitize_text_field( wp_unslash( $_POST['start_date'] ) ) : null,
-			'end_date'     => isset( $_POST['end_date'] ) ? sanitize_text_field( wp_unslash( $_POST['end_date'] ) ) : null,
-			'budget'       => isset( $_POST['budget'] ) ? floatval( $_POST['budget'] ) : 0,
-			'color'        => isset( $_POST['color'] ) ? sanitize_hex_color( wp_unslash( $_POST['color'] ) ) : '#2ecc71',
-			'priority'     => isset( $_POST['priority'] ) ? intval( $_POST['priority'] ) : 0,
-			'status'       => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'pending',
+			'portfolio_id'   => isset( $_POST['portfolio_id'] ) ? intval( $_POST['portfolio_id'] ) : 0,
+			'foundation_id'  => isset( $_POST['foundation_id'] ) ? intval( $_POST['foundation_id'] ) : null,
+			'name'           => isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '',
+			'description'    => isset( $_POST['description'] ) ? sanitize_textarea_field( wp_unslash( $_POST['description'] ) ) : '',
+			'start_date'     => isset( $_POST['start_date'] ) ? sanitize_text_field( wp_unslash( $_POST['start_date'] ) ) : null,
+			'end_date'       => isset( $_POST['end_date'] ) ? sanitize_text_field( wp_unslash( $_POST['end_date'] ) ) : null,
+			'budget'         => isset( $_POST['budget'] ) ? floatval( $_POST['budget'] ) : 0,
+			'color'          => isset( $_POST['color'] ) ? sanitize_hex_color( wp_unslash( $_POST['color'] ) ) : '#2ecc71',
+			'priority'       => isset( $_POST['priority'] ) ? intval( $_POST['priority'] ) : 0,
+			'status'         => isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : 'pending',
 		) );
 
 		$result = $project->save_validated();

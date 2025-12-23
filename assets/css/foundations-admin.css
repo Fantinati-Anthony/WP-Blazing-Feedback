@@ -2556,6 +2556,251 @@
 }
 
 /* ==========================================================================
+   Client Select Grid (New Foundation Page)
+   ========================================================================== */
+
+.bzmi-client-select-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: var(--bzmi-spacing-md);
+	margin-bottom: var(--bzmi-spacing-lg);
+}
+
+.bzmi-client-option {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: var(--bzmi-spacing-md);
+	background: #fff;
+	border: 2px solid var(--bzmi-gray-200);
+	border-radius: var(--bzmi-radius-md);
+	cursor: pointer;
+	transition: all var(--bzmi-transition);
+}
+
+.bzmi-client-option:hover {
+	border-color: var(--bzmi-primary);
+	box-shadow: var(--bzmi-shadow);
+}
+
+.bzmi-client-option input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.bzmi-client-option input[type="radio"]:checked + .bzmi-client-option__content {
+	border-color: var(--bzmi-primary);
+}
+
+.bzmi-client-option:has(input[type="radio"]:checked) {
+	border-color: var(--bzmi-primary);
+	background: var(--bzmi-primary-light);
+}
+
+.bzmi-client-option__content {
+	display: flex;
+	align-items: center;
+	gap: var(--bzmi-spacing-md);
+	width: 100%;
+}
+
+.bzmi-client-option__avatar {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	background: linear-gradient(135deg, var(--bzmi-primary), var(--bzmi-primary-hover));
+	color: #fff;
+	font-size: 16px;
+	font-weight: 600;
+	border-radius: var(--bzmi-radius-md);
+	flex-shrink: 0;
+}
+
+.bzmi-client-option__info {
+	flex: 1;
+	min-width: 0;
+}
+
+.bzmi-client-option__name {
+	display: block;
+	font-weight: 600;
+	color: var(--bzmi-gray-800);
+	margin-bottom: 2px;
+}
+
+.bzmi-client-option__company {
+	display: block;
+	font-size: 13px;
+	color: var(--bzmi-gray-500);
+}
+
+.bzmi-client-option__foundations {
+	display: block;
+	font-size: 11px;
+	color: var(--bzmi-primary);
+	margin-top: 4px;
+}
+
+/* ==========================================================================
+   Form Sections
+   ========================================================================== */
+
+.bzmi-form-section {
+	margin-bottom: var(--bzmi-spacing-xl);
+}
+
+.bzmi-form-section__title {
+	display: flex;
+	align-items: center;
+	gap: var(--bzmi-spacing-sm);
+	margin: 0 0 var(--bzmi-spacing-lg);
+	padding-bottom: var(--bzmi-spacing-md);
+	border-bottom: 1px solid var(--bzmi-gray-200);
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--bzmi-gray-800);
+}
+
+.bzmi-form-section--info {
+	margin-top: var(--bzmi-spacing-lg);
+}
+
+/* ==========================================================================
+   Info Box
+   ========================================================================== */
+
+.bzmi-info-box {
+	display: flex;
+	gap: var(--bzmi-spacing-md);
+	padding: var(--bzmi-spacing-lg);
+	background: var(--bzmi-info-light);
+	border: 1px solid var(--bzmi-info);
+	border-radius: var(--bzmi-radius-md);
+}
+
+.bzmi-info-box > .dashicons {
+	flex-shrink: 0;
+	color: var(--bzmi-info);
+}
+
+.bzmi-info-box__content h4 {
+	margin: 0 0 var(--bzmi-spacing-sm);
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--bzmi-gray-800);
+}
+
+.bzmi-info-box__content p {
+	margin: 0 0 var(--bzmi-spacing-sm);
+	font-size: 14px;
+	color: var(--bzmi-gray-600);
+	line-height: 1.6;
+}
+
+.bzmi-info-box__content ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.bzmi-info-box__content ul li {
+	padding: 4px 0;
+	font-size: 13px;
+	color: var(--bzmi-gray-600);
+}
+
+.bzmi-info-box__content ul li strong {
+	color: var(--bzmi-gray-800);
+}
+
+/* ==========================================================================
+   Form Actions
+   ========================================================================== */
+
+.bzmi-form-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--bzmi-spacing-md);
+	padding-top: var(--bzmi-spacing-lg);
+	border-top: 1px solid var(--bzmi-gray-200);
+}
+
+.bzmi-form-actions .button-hero {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--bzmi-spacing-xs);
+}
+
+.bzmi-form-actions .button-hero .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+/* ==========================================================================
+   Card Layout
+   ========================================================================== */
+
+.bzmi-card {
+	background: #fff;
+	border: 1px solid var(--bzmi-gray-200);
+	border-radius: var(--bzmi-radius-lg);
+	box-shadow: var(--bzmi-shadow);
+}
+
+.bzmi-card--form {
+	padding: var(--bzmi-spacing-xl);
+}
+
+/* ==========================================================================
+   Form Labels and Inputs Enhancement
+   ========================================================================== */
+
+.bzmi-form-label {
+	display: block;
+	font-weight: 600;
+	color: var(--bzmi-gray-700);
+	margin-bottom: var(--bzmi-spacing-sm);
+}
+
+.bzmi-optional {
+	font-weight: 400;
+	color: var(--bzmi-gray-400);
+	font-size: 12px;
+}
+
+.bzmi-input {
+	width: 100%;
+	max-width: 400px;
+	padding: var(--bzmi-spacing-sm) var(--bzmi-spacing-md);
+	border: 1px solid var(--bzmi-gray-300);
+	border-radius: var(--bzmi-radius-sm);
+	font-size: 14px;
+	transition: border-color var(--bzmi-transition-fast), box-shadow var(--bzmi-transition-fast);
+}
+
+.bzmi-input:focus {
+	outline: none;
+	border-color: var(--bzmi-primary);
+	box-shadow: 0 0 0 3px var(--bzmi-primary-light);
+}
+
+.bzmi-form-help {
+	margin-top: var(--bzmi-spacing-xs);
+	font-size: 12px;
+	color: var(--bzmi-gray-500);
+}
+
+/* Badge Small Variant */
+.bzmi-badge--small {
+	padding: 1px 6px;
+	font-size: 10px;
+}
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 

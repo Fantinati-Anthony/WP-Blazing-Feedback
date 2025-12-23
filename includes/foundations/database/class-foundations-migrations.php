@@ -67,7 +67,7 @@ class BZMI_Foundations_Migrations {
 	/**
 	 * Créer la table principale des fondations
 	 *
-	 * Une fondation par client
+	 * Plusieurs fondations peuvent être liées à un même client
 	 *
 	 * @param string $charset_collate Charset de la base.
 	 * @return void
@@ -92,12 +92,37 @@ class BZMI_Foundations_Migrations {
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
 			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY (id),
-			UNIQUE KEY client_id (client_id),
+			KEY client_id (client_id),
 			KEY status (status),
 			KEY completion_score (completion_score)
 		) {$charset_collate};";
 
 		dbDelta( $sql );
+
+		// Supprimer l'ancienne contrainte UNIQUE si elle existe (migration depuis v2.0)
+		self::drop_unique_client_constraint();
+	}
+
+	/**
+	 * Supprimer la contrainte UNIQUE sur client_id pour permettre plusieurs fondations par client
+	 *
+	 * @since 2.1.0
+	 * @return void
+	 */
+	private static function drop_unique_client_constraint() {
+		global $wpdb;
+
+		$table_name = BZMI_Database::get_table_name( 'foundations' );
+
+		// Vérifier si la contrainte UNIQUE existe
+		$indexes = $wpdb->get_results( "SHOW INDEX FROM {$table_name} WHERE Key_name = 'client_id' AND Non_unique = 0" );
+
+		if ( ! empty( $indexes ) ) {
+			// Supprimer l'index UNIQUE
+			$wpdb->query( "ALTER TABLE {$table_name} DROP INDEX client_id" );
+			// Recréer en tant qu'index simple
+			$wpdb->query( "ALTER TABLE {$table_name} ADD INDEX client_id (client_id)" );
+		}
 	}
 
 	/**

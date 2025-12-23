@@ -57,6 +57,22 @@ $title = $is_edit ? __( 'Modifier le projet', 'blazing-feedback' ) : __( 'Nouvea
 				</td>
 			</tr>
 			<tr>
+				<th><label for="foundation_id"><?php esc_html_e( 'Fondation', 'blazing-feedback' ); ?></label></th>
+				<td>
+					<select name="foundation_id" id="foundation_id">
+						<option value=""><?php esc_html_e( '-- Sans fondation --', 'blazing-feedback' ); ?></option>
+						<?php foreach ( $foundations as $foundation ) : ?>
+							<option value="<?php echo intval( $foundation->id ); ?>"
+									data-client-id="<?php echo intval( $foundation->client_id ); ?>"
+									<?php selected( $project->foundation_id ?? '', $foundation->id ); ?>>
+								<?php echo esc_html( $foundation->name ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+					<p class="description"><?php esc_html_e( 'La fondation de marque associée au projet.', 'blazing-feedback' ); ?></p>
+				</td>
+			</tr>
+			<tr>
 				<th><label for="description"><?php esc_html_e( 'Description', 'blazing-feedback' ); ?></label></th>
 				<td>
 					<textarea name="description" id="description" rows="4" class="large-text"><?php echo esc_textarea( $project->description ?? '' ); ?></textarea>
@@ -101,3 +117,50 @@ $title = $is_edit ? __( 'Modifier le projet', 'blazing-feedback' ) : __( 'Nouvea
 		</p>
 	</form>
 </div>
+
+<script>
+jQuery(document).ready(function($) {
+	var $clientSelect = $('#client_id');
+	var $foundationSelect = $('#foundation_id');
+	var $foundationOptions = $foundationSelect.find('option').not(':first').detach();
+	var currentFoundationId = <?php echo intval( $project->foundation_id ?? 0 ); ?>;
+
+	function filterFoundations() {
+		var clientId = $clientSelect.val();
+		var currentVal = $foundationSelect.val();
+
+		// Remove all options except the first one
+		$foundationSelect.find('option').not(':first').remove();
+
+		if (clientId) {
+			// Filter options by client
+			$foundationOptions.each(function() {
+				if ($(this).data('client-id') == clientId) {
+					$foundationSelect.append($(this).clone());
+				}
+			});
+		} else {
+			// Show all options if no client selected
+			$foundationSelect.append($foundationOptions.clone());
+		}
+
+		// Try to restore previous selection
+		if (currentVal) {
+			$foundationSelect.val(currentVal);
+		}
+	}
+
+	// Filter on client change
+	$clientSelect.on('change', function() {
+		filterFoundations();
+	});
+
+	// Initial filter
+	filterFoundations();
+
+	// Restore current foundation if editing
+	if (currentFoundationId) {
+		$foundationSelect.val(currentFoundationId);
+	}
+});
+</script>

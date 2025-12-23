@@ -375,18 +375,24 @@ class BZMI_REST_Foundations {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function create_foundation( $request ) {
+		$params    = $request->get_json_params();
 		$client_id = absint( $request->get_param( 'client_id' ) );
 
 		if ( ! $client_id ) {
 			return new WP_Error( 'missing_client', __( 'Client requis.', 'blazing-feedback' ), array( 'status' => 400 ) );
 		}
 
-		$existing = BZMI_Foundation::first_where( array( 'client_id' => $client_id ) );
-		if ( $existing ) {
-			return new WP_Error( 'already_exists', __( 'Ce client a déjà une fondation.', 'blazing-feedback' ), array( 'status' => 409 ) );
+		// Vérifier que le client existe
+		$client = BZMI_Client::find( $client_id );
+		if ( ! $client ) {
+			return new WP_Error( 'client_not_found', __( 'Client introuvable.', 'blazing-feedback' ), array( 'status' => 404 ) );
 		}
 
-		$foundation = BZMI_Foundation::get_or_create_for_client( $client_id );
+		// Récupérer le nom si fourni
+		$name = isset( $params['name'] ) ? sanitize_text_field( $params['name'] ) : '';
+
+		// Créer la fondation (plusieurs fondations par client sont maintenant autorisées)
+		$foundation = BZMI_Foundation::create_for_client( $client_id, $name );
 
 		if ( $foundation ) {
 			return rest_ensure_response( array(
