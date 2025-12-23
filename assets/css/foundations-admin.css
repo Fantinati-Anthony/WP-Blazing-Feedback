@@ -661,6 +661,127 @@
    Identity Tab
    ========================================================================== */
 
+/* Sections Grid (Identity sections cards) */
+.bzmi-sections-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: var(--bzmi-spacing-md);
+	margin-bottom: var(--bzmi-spacing-xl);
+}
+
+.bzmi-section-card {
+	background: #fff;
+	border: 1px solid var(--bzmi-gray-200);
+	border-radius: var(--bzmi-radius-lg);
+	padding: var(--bzmi-spacing-md);
+	transition: box-shadow var(--bzmi-transition), border-color var(--bzmi-transition);
+}
+
+.bzmi-section-card:hover {
+	box-shadow: var(--bzmi-shadow-md);
+	border-color: var(--bzmi-identity);
+}
+
+.bzmi-section-card__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: var(--bzmi-spacing-sm);
+}
+
+.bzmi-section-card__title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--bzmi-gray-800);
+}
+
+.bzmi-section-card__status {
+	flex-shrink: 0;
+}
+
+.bzmi-section-card__progress {
+	display: flex;
+	align-items: center;
+	gap: var(--bzmi-spacing-sm);
+	margin-bottom: var(--bzmi-spacing-md);
+}
+
+.bzmi-mini-progress {
+	flex: 1;
+	height: 6px;
+	background: var(--bzmi-gray-200);
+	border-radius: var(--bzmi-radius-full);
+	overflow: hidden;
+}
+
+.bzmi-mini-progress__fill {
+	height: 100%;
+	background: linear-gradient(90deg, var(--bzmi-identity), var(--bzmi-ai));
+	border-radius: var(--bzmi-radius-full);
+	transition: width var(--bzmi-transition-slow);
+}
+
+.bzmi-mini-progress__label {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--bzmi-gray-600);
+	min-width: 35px;
+}
+
+.bzmi-section-card__preview {
+	min-height: 60px;
+	margin-bottom: var(--bzmi-spacing-md);
+	padding: var(--bzmi-spacing-sm);
+	background: var(--bzmi-gray-50);
+	border-radius: var(--bzmi-radius-sm);
+}
+
+.bzmi-section-card__preview .bzmi-preview-text {
+	margin: 0;
+	font-size: 13px;
+	color: var(--bzmi-gray-600);
+	line-height: 1.5;
+}
+
+.bzmi-section-card__preview .bzmi-preview-font {
+	margin: 0;
+	font-size: 14px;
+	color: var(--bzmi-gray-700);
+	font-weight: 500;
+}
+
+.bzmi-section-card__actions {
+	display: flex;
+	gap: var(--bzmi-spacing-xs);
+}
+
+.bzmi-section-card__actions .button {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.bzmi-section-card__actions .button .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.bzmi-btn-ai-section {
+	background: linear-gradient(135deg, var(--bzmi-ai-light), #fff) !important;
+	border-color: var(--bzmi-ai) !important;
+}
+
+.bzmi-btn-ai-section:hover {
+	background: var(--bzmi-ai-light) !important;
+}
+
+.bzmi-btn-ai-section .dashicons {
+	color: var(--bzmi-ai);
+}
+
+/* Legacy identity sections (accordion style) */
 .bzmi-identity-sections {
 	display: flex;
 	flex-direction: column;
@@ -789,7 +910,8 @@
 	color: var(--bzmi-gray-600);
 }
 
-.bzmi-status-badge--draft {
+.bzmi-status-badge--draft,
+.bzmi-status-badge--hypothesis {
 	background: var(--bzmi-warning-light);
 	color: var(--bzmi-warning);
 }
@@ -797,6 +919,12 @@
 .bzmi-status-badge--validated {
 	background: var(--bzmi-success-light);
 	color: var(--bzmi-success);
+}
+
+.bzmi-status-badge .dashicons {
+	font-size: 12px;
+	width: 12px;
+	height: 12px;
 }
 
 /* ==========================================================================
@@ -865,6 +993,90 @@
 .bzmi-persona-card__segment {
 	font-size: 13px;
 	color: var(--bzmi-gray-500);
+}
+
+/* Persona card content layout (used in identity tab) */
+.bzmi-persona-card__content {
+	flex: 1;
+	min-width: 0;
+	padding: var(--bzmi-spacing-md);
+}
+
+.bzmi-persona-card__job {
+	display: block;
+	font-size: 13px;
+	color: var(--bzmi-gray-600);
+	margin-bottom: 2px;
+}
+
+.bzmi-persona-card__age {
+	display: block;
+	font-size: 12px;
+	color: var(--bzmi-gray-500);
+}
+
+.bzmi-persona-card__quote {
+	margin: var(--bzmi-spacing-sm) 0 0;
+	padding: var(--bzmi-spacing-sm);
+	font-size: 13px;
+	font-style: italic;
+	color: var(--bzmi-gray-600);
+	background: var(--bzmi-gray-50);
+	border-left: 3px solid var(--bzmi-identity);
+	border-radius: 0 var(--bzmi-radius-sm) var(--bzmi-radius-sm) 0;
+}
+
+.bzmi-persona-card__progress {
+	display: flex;
+	align-items: center;
+	gap: var(--bzmi-spacing-sm);
+	margin-top: var(--bzmi-spacing-sm);
+}
+
+.bzmi-persona-card__progress span {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--bzmi-gray-600);
+}
+
+.bzmi-persona-card__actions {
+	display: flex;
+	gap: var(--bzmi-spacing-xs);
+	padding: var(--bzmi-spacing-sm) var(--bzmi-spacing-md);
+	background: var(--bzmi-gray-50);
+	border-top: 1px solid var(--bzmi-gray-200);
+}
+
+.bzmi-persona-card__actions .button-small {
+	padding: 4px 8px;
+}
+
+.bzmi-persona-card__actions .button-small .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+}
+
+/* Persona card with avatar on left */
+.bzmi-personas-grid .bzmi-persona-card {
+	display: flex;
+	flex-direction: column;
+}
+
+.bzmi-personas-grid .bzmi-persona-card:not(.bzmi-persona-card--add) {
+	padding: 0;
+	overflow: hidden;
+}
+
+.bzmi-personas-grid .bzmi-persona-card__avatar {
+	width: 60px;
+	height: 60px;
+	margin: var(--bzmi-spacing-md);
+	margin-bottom: 0;
+	border-radius: 50%;
+	overflow: hidden;
+	border: 3px solid var(--bzmi-identity);
+	flex-shrink: 0;
 }
 
 .bzmi-persona-card__body {
