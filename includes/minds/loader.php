@@ -288,6 +288,14 @@ add_action( 'plugins_loaded', 'wpvfh_register_minds_hooks', 16 );
 // Ajouter les capacités à l'administrateur à chaque chargement (nécessaire si ajoutées après activation)
 add_action( 'init', 'wpvfh_create_minds_roles', 5 );
 
+// Exécuter les migrations de mise à jour si nécessaire (une seule fois)
+add_action( 'init', function() {
+	$db_version = BZMI_Database::get_setting( 'db_version', '0' );
+	if ( version_compare( $db_version, BZMI_DB_VERSION, '<' ) ) {
+		BZMI_Migrations::run();
+	}
+}, 10 );
+
 // Activation
 register_activation_hook( WPVFH_PLUGIN_DIR . 'blazing-feedback.php', function() {
 	wpvfh_load_minds_modules();

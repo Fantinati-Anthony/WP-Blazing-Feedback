@@ -51,8 +51,36 @@ class BZMI_Migrations {
 		self::create_attachments_table( $charset_collate );
 		self::create_activity_log_table( $charset_collate );
 
+		// Migrations de mise à jour
+		self::migrate_add_company_mode_column();
+
 		// Mettre à jour la version
 		BZMI_Database::update_setting( 'db_version', BZMI_DB_VERSION );
+	}
+
+	/**
+	 * Ajouter la colonne company_mode à la table clients si elle n'existe pas
+	 *
+	 * @since 2.1.0
+	 * @return void
+	 */
+	private static function migrate_add_company_mode_column() {
+		global $wpdb;
+
+		$table_name = BZMI_Database::get_table_name( 'clients' );
+
+		// Vérifier si la colonne existe déjà
+		$column_exists = $wpdb->get_results(
+			$wpdb->prepare(
+				"SHOW COLUMNS FROM {$table_name} LIKE %s",
+				'company_mode'
+			)
+		);
+
+		if ( empty( $column_exists ) ) {
+			$wpdb->query( "ALTER TABLE {$table_name} ADD COLUMN company_mode varchar(50) DEFAULT 'existing' AFTER company" );
+			$wpdb->query( "ALTER TABLE {$table_name} ADD INDEX company_mode (company_mode)" );
+		}
 	}
 
 	/**
@@ -98,6 +126,7 @@ class BZMI_Migrations {
 			email varchar(255),
 			phone varchar(50),
 			company varchar(255),
+			company_mode varchar(50) DEFAULT 'existing',
 			address text,
 			website varchar(255),
 			notes text,
@@ -109,7 +138,8 @@ class BZMI_Migrations {
 			PRIMARY KEY (id),
 			KEY status (status),
 			KEY created_by (created_by),
-			KEY name (name(191))
+			KEY name (name(191)),
+			KEY company_mode (company_mode)
 		) {$charset_collate};";
 
 		dbDelta( $sql );

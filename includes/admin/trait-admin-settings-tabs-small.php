@@ -186,11 +186,12 @@ trait WPVFH_Admin_Settings_Tabs_Small {
      * Rendu de l'onglet Zone de danger
      *
      * @since 1.8.0
+     * @since 2.1.0 Affiche toutes les tables du plugin (Feedback + Minds + Foundations)
      * @return void
      */
     public static function render_tab_danger() {
         $tables_exist = WPVFH_Database::tables_exist();
-        $table_stats = $tables_exist ? WPVFH_Database::get_table_stats() : array();
+        $table_stats = self::get_all_plugin_tables_stats();
         ?>
         <div class="wpvfh-danger-zone" style="padding: 20px; background: #fff; border: 2px solid #dc3545; border-radius: 4px;">
             <h2 style="color: #dc3545; margin-top: 0;">
@@ -199,70 +200,190 @@ trait WPVFH_Admin_Settings_Tabs_Small {
             </h2>
             <p style="color: #666;"><?php esc_html_e( 'Ces actions sont irréversibles. Utilisez-les avec précaution.', 'blazing-feedback' ); ?></p>
 
-            <?php if ( $tables_exist ) : ?>
-                <!-- Stats des tables -->
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
-                    <h4 style="margin-top: 0;"><?php esc_html_e( 'État des tables', 'blazing-feedback' ); ?></h4>
+            <!-- Stats des tables -->
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                <h4 style="margin-top: 0;"><?php esc_html_e( 'État de toutes les tables du plugin', 'blazing-feedback' ); ?></h4>
+
+                <?php if ( ! empty( $table_stats ) ) : ?>
                     <table class="widefat" style="margin-bottom: 0;">
                         <thead>
                             <tr>
                                 <th><?php esc_html_e( 'Table', 'blazing-feedback' ); ?></th>
+                                <th><?php esc_html_e( 'Module', 'blazing-feedback' ); ?></th>
                                 <th style="text-align: right;"><?php esc_html_e( 'Entrées', 'blazing-feedback' ); ?></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ( $table_stats as $key => $stat ) : ?>
+                            <?php foreach ( $table_stats as $stat ) : ?>
                                 <tr>
                                     <td><code><?php echo esc_html( $stat['table'] ); ?></code></td>
+                                    <td>
+                                        <span style="
+                                            display: inline-block;
+                                            padding: 2px 8px;
+                                            border-radius: 3px;
+                                            font-size: 11px;
+                                            background: <?php echo esc_attr( $stat['color'] ); ?>;
+                                            color: #fff;
+                                        ">
+                                            <?php echo esc_html( $stat['module_label'] ); ?>
+                                        </span>
+                                    </td>
                                     <td style="text-align: right;"><?php echo esc_html( number_format_i18n( $stat['count'] ) ); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="2"><strong><?php esc_html_e( 'Total tables', 'blazing-feedback' ); ?></strong></th>
+                                <th style="text-align: right;"><strong><?php echo esc_html( count( $table_stats ) ); ?></strong></th>
+                            </tr>
+                        </tfoot>
                     </table>
-                </div>
+                <?php else : ?>
+                    <p style="color: #666;"><?php esc_html_e( 'Aucune table trouvée.', 'blazing-feedback' ); ?></p>
+                <?php endif; ?>
+            </div>
 
-                <!-- Actions -->
-                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger&action=truncate_feedbacks' ), 'wpvfh_truncate_feedbacks' ) ); ?>"
-                       class="button"
-                       style="border-color: #f0ad4e; color: #856404;"
-                       onclick="return confirm('<?php esc_attr_e( 'Êtes-vous sûr de vouloir supprimer TOUS les feedbacks et réponses ? Cette action est irréversible.', 'blazing-feedback' ); ?>');">
-                        <span class="dashicons dashicons-trash" style="vertical-align: middle;"></span>
-                        <?php esc_html_e( 'Vider les feedbacks', 'blazing-feedback' ); ?>
-                    </a>
+            <!-- Actions -->
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=bzmi-settings&tab=danger&action=truncate_feedbacks' ), 'wpvfh_truncate_feedbacks' ) ); ?>"
+                   class="button"
+                   style="border-color: #f0ad4e; color: #856404;"
+                   onclick="return confirm('<?php esc_attr_e( 'Êtes-vous sûr de vouloir supprimer TOUS les feedbacks et réponses ? Cette action est irréversible.', 'blazing-feedback' ); ?>');">
+                    <span class="dashicons dashicons-trash" style="vertical-align: middle;"></span>
+                    <?php esc_html_e( 'Vider les feedbacks', 'blazing-feedback' ); ?>
+                </a>
 
-                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger&action=truncate_all' ), 'wpvfh_truncate_all' ) ); ?>"
-                       class="button"
-                       style="border-color: #dc3545; color: #dc3545;"
-                       onclick="return confirm('<?php esc_attr_e( 'Êtes-vous sûr de vouloir vider TOUTES les tables (feedbacks, métadonnées, groupes, paramètres) ? Cette action est irréversible.', 'blazing-feedback' ); ?>');">
-                        <span class="dashicons dashicons-database-remove" style="vertical-align: middle;"></span>
-                        <?php esc_html_e( 'Vider toutes les tables', 'blazing-feedback' ); ?>
-                    </a>
+                <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=bzmi-settings&tab=danger&action=truncate_all' ), 'wpvfh_truncate_all' ) ); ?>"
+                   class="button"
+                   style="border-color: #dc3545; color: #dc3545;"
+                   onclick="return confirm('<?php esc_attr_e( 'Êtes-vous sûr de vouloir vider TOUTES les tables (feedbacks, clients, fondations, projets, etc.) ? Cette action est irréversible.', 'blazing-feedback' ); ?>');">
+                    <span class="dashicons dashicons-database-remove" style="vertical-align: middle;"></span>
+                    <?php esc_html_e( 'Vider toutes les tables', 'blazing-feedback' ); ?>
+                </a>
 
-                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger&action=drop_tables' ), 'wpvfh_drop_tables' ) ); ?>"
-                       class="button button-link-delete"
-                       style="background: #dc3545; border-color: #dc3545; color: #fff;"
-                       onclick="return confirm('<?php esc_attr_e( 'ATTENTION : Êtes-vous sûr de vouloir SUPPRIMER toutes les tables de la base de données ? Vous devrez réactiver le plugin pour les recréer.', 'blazing-feedback' ); ?>');">
-                        <span class="dashicons dashicons-database-remove" style="vertical-align: middle;"></span>
-                        <?php esc_html_e( 'Supprimer les tables', 'blazing-feedback' ); ?>
-                    </a>
-                </div>
+                <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=bzmi-settings&tab=danger&action=drop_tables' ), 'wpvfh_drop_tables' ) ); ?>"
+                   class="button button-link-delete"
+                   style="background: #dc3545; border-color: #dc3545; color: #fff;"
+                   onclick="return confirm('<?php esc_attr_e( 'ATTENTION : Êtes-vous sûr de vouloir SUPPRIMER toutes les tables de la base de données ? Vous devrez réactiver le plugin pour les recréer.', 'blazing-feedback' ); ?>');">
+                    <span class="dashicons dashicons-database-remove" style="vertical-align: middle;"></span>
+                    <?php esc_html_e( 'Supprimer les tables', 'blazing-feedback' ); ?>
+                </a>
+            </div>
 
-            <?php else : ?>
+            <?php if ( ! $tables_exist ) : ?>
                 <!-- Tables n'existent pas -->
-                <div class="notice notice-warning inline" style="margin: 0 0 15px 0;">
+                <div class="notice notice-warning inline" style="margin: 15px 0 0 0;">
                     <p>
-                        <strong><?php esc_html_e( 'Les tables de base de données n\'existent pas.', 'blazing-feedback' ); ?></strong><br>
+                        <strong><?php esc_html_e( 'Certaines tables de base de données n\'existent pas.', 'blazing-feedback' ); ?></strong><br>
                         <?php esc_html_e( 'Cliquez sur le bouton ci-dessous pour les créer.', 'blazing-feedback' ); ?>
                     </p>
                 </div>
-                <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=wpvfh-settings&tab=danger&action=recreate_tables' ), 'wpvfh_recreate_tables' ) ); ?>"
-                   class="button button-primary">
+                <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=bzmi-settings&tab=danger&action=recreate_tables' ), 'wpvfh_recreate_tables' ) ); ?>"
+                   class="button button-primary" style="margin-top: 10px;">
                     <span class="dashicons dashicons-database-add" style="vertical-align: middle;"></span>
-                    <?php esc_html_e( 'Créer les tables', 'blazing-feedback' ); ?>
+                    <?php esc_html_e( 'Créer les tables manquantes', 'blazing-feedback' ); ?>
                 </a>
             <?php endif; ?>
         </div>
         <?php
+    }
+
+    /**
+     * Obtenir les statistiques de toutes les tables du plugin
+     *
+     * @since 2.1.0
+     * @return array
+     */
+    private static function get_all_plugin_tables_stats() {
+        global $wpdb;
+
+        $stats = array();
+
+        // Tables Blazing Feedback
+        $feedback_tables = array(
+            'wpvfh_feedbacks'  => 'Feedbacks',
+            'wpvfh_responses'  => 'Réponses',
+            'wpvfh_groups'     => 'Groupes',
+            'wpvfh_metadata'   => 'Métadonnées',
+            'wpvfh_settings'   => 'Paramètres',
+        );
+
+        foreach ( $feedback_tables as $table_suffix => $label ) {
+            $table_name = $wpdb->prefix . $table_suffix;
+            if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name ) {
+                $count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name}" );
+                $stats[] = array(
+                    'table'        => $table_name,
+                    'label'        => $label,
+                    'count'        => $count,
+                    'module'       => 'feedback',
+                    'module_label' => 'Feedback',
+                    'color'        => '#f39c12',
+                );
+            }
+        }
+
+        // Tables Blazing Minds (CPPICAVAL)
+        $minds_tables = array(
+            'settings'       => 'Paramètres',
+            'clients'        => 'Clients',
+            'portfolios'     => 'Portefeuilles',
+            'projects'       => 'Projets',
+            'informations'   => 'Informations',
+            'clarifications' => 'Clarifications',
+            'actions'        => 'Actions',
+            'values'         => 'Valeurs',
+            'apprenticeships' => 'Apprentissages',
+            'project_users'  => 'Utilisateurs projet',
+            'attachments'    => 'Pièces jointes',
+            'activity_log'   => 'Journal activité',
+        );
+
+        foreach ( $minds_tables as $table_suffix => $label ) {
+            $table_name = $wpdb->prefix . 'blazingminds_' . $table_suffix;
+            if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name ) {
+                $count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name}" );
+                $stats[] = array(
+                    'table'        => $table_name,
+                    'label'        => $label,
+                    'count'        => $count,
+                    'module'       => 'minds',
+                    'module_label' => 'Minds',
+                    'color'        => '#3498db',
+                );
+            }
+        }
+
+        // Tables Fondations
+        $foundations_tables = array(
+            'foundations'          => 'Fondations',
+            'foundation_identity'  => 'Identité',
+            'foundation_personas'  => 'Personas',
+            'foundation_offers'    => 'Offres',
+            'foundation_competitors' => 'Concurrents',
+            'foundation_journeys'  => 'Parcours',
+            'foundation_channels'  => 'Canaux',
+            'foundation_execution' => 'Exécution',
+            'foundation_ai_logs'   => 'Logs IA',
+        );
+
+        foreach ( $foundations_tables as $table_suffix => $label ) {
+            $table_name = $wpdb->prefix . 'blazingminds_' . $table_suffix;
+            if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name ) {
+                $count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table_name}" );
+                $stats[] = array(
+                    'table'        => $table_name,
+                    'label'        => $label,
+                    'count'        => $count,
+                    'module'       => 'foundations',
+                    'module_label' => 'Fondations',
+                    'color'        => '#8e44ad',
+                );
+            }
+        }
+
+        return $stats;
     }
 }
