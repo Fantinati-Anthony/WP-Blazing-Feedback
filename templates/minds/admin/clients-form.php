@@ -57,6 +57,23 @@ $base_url = admin_url( 'admin.php?page=blazing-minds-clients' );
 			</tr>
 			<tr>
 				<th scope="row">
+					<label for="company_mode"><?php esc_html_e( 'Mode entreprise', 'blazing-minds' ); ?></label>
+				</th>
+				<td>
+					<select id="company_mode" name="company_mode">
+						<?php foreach ( BZMI_Client::COMPANY_MODES as $key => $label ) : ?>
+							<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $client->company_mode ?: 'existing', $key ); ?>>
+								<?php echo esc_html( $label ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+					<p class="description">
+						<?php esc_html_e( 'Création = nouvelle entreprise à créer, Existante = entreprise déjà existante', 'blazing-minds' ); ?>
+					</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">
 					<label for="website"><?php esc_html_e( 'Site web', 'blazing-minds' ); ?></label>
 				</th>
 				<td>
