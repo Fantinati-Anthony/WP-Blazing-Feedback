@@ -245,7 +245,7 @@ trait WPVFH_Options_Ajax_Handlers_Trait {
 
         wp_send_json_success( array(
             'group'       => $group,
-            'redirect_url' => admin_url( 'admin.php?page=wpvfh-options&tab=' . $group['slug'] ),
+            'redirect_url' => admin_url( 'admin.php?page=bzmi-metadata&tab=' . $group['slug'] ),
         ) );
     }
 
@@ -277,7 +277,7 @@ trait WPVFH_Options_Ajax_Handlers_Trait {
         }
 
         wp_send_json_success( array(
-            'redirect_url' => admin_url( 'admin.php?page=wpvfh-options&tab=statuses' ),
+            'redirect_url' => admin_url( 'admin.php?page=bzmi-metadata&tab=statuses' ),
         ) );
     }
 

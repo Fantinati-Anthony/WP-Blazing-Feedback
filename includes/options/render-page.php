@@ -39,7 +39,7 @@
      */
     private static function render_items_table( $type, $items, $group_name = null ) {
         $reset_url = wp_nonce_url(
-            admin_url( 'admin.php?page=wpvfh-options&tab=' . $type . '&action=reset' ),
+            admin_url( 'admin.php?page=bzmi-metadata&tab=' . $type . '&action=reset' ),
             'wpvfh_reset_options'
         );
 

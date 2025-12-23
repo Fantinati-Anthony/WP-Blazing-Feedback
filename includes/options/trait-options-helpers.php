@@ -198,7 +198,7 @@ trait WPVFH_Options_Helpers_Trait {
                     break;
             }
 
-            wp_safe_redirect( admin_url( 'admin.php?page=wpvfh-options&tab=' . $tab . '&reset=1' ) );
+            wp_safe_redirect( admin_url( 'admin.php?page=bzmi-metadata&tab=' . $tab . '&reset=1' ) );
             exit;
         }
     }

@@ -50,7 +50,7 @@ trait WPVFH_Options_Rendering_Trait {
 
             <nav class="nav-tab-wrapper wpvfh-nav-tabs">
                 <?php foreach ( $tabs as $tab_id => $tab_label ) : ?>
-                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpvfh-options&tab=' . $tab_id ) ); ?>"
+                    <a href="<?php echo esc_url( admin_url( 'admin.php?page=bzmi-metadata&tab=' . $tab_id ) ); ?>"
                        class="nav-tab <?php echo $current_tab === $tab_id ? 'nav-tab-active' : ''; ?>"
                        data-tab="<?php echo esc_attr( $tab_id ); ?>"
                        data-deletable="<?php echo ! self::is_default_group( $tab_id ) ? 'true' : 'false'; ?>">
@@ -247,7 +247,7 @@ trait WPVFH_Options_Rendering_Trait {
      */
     private static function render_items_table( $type, $items, $group_name = null ) {
         $reset_url = wp_nonce_url(
-            admin_url( 'admin.php?page=wpvfh-options&tab=' . $type . '&action=reset' ),
+            admin_url( 'admin.php?page=bzmi-metadata&tab=' . $type . '&action=reset' ),
             'wpvfh_reset_options'
         );
 
