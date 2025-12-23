@@ -267,6 +267,7 @@ function wpvfh_create_minds_roles() {
 		'bzmi_view_reports'        => true,
 		'bzmi_use_ai'              => true,
 		// Fondations (v2.0.0)
+		'bzmi_view_foundations'    => true,
 		'bzmi_manage_foundations'  => true,
 		'bzmi_edit_foundations'    => true,
 		'bzmi_delete_foundations'  => true,
@@ -283,6 +284,9 @@ function wpvfh_create_minds_roles() {
 // Initialiser à plugins_loaded
 add_action( 'plugins_loaded', 'wpvfh_init_minds', 15 );
 add_action( 'plugins_loaded', 'wpvfh_register_minds_hooks', 16 );
+
+// Ajouter les capacités à l'administrateur à chaque chargement (nécessaire si ajoutées après activation)
+add_action( 'init', 'wpvfh_create_minds_roles', 5 );
 
 // Activation
 register_activation_hook( WPVFH_PLUGIN_DIR . 'blazing-feedback.php', function() {
