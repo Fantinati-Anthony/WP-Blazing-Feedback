@@ -18,7 +18,7 @@
 	const BZMIFoundations = {
 		// Configuration
 		config: {
-			apiBase: bzmiFoundations.restUrl || '/wp-json/blazing-minds/v1/foundations/',
+			apiBase: (bzmiFoundations.apiBase || '/wp-json/blazing-minds/v1/foundations').replace(/\/$/, ''),
 			nonce: bzmiFoundations.nonce || '',
 			adminUrl: bzmiFoundations.adminUrl || '/wp-admin/',
 			foundationId: null,
@@ -152,10 +152,84 @@
 			this.elements.$modal.data('saveCallback', saveCallback);
 			this.elements.$modal.show();
 
-			// Focus first input
+			// Initialize color pickers
 			setTimeout(() => {
+				this.elements.$modal.find('.bzmi-color-picker').each(function() {
+					if ($.fn.wpColorPicker) {
+						$(this).wpColorPicker({
+							change: function(event, ui) {
+								$(this).val(ui.color.toString());
+							}
+						});
+					}
+				});
+
+				// Initialize media selectors
+				this.initMediaSelectors();
+
+				// Load attachment images
+				this.loadAttachmentImages();
+
+				// Focus first input
 				this.elements.$modal.find('input, textarea, select').first().focus();
 			}, 100);
+		},
+
+		/**
+		 * Initialize media selectors in modal
+		 */
+		initMediaSelectors: function() {
+			const self = this;
+
+			this.elements.$modal.find('.bzmi-select-media').off('click').on('click', function(e) {
+				e.preventDefault();
+				const $field = $(this).closest('.bzmi-media-field');
+				const $input = $field.find('input[type="hidden"]');
+				const $preview = $field.find('.bzmi-media-preview');
+				const $removeBtn = $field.find('.bzmi-remove-media');
+
+				const frame = wp.media({
+					title: bzmiFoundations.strings?.select_image || 'Sélectionner une image',
+					button: { text: bzmiFoundations.strings?.use_image || 'Utiliser cette image' },
+					multiple: false
+				});
+
+				frame.on('select', function() {
+					const attachment = frame.state().get('selection').first().toJSON();
+					$input.val(attachment.id);
+					$preview.html('<img src="' + (attachment.sizes?.thumbnail?.url || attachment.url) + '">');
+					$removeBtn.show();
+				});
+
+				frame.open();
+			});
+
+			this.elements.$modal.find('.bzmi-remove-media').off('click').on('click', function(e) {
+				e.preventDefault();
+				const $field = $(this).closest('.bzmi-media-field');
+				$field.find('input[type="hidden"]').val('');
+				$field.find('.bzmi-media-preview').empty();
+				$(this).hide();
+			});
+		},
+
+		/**
+		 * Load attachment images for previews
+		 */
+		loadAttachmentImages: function() {
+			this.elements.$modal.find('.bzmi-media-preview img[data-attachment-id]').each(function() {
+				const $img = $(this);
+				const attachmentId = $img.data('attachment-id');
+				if (attachmentId && wp.media?.attachment) {
+					const attachment = wp.media.attachment(attachmentId);
+					attachment.fetch().then(function() {
+						const url = attachment.get('sizes')?.thumbnail?.url || attachment.get('url');
+						if (url) {
+							$img.attr('src', url);
+						}
+					});
+				}
+			});
 		},
 
 		/**
@@ -308,24 +382,65 @@
 					break;
 
 				case 'visuals':
-					html += this.buildTextField('logo_url', 'URL du logo', content.logo_url, 'url');
-					html += this.buildTextField('logo_guidelines', 'Guidelines logo', content.logo_guidelines, 'textarea');
-					html += this.buildTextField('imagery_style', 'Style d\'imagerie', content.imagery_style, 'textarea');
-					html += this.buildTextField('icon_style', 'Style d\'ic\u00f4nes', content.icon_style);
+					html += '<div class="bzmi-form-group">';
+					html += '<label>Logo principal</label>';
+					html += '<div class="bzmi-media-field" data-field="logo_primary_id">';
+					html += '<input type="hidden" name="logo_primary_id" value="' + (content.logo_primary_id || '') + '">';
+					html += '<div class="bzmi-media-preview">' + (content.logo_primary_id ? '<img src="" data-attachment-id="' + content.logo_primary_id + '">' : '') + '</div>';
+					html += '<button type="button" class="button bzmi-select-media">' + (bzmiFoundations.strings?.select_image || 'Sélectionner') + '</button>';
+					html += '<button type="button" class="button bzmi-remove-media" style="' + (content.logo_primary_id ? '' : 'display:none') + '">Supprimer</button>';
+					html += '</div></div>';
+					html += '<div class="bzmi-form-group">';
+					html += '<label>Logo secondaire</label>';
+					html += '<div class="bzmi-media-field" data-field="logo_secondary_id">';
+					html += '<input type="hidden" name="logo_secondary_id" value="' + (content.logo_secondary_id || '') + '">';
+					html += '<div class="bzmi-media-preview">' + (content.logo_secondary_id ? '<img src="" data-attachment-id="' + content.logo_secondary_id + '">' : '') + '</div>';
+					html += '<button type="button" class="button bzmi-select-media">' + (bzmiFoundations.strings?.select_image || 'Sélectionner') + '</button>';
+					html += '<button type="button" class="button bzmi-remove-media" style="' + (content.logo_secondary_id ? '' : 'display:none') + '">Supprimer</button>';
+					html += '</div></div>';
+					html += '<div class="bzmi-form-group">';
+					html += '<label>Icône/Favicon</label>';
+					html += '<div class="bzmi-media-field" data-field="logo_icon_id">';
+					html += '<input type="hidden" name="logo_icon_id" value="' + (content.logo_icon_id || '') + '">';
+					html += '<div class="bzmi-media-preview">' + (content.logo_icon_id ? '<img src="" data-attachment-id="' + content.logo_icon_id + '">' : '') + '</div>';
+					html += '<button type="button" class="button bzmi-select-media">' + (bzmiFoundations.strings?.select_image || 'Sélectionner') + '</button>';
+					html += '<button type="button" class="button bzmi-remove-media" style="' + (content.logo_icon_id ? '' : 'display:none') + '">Supprimer</button>';
+					html += '</div></div>';
+					html += this.buildTextField('logo_guidelines', 'Guidelines d\'utilisation du logo', content.logo_guidelines, 'textarea');
+					html += this.buildTextField('imagery_style', 'Style d\'imagerie (photos, illustrations)', content.imagery_style, 'textarea');
+					html += this.buildTextField('iconography_style', 'Style d\'iconographie', content.iconography_style, 'textarea');
 					break;
 
 				case 'colors':
-					html += '<div class="bzmi-colors-list">';
-					html += '<p class="description">D\u00e9finissez vos couleurs (format: nom|hexadecimal|usage)</p>';
-					html += this.buildTextField('colors_raw', 'Couleurs', this.formatColors(content.palette || []), 'textarea');
+					html += '<div class="bzmi-colors-section">';
+					html += '<h4>Couleurs principales</h4>';
+					html += '<div class="bzmi-color-row">';
+					html += this.buildColorField('primary_color', 'Couleur primaire', content.primary_color);
+					html += this.buildColorField('secondary_color', 'Couleur secondaire', content.secondary_color);
+					html += this.buildColorField('accent_color', 'Couleur d\'accent', content.accent_color);
+					html += '</div>';
+					html += '<div class="bzmi-color-row">';
+					html += this.buildColorField('background_color', 'Fond', content.background_color);
+					html += this.buildColorField('text_color', 'Texte', content.text_color);
+					html += '</div>';
+					html += '<h4>Palette compl\u00e8te</h4>';
+					html += '<p class="description">Format: nom|#hexadecimal|usage (une couleur par ligne)</p>';
+					html += this.buildTextField('palette_raw', 'Palette', this.formatColors(content.palette || []), 'textarea');
+					html += this.buildTextField('usage_guidelines', 'Guidelines d\'utilisation des couleurs', content.usage_guidelines, 'textarea');
 					html += '</div>';
 					break;
 
 				case 'typography':
-					html += this.buildTextField('primary_font', 'Police principale', content.primary_font);
-					html += this.buildTextField('secondary_font', 'Police secondaire', content.secondary_font);
-					html += this.buildTextField('heading_style', 'Style des titres', content.heading_style);
-					html += this.buildTextField('body_style', 'Style du corps', content.body_style);
+					html += this.buildTextField('heading_font', 'Police des titres', content.heading_font);
+					html += this.buildTextField('body_font', 'Police du corps de texte', content.body_font);
+					html += this.buildTextField('accent_font', 'Police d\'accent (optionnel)', content.accent_font);
+					html += '<div class="bzmi-form-group">';
+					html += '<label>Tailles de police</label>';
+					html += '<p class="description">Format: nom|taille (ex: h1|48px)</p>';
+					const fontSizesText = (content.font_sizes || []).map(s => `${s.name}|${s.size}`).join('\\n');
+					html += '<textarea name="font_sizes" rows="4">' + fontSizesText + '</textarea>';
+					html += '</div>';
+					html += this.buildTextField('usage_guidelines', 'Guidelines typographiques', content.usage_guidelines, 'textarea');
 					break;
 			}
 
@@ -369,6 +484,19 @@
 				html += '<input type="' + type + '" id="' + name + '" name="' + name + '" value="' + (value || '') + '">';
 			}
 
+			html += '</div>';
+			return html;
+		},
+
+		/**
+		 * Build color field HTML
+		 */
+		buildColorField: function(name, label, value) {
+			let html = '<div class="bzmi-form-group bzmi-form-group--color">';
+			html += '<label for="' + name + '">' + label + '</label>';
+			html += '<div class="bzmi-color-input-wrap">';
+			html += '<input type="text" id="' + name + '" name="' + name + '" value="' + (value || '') + '" class="bzmi-color-picker" data-default-color="' + (value || '#ffffff') + '">';
+			html += '</div>';
 			html += '</div>';
 			return html;
 		},
@@ -425,21 +553,35 @@
 					break;
 
 				case 'visuals':
-					content.logo_url = formData.logo_url;
+					content.logo_primary_id = parseInt(formData.logo_primary_id) || 0;
+					content.logo_secondary_id = parseInt(formData.logo_secondary_id) || 0;
+					content.logo_icon_id = parseInt(formData.logo_icon_id) || 0;
 					content.logo_guidelines = formData.logo_guidelines;
 					content.imagery_style = formData.imagery_style;
-					content.icon_style = formData.icon_style;
+					content.iconography_style = formData.iconography_style;
 					break;
 
 				case 'colors':
-					content.palette = this.parseColors(formData.colors_raw || '');
+					content.primary_color = formData.primary_color;
+					content.secondary_color = formData.secondary_color;
+					content.accent_color = formData.accent_color;
+					content.background_color = formData.background_color;
+					content.text_color = formData.text_color;
+					content.palette = this.parseColors(formData.palette_raw || '');
+					content.usage_guidelines = formData.usage_guidelines;
 					break;
 
 				case 'typography':
-					content.primary_font = formData.primary_font;
-					content.secondary_font = formData.secondary_font;
-					content.heading_style = formData.heading_style;
-					content.body_style = formData.body_style;
+					content.heading_font = formData.heading_font;
+					content.body_font = formData.body_font;
+					content.accent_font = formData.accent_font;
+					content.font_sizes = formData.font_sizes ? formData.font_sizes.split('\n')
+						.filter(v => v.trim())
+						.map(line => {
+							const parts = line.split('|');
+							return { name: parts[0].trim(), size: parts[1] ? parts[1].trim() : '' };
+						}) : [];
+					content.usage_guidelines = formData.usage_guidelines;
 					break;
 
 				default:
